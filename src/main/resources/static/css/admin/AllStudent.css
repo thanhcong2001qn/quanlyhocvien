@@ -1,11 +1,5 @@
 /* Styles for the content area that respects sidebar and header */
 
-.content-wrapper {
-    margin-left: 250px; /* Width of sidebar */
-    padding-top: 70px; /* Height of header */
-    min-height: calc(100vh - 70px);
-    transition: margin-left 0.3s ease;
-}
 .page-title {
     display: block;
 }
@@ -50,15 +44,6 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 991.98px) {
-    .content-wrapper {
-        margin-left: 0;
-    }
-
-    body.sidebar-open .content-wrapper {
-        margin-left: 250px;
-    }
-}
 
 @media (max-width: 767.98px) {
     .content-header {
