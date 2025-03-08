@@ -1,0 +1,465 @@
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+/* Header styles */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+    height: 70px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+@media (min-width: 992px) {
+    .admin-header {
+        width: calc(100% - 250px);
+        margin-left: 250px
+
+    }
+}
+@media (max-width: 991px) {
+    .admin-header {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    /* Để xử lý sidebar khi màn hình nhỏ - giả sử có class .sidebar-collapsed */
+    .sidebar-collapsed .admin-header {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* Logo section */
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-logo img {
+    height: 38px;
+}
+
+.header-logo h2 {
+    color: #1A4B7C;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.header-logo span {
+    color: #FFC466;
+    font-weight: 700;
+}
+
+/* Mobile Toggle Button */
+.mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #1A4B7C;
+    cursor: pointer;
+}
+
+/* Search section */
+.header-search {
+    flex: 0 1 400px;
+    position: relative;
+}
+
+.header-search input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid #e1e5eb;
+    border-radius: 20px;
+    background-color: #f5f7fa;
+    outline: none;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.header-search input:focus {
+    border-color: #7BDCB5;
+    box-shadow: 0 0 0 3px rgba(123, 220, 181, 0.2);
+    background-color: #fff;
+}
+
+.header-search button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #667780;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.header-search button:hover {
+    color: #1A4B7C;
+}
+
+/* Actions section */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Notification button */
+.header-notification {
+    position: relative;
+}
+
+.notification-btn {
+    background: none;
+    border: none;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    color: #667780;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-btn:hover {
+    background-color: #f5f7fa;
+    color: #1A4B7C;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: 18px;
+    width: 18px;
+    background-color: #FF6B6B;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-dropdown {
+    position: absolute;
+    top: 50px;
+    right: -5px;
+    width: 320px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.2s;
+}
+
+.header-notification.active .notification-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notification-header {
+    padding: 15px;
+    border-bottom: 1px solid #e1e5eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification-header h4 {
+    font-size: 0.9rem;
+    color: #5a6169;
+}
+
+.notification-header a {
+    font-size: 0.8rem;
+    color: #7BDCB5;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.notification-header a:hover {
+    color: #1A4B7C;
+}
+
+.notification-list {
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f5f7fa;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background-color: #f5f7fa;
+}
+
+.notification-item-icon {
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    background-color: rgba(123, 220, 181, 0.2);
+    color: #7BDCB5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-item-content {
+    flex: 1;
+}
+
+.notification-item-content p {
+    font-size: 0.85rem;
+    margin-bottom: 3px;
+}
+
+.notification-item-content small {
+    color: #949ca5;
+    font-size: 0.75rem;
+}
+
+.notification-footer {
+    padding: 12px;
+    text-align: center;
+    border-top: 1px solid #e1e5eb;
+}
+
+.notification-footer a {
+    font-size: 0.85rem;
+    color: #7BDCB5;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.notification-footer a:hover {
+    color: #1A4B7C;
+}
+
+/* User profile */
+.header-profile {
+    position: relative;
+}
+
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 5px;
+    transition: all 0.2s;
+}
+
+.profile-btn:hover .profile-name {
+    color: #1A4B7C;
+}
+
+.profile-avatar {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #e1e5eb;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info {
+    text-align: left;
+    display: none;
+}
+
+.profile-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    transition: color 0.2s;
+}
+
+.profile-role {
+    font-size: 0.75rem;
+    color: #949ca5;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 220px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.2s;
+}
+
+.header-profile.active .profile-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.profile-dropdown-header {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #e1e5eb;
+}
+
+.profile-dropdown-header .profile-avatar {
+    margin: 0 auto 10px;
+    height: 60px;
+    width: 60px;
+}
+
+.profile-dropdown-header .profile-name {
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.profile-dropdown-menu {
+    padding: 10px 0;
+}
+
+.profile-dropdown-item {
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #5a6169;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.profile-dropdown-item:hover {
+    background-color: #f5f7fa;
+    color: #1A4B7C;
+}
+
+.profile-dropdown-item i {
+    width: 20px;
+    text-align: center;
+    color: #7BDCB5;
+}
+
+.profile-dropdown-footer {
+    padding: 10px 20px;
+    border-top: 1px solid #e1e5eb;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #FF6B6B;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.logout-btn:hover {
+    color: #e74c3c;
+}
+
+/* For larger screens, show profile info */
+@media (min-width: 768px) {
+    .profile-info {
+        display: block;
+    }
+
+    .mobile-toggle {
+        display: none;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .header-search {
+        flex: 0 1 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-search {
+        display: none;
+    }
+
+    .mobile-toggle {
+        display: block;
+    }
+
+    .profile-info {
+        display: none;
+    }
+}
+
+/* Content spacer to prevent header overlap */
+.content-spacer {
+    height: 70px;
+}
+
+/* Set space for sidebar */
+.admin-container {
+    display: flex;
+}
+
+.main-content {
+    width: calc(100% - 250px);
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin 0.3s;
+}
+
+@media (max-width: 991px) {
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
+}

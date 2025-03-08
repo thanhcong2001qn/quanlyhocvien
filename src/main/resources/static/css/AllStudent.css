@@ -1,0 +1,75 @@
+/* Styles for the content area that respects sidebar and header */
+
+.content-wrapper {
+    margin-left: 250px; /* Width of sidebar */
+    padding-top: 70px; /* Height of header */
+    min-height: calc(100vh - 70px);
+    transition: margin-left 0.3s ease;
+}
+.page-title {
+    display: block;
+}
+.breadcrumb-item a{
+    margin-bottom: 15px;
+    text-decoration: none;
+    color:  #FF6B35;
+}
+
+/* CSS cho card và table để phù hợp với thiết kế admin */
+.card {
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    margin-bottom: 1rem;
+    border-radius: .25rem;
+}
+
+.card-header {
+    background-color: rgba(0,0,0,.03);
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: .75rem 1.25rem;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.card-header2{
+    background-color: white;
+}
+.card-title {
+    margin-bottom: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card-tools {
+    margin-left: auto;
+}
+
+.sort-icon {
+    float: left;
+    margin-left: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .content-wrapper {
+        margin-left: 0;
+    }
+
+    body.sidebar-open .content-wrapper {
+        margin-left: 250px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .content-header {
+        padding: 15px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+}

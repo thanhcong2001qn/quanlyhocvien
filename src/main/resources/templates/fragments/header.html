@@ -1,0 +1,135 @@
+
+<body>
+<div class="admin-container">
+    <!-- Sidebar sẽ được thêm vào đây -->
+
+    <div class="main-content">
+        <!-- Admin Header -->
+        <header class="admin-header">
+            <!-- Mobile Toggle Button -->
+            <button class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Logo -->
+            <div class="header-logo">
+                <h2>Admin<span>Panel</span></h2>
+            </div>
+
+            <!-- Search -->
+            <div class="header-search">
+                <input type="text" placeholder="Tìm kiếm...">
+                <button type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <!-- Actions -->
+            <div class="header-actions">
+                <!-- Notifications -->
+                <div class="header-notification">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+
+                    <div class="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Thông báo</h4>
+                            <a href="#">Đánh dấu đã đọc</a>
+                        </div>
+                        <div class="notification-list">
+                            <div class="notification-item">
+                                <div class="notification-item-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="notification-item-content">
+                                    <p>Người dùng mới đăng ký</p>
+                                    <small>2 phút trước</small>
+                                </div>
+                            </div>
+
+                            <div class="notification-item">
+                                <div class="notification-item-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="notification-item-content">
+                                    <p>Đơn hàng mới #12345</p>
+                                    <small>15 phút trước</small>
+                                </div>
+                            </div>
+
+                            <div class="notification-item">
+                                <div class="notification-item-icon">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
+                                <div class="notification-item-content">
+                                    <p>Cảnh báo hệ thống</p>
+                                    <small>1 giờ trước</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification-footer">
+                            <a href="#">Xem tất cả thông báo</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Profile -->
+                <div class="header-profile">
+                    <button class="profile-btn">
+                        <div class="profile-avatar">
+                            <img src="https://via.placeholder.com/128" alt="User Avatar">
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name">Nguyễn Văn A</div>
+                            <div class="profile-role">Administrator</div>
+                        </div>
+                    </button>
+
+                    <div class="profile-dropdown">
+                        <div class="profile-dropdown-header">
+                            <div class="profile-avatar">
+                                <img src="https://via.placeholder.com/128" alt="User Avatar">
+                            </div>
+                            <div class="profile-name">Nguyễn Văn A</div>
+                            <div class="profile-role">Administrator</div>
+                        </div>
+                        <div class="profile-dropdown-menu">
+                            <a href="#" class="profile-dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>Hồ sơ cá nhân</span>
+                            </a>
+                            <a href="#" class="profile-dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Cài đặt</span>
+                            </a>
+                            <a href="#" class="profile-dropdown-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>Tin nhắn</span>
+                            </a>
+                        </div>
+                        <div class="profile-dropdown-footer">
+                            <button class="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Đăng xuất</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Spacer to prevent content from being hidden under fixed header -->
+        <div class="content-spacer"></div>
+
+        <!-- Main Content Container -->
+        <main class="admin-content">
+            <h1>Bảng điều khiển Admin</h1>
+            <p>Đây là nội dung trang chính của bảng điều khiển.</p>
+            <!-- Nội dung chính sẽ được thêm vào đây -->
+        </main>
+    </div>
+</div>
+
+
