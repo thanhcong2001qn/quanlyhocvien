@@ -73,12 +73,9 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Số điện thoại:</label>
                                 <div class="col-sm-9">
-                                    <input id="phoneNumber" type="tel" class="form-control"
-                                           th:value="${student.phoneNumber}">
+                                    <input id="phoneNumber" type="tel" class="form-control" th:value="${student.phoneNumber}">
                                 </div>
-                                <div class="error-message" id="phoneNumberError">Vui lòng nhập số điện thoại hợp lệ (10
-                                    chữ số)
-                                </div>
+                                <div class="error-message" id="phoneNumberError">Vui lòng nhập số điện thoại hợp lệ (10 chữ số)</div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Địa chỉ:</label>
@@ -165,11 +162,6 @@
             phoneNumber: phoneNumber
         };
 
-        // const responseDiv = document.getElementById('responseMessage');
-        // responseDiv.style.display = 'block';
-        // responseDiv.style.backgroundColor = '#ffffcc';
-        // responseDiv.innerHTML = 'Đang gửi thông tin...';
-        // Gửi dữ liệu dưới dạng JSON đến server
         fetch('/student/apiEditStudent', {
             method: 'PUT',
             headers: {
@@ -185,13 +177,6 @@
                 }
             })
 
-
-        // Ở đây bạn có thể thêm mã JavaScript để xử lý form
-        // Ví dụ: gửi dữ liệu bằng AJAX đến server
-
-
-        // Hoặc gửi form thực sự:
-        // this.submit();
     });
 </script>
 </body>
