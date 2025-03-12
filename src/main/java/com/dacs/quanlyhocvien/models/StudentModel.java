@@ -1,8 +1,6 @@
 package com.dacs.quanlyhocvien.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -10,6 +8,7 @@ import java.time.LocalDate;
 @Table(name = "student")
 public class StudentModel extends AbstractModel {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String fullName;
     private String email;
