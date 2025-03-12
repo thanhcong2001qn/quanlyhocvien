@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-    <head>
+<head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Admin</title>
@@ -10,8 +10,8 @@
         <link rel="stylesheet" th:href="@{/css/admin/AddStudent.css}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    </head>
-    <body>
+</head>
+<body>
     <div th:replace="~{/fragments/header :: header}"></div>
     <div th:replace="~{/fragments/menu :: menu}"></div>
     <!--&lt;!&ndash;body&ndash;&gt;-->
@@ -21,7 +21,7 @@
             <form id="studentForm">
                 <div class="form-group">
                     <label for="fullName">Họ tên:</label>
-                    <input type="text" id="fullName" name="fullName" >
+                    <input type="text" id="fullName" name="fullName" placeholder="Nhập tên sinh viên" >
                     <div class="error-message" id="fullNameError">Vui lòng nhập họ tên</div>
                 </div>
                 <div class="form-group">
@@ -30,16 +30,23 @@
                     <div class="error-message" id="emailError">Vui lòng nhập email hợp lệ</div>
                 </div>
                 <div class="form-group">
-                    <label for="address">Địa chỉ:</label>
-                    <textarea id="address" name="address" rows="3" ></textarea>
-                    <div class="error-message" id="addressError">Vui lòng nhập địa chỉ</div>
+                    <label for="gender">Giới tính:</label>
+                    <select class="form-select" name="gender" id="gender">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
                 </div>
-
                 <div class="form-group">
                     <label for="dateOfBirth">Ngày sinh:</label>
                     <input type="date" id="dateOfBirth" name="dateOfBirth" >
                     <div class="error-message" id="birthDateError">Vui lòng chọn ngày sinh</div>
                 </div>
+                <div class="form-group">
+                    <label for="address">Địa chỉ:</label>
+                    <input id="address" name="address" rows="3" ></input>
+                    <div class="error-message" id="addressError">Vui lòng nhập địa chỉ</div>
+                </div>
+
 
                 <div class="form-group">
                     <label for="phoneNumber">Số điện thoại:</label>
@@ -51,123 +58,97 @@
                     <button type="submit">Lưu thông tin</button>
                     <button type="reset" style="background-color: #f44336;">Xóa form</button>
                 </div>
-
             </form>
 
-
         </div>
-
-        <script>
-            document.getElementById('studentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                // Kiểm tra dữ liệu nhập vào
-                const fullName = document.getElementById('fullName').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const address = document.getElementById('address').value.trim();
-                const dateOfBirth = document.getElementById('dateOfBirth').value.trim();
-                const phoneNumber = document.getElementById('phoneNumber').value.trim();
-
-                let isValid = true;
-
-                if (!fullName) {
-                    document.getElementById('fullNameError').style.display = 'block';
-                    isValid = false;
-                } else {
-                    document.getElementById('fullNameError').style.display = 'none';
-                }
-                if (!email) {
-                    document.getElementById('emailError').style.display = 'block';
-                    isValid = false;
-                } else {
-                    document.getElementById('emailError').style.display = 'none';
-                }
-                if (!address) {
-                    document.getElementById('addressError').style.display = 'block';
-                    isValid = false;
-                } else {
-                    document.getElementById('addressError').style.display = 'none';
-                }
-
-                if (!dateOfBirth) {
-                    document.getElementById('birthDateError').style.display = 'block';
-                    isValid = false;
-                } else {
-                    document.getElementById('birthDateError').style.display = 'none';
-                }
-
-                if (!phoneNumber || !/^\d{10}$/.test(phoneNumber)) {
-                    document.getElementById('phoneNumberError').style.display = 'block';
-                    isValid = false;
-                } else {
-                    document.getElementById('phoneNumberError').style.display = 'none';
-                }
-
-                if (!isValid) {
-                    return;
-                }
-                // Tạo đối tượng JSON từ dữ liệu form
-                const studentData = {
-                    fullName: fullName,
-                    email: email,
-                    address: address,
-                    dateOfBirth: dateOfBirth,
-                    phoneNumber: phoneNumber
-                };
-
-                // Hiển thị loading hoặc thông báo đang xử lý
-                // const responseDiv = document.getElementById('responseMessage');
-                // responseDiv.style.display = 'block';
-                // responseDiv.style.backgroundColor = '#ffffcc';
-                // responseDiv.innerHTML = 'Đang gửi thông tin...';
-                // Gửi dữ liệu dưới dạng JSON đến server
-                fetch('/student/apiAddStudent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(studentData)
-                })
-                    .then(response => {
-                        if (response.ok && response.status === 201) {
-                            alert('Thông tin sinh viên đã được lưu!');
-                            document.getElementById('studentForm').reset();
-
-                        }
-                        if(response.status === 409) {
-                            alert('Email đã tồn tại trong hệ thống!');
-                        }
-                    })
-                    .then(savedStudent => {
-                        // Xử lý kết quả trả về từ server
-                        // alert('Thông tin sinh viên đã được lưu!');
-                        // responseDiv.style.backgroundColor = '#d4edda';
-                        // responseDiv.innerHTML = 'Thêm sinh viên thành công!';
-                        // Xóa form sau khi gửi thành công
-                        // document.getElementById('studentForm').reset();
-
-                        // Hoặc chuyển hướng sang trang khác
-                        // window.location.href = '/students';
-                    })
-                    .catch(error => {
-                        // Xử lý lỗi
-                        responseDiv.style.backgroundColor = '#f8d7da';
-                        responseDiv.innerHTML = 'Lỗi: ' + error.message;
-                        console.error('Error:', error);
-                    });
-
-            // Ở đây bạn có thể thêm mã JavaScript để xử lý form
-                // Ví dụ: gửi dữ liệu bằng AJAX đến server
-
-
-                // Hoặc gửi form thực sự:
-                // this.submit();
-            });
-        </script>
-
+        <div id="popup" class="popup popup-notification" style="display: none;">
+            <div class="popup-content">
+                <p id="message-popup-notification"></p>
+                <button id="closePopupButton">Đóng</button>
+            </div>
+        </div>
     </div>
     <!--body-->
     <script th:src="@{/js/menu.js}"></script>
     <script th:src="@{/js/header.js}"></script>
-    </body>
+    <script th:src="@{/js/body.js}"></script>
+    <script>
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Kiểm tra dữ liệu nhập vào
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const dateOfBirth = document.getElementById('dateOfBirth').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const gender = document.getElementById('gender').value.trim();
+            let isValid = true;
+
+            if (!fullName) {
+                document.getElementById('fullNameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('fullNameError').style.display = 'none';
+            }
+            if (!email) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+            if (!address) {
+                document.getElementById('addressError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('addressError').style.display = 'none';
+            }
+
+            if (!dateOfBirth) {
+                document.getElementById('birthDateError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('birthDateError').style.display = 'none';
+            }
+
+            if (!phoneNumber || !/^\d{10}$/.test(phoneNumber)) {
+                document.getElementById('phoneNumberError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('phoneNumberError').style.display = 'none';
+            }
+
+            if (!isValid) {
+                return;
+            }
+            // Tạo đối tượng JSON từ dữ liệu form
+            const studentData = {
+                fullName: fullName,
+                email: email,
+                address: address,
+                dateOfBirth: dateOfBirth,
+                phoneNumber: phoneNumber,
+                gender: gender
+            };
+
+
+            fetch('/student/apiAddStudent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(studentData)
+            })
+                .then(response => {
+                    if (response.ok && response.status === 201) {
+                        showPopupNotification("Thông tin sinh viên được lưu thành công!");
+                        document.getElementById('studentForm').reset();
+                    }
+                    if(response.status === 409) {
+                        showPopupNotification('Email đã tồn tại trong hệ thống!');
+                    }
+                })
+        });
+    </script>
+</body>
 </html>

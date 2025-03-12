@@ -36,14 +36,16 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Họ và tên:</label>
                                 <div class="col-sm-9">
-                                    <input id="fullName" type="text" class="form-control" th:value="${student.fullName}">
+                                    <input id="fullName" type="text" class="form-control"
+                                           th:value="${student.fullName}">
                                 </div>
                                 <div class="error-message" id="fullNameError">Vui lòng nhập họ tên</div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Ngày sinh:</label>
                                 <div class="col-sm-9">
-                                    <input type="date" id="dateOfBirth" name="dateOfBirth" th:value="${student.dateOfBirth}" class="form-control" >
+                                    <input type="date" id="dateOfBirth" name="dateOfBirth"
+                                           th:value="${student.dateOfBirth}" class="form-control">
                                 </div>
                                 <div class="error-message" id="birthDateError">Vui lòng chọn ngày sinh</div>
                             </div>
@@ -51,8 +53,12 @@
                                 <label class="col-sm-3 col-form-label">Giới tính:</label>
                                 <div class="col-sm-9">
                                     <select class="form-select" name="gender" id="gender" th:value="${student.gender}">
-                                        <option value="MALE" th:selected="${student != null && student.gender == 'MALE'}">MALE</option>
-                                        <option value="FEMALE" th:selected="${student != null && student.gender == 'FEMALE'}">FEMALE</option>
+                                        <option value="Nam" th:selected="${student != null && student.gender == 'Nam'}">
+                                            Nam
+                                        </option>
+                                        <option value="Nữ" th:selected="${student != null && student.gender == 'Nữ'}">
+                                            Nữ
+                                        </option>
                                     </select>
                                 </div>
 
@@ -60,15 +66,19 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Email:</label>
                                 <div class="col-sm-9">
-                                    <input id="email" type="email" class="form-control" th:value="${student.email}" readonly>
+                                    <input id="email" type="email" class="form-control" th:value="${student.email}"
+                                           readonly>
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Số điện thoại:</label>
                                 <div class="col-sm-9">
-                                    <input id="phoneNumber" type="tel" class="form-control" th:value="${student.phoneNumber}">
+                                    <input id="phoneNumber" type="tel" class="form-control"
+                                           th:value="${student.phoneNumber}">
                                 </div>
-                                <div class="error-message" id="phoneNumberError">Vui lòng nhập số điện thoại hợp lệ (10 chữ số)</div>
+                                <div class="error-message" id="phoneNumberError">Vui lòng nhập số điện thoại hợp lệ (10
+                                    chữ số)
+                                </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Địa chỉ:</label>
@@ -77,6 +87,8 @@
                                 </div>
                                 <div class="error-message" id="addressError">Vui lòng nhập địa chỉ</div>
                             </div>
+                            <input type="hidden" id="password" name="password" th:value="${student.password}"
+                                   class="form-control">
                         </div>
                         <div class="form-group">
                             <button type="submit">Lưu chỉnh sửa</button>
@@ -84,103 +96,103 @@
                     </form>
                 </div>
             </div>
-            </div>
+        </div>
+    </div>
+    <div id="popup" class="popup popup-notification" style="display: none;">
+        <div class="popup-content">
+            <p id="message-popup-notification"></p>
+            <button id="closePopupButton">Đóng</button>
+        </div>
     </div>
 </div>
 <!---->
 <script th:src="@{/js/menu.js}"></script>
 <script th:src="@{/js/header.js}"></script>
-    <script>
-        document.getElementById('updateStudentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = document.getElementById('id').value.trim();
-            const fullName = document.getElementById('fullName').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const address = document.getElementById('address').value.trim();
-            const gender = document.getElementById('gender').value.trim();
-            const dateOfBirth = document.getElementById('dateOfBirth').value.trim();
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            const password = document.getElementById('password').value.trim();
-            let isValid = true;
+<script th:src="@{/js/body.js}"></script>
+<script>
+    document.getElementById('updateStudentForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const id = document.getElementById('id').value.trim();
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const gender = document.getElementById('gender').value.trim();
+        const dateOfBirth = document.getElementById('dateOfBirth').value.trim();
+        const phoneNumber = document.getElementById('phoneNumber').value.trim();
+        const password = document.getElementById('password').value.trim();
+        let isValid = true;
 
-            if (!fullName) {
-                document.getElementById('fullNameError').style.display = 'block';
-                isValid = false;
-            } else {
-                document.getElementById('fullNameError').style.display = 'none';
-            }
+        if (!fullName) {
+            document.getElementById('fullNameError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('fullNameError').style.display = 'none';
+        }
 
-            if (!address) {
-                document.getElementById('addressError').style.display = 'block';
-                isValid = false;
-            } else {
-                document.getElementById('addressError').style.display = 'none';
-            }
+        if (!address) {
+            document.getElementById('addressError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('addressError').style.display = 'none';
+        }
 
-            if (!dateOfBirth) {
-                document.getElementById('birthDateError').style.display = 'block';
-                isValid = false;
-            } else {
-                document.getElementById('birthDateError').style.display = 'none';
-            }
+        if (!dateOfBirth) {
+            document.getElementById('birthDateError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('birthDateError').style.display = 'none';
+        }
 
-            if (!phoneNumber || !/^\d{10}$/.test(phoneNumber)) {
-                document.getElementById('phoneNumberError').style.display = 'block';
-                isValid = false;
-            } else {
-                document.getElementById('phoneNumberError').style.display = 'none';
-            }
+        if (!phoneNumber || !/^\d{10}$/.test(phoneNumber)) {
+            document.getElementById('phoneNumberError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('phoneNumberError').style.display = 'none';
+        }
 
-            if (!isValid) {
-                return;
-            }
-            // Tạo đối tượng JSON từ dữ liệu form
-            const studentData = {
-                id: id,
-                fullName: fullName,
-                email: email,
-                address: address,
-                gender: gender,
-                dateOfBirth: dateOfBirth,
-                phoneNumber: phoneNumber
-            };
-            
+        if (!isValid) {
+            return;
+        }
+        // Tạo đối tượng JSON từ dữ liệu form
+        const studentData = {
+            id: id,
+            fullName: fullName,
+            email: email,
+            password: password,
+            address: address,
+            gender: gender,
+            dateOfBirth: dateOfBirth,
+            phoneNumber: phoneNumber
+        };
 
-            fetch('/student/apiEditStudent', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(studentData)
+        // const responseDiv = document.getElementById('responseMessage');
+        // responseDiv.style.display = 'block';
+        // responseDiv.style.backgroundColor = '#ffffcc';
+        // responseDiv.innerHTML = 'Đang gửi thông tin...';
+        // Gửi dữ liệu dưới dạng JSON đến server
+        fetch('/student/apiEditStudent', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(studentData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    showPopupNotification('Thông tin sinh viên đã được lưu!');
+                    document.getElementById('studentForm').reset();
+
+                }
             })
-                .then(response => {
-                    if (response.ok && response.status === 201) {
-                        alert('Thông tin sinh viên đã được lưu!');
-                        document.getElementById('studentForm').reset();
-
-                    }
-                    if(response.status === 409) {
-                        alert('Email đã tồn tại trong hệ thống!');
-                    }
-                })
-
-                    // Hoặc chuyển hướng sang trang khác
-                    // window.location.href = '/students';
-                })
-                .catch(error => {
-                    // Xử lý lỗi
-                    responseDiv.style.backgroundColor = '#f8d7da';
-                    responseDiv.innerHTML = 'Lỗi: ' + error.message;
-                    console.error('Error:', error);
-                });
-
-            // Ở đây bạn có thể thêm mã JavaScript để xử lý form
-            // Ví dụ: gửi dữ liệu bằng AJAX đến server
 
 
-            // Hoặc gửi form thực sự:
-            // this.submit();
-        });
-    </script>
+        // Ở đây bạn có thể thêm mã JavaScript để xử lý form
+        // Ví dụ: gửi dữ liệu bằng AJAX đến server
+
+
+        // Hoặc gửi form thực sự:
+        // this.submit();
+    });
+</script>
 </body>
 </html>
