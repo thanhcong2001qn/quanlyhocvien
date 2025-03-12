@@ -144,13 +144,8 @@
                 dateOfBirth: dateOfBirth,
                 phoneNumber: phoneNumber
             };
+            
 
-            // Hiển thị loading hoặc thông báo đang xử lý
-            // const responseDiv = document.getElementById('responseMessage');
-            // responseDiv.style.display = 'block';
-            // responseDiv.style.backgroundColor = '#ffffcc';
-            // responseDiv.innerHTML = 'Đang gửi thông tin...';
-            // Gửi dữ liệu dưới dạng JSON đến server
             fetch('/student/apiEditStudent', {
                 method: 'PUT',
                 headers: {
