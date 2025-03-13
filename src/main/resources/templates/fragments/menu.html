@@ -5,7 +5,7 @@
     </div>
     <ul>
         <li class="menu-item">
-               <a th:href="@{/admin}" class="menu-link" ><i class="fas fa-tachometer-alt padding "></i> Dashboard</a>
+               <a th:href="@{/dashboard}" class="menu-link" ><i class="fas fa-tachometer-alt padding "></i> Dashboard</a>
         </li>
         <li class="menu-item">
             <div class="menu-link">
@@ -14,8 +14,7 @@
             </div>
             <ul class="submenu">
                 <li><a th:href= "@{/AllStudent}">All Students</a></li>
-                <li><a href="#">Student Details</a></li>
-                <li><a href="#">Admission Form</a></li>
+                <li><a th:href= "@{/add-student}">Admission Form</a></li>
                 <li><a href="#">Student Promotion</a></li>
             </ul>
         </li>
