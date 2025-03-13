@@ -17,7 +17,7 @@ public class StudentModel extends AbstractModel {
     private String phoneNumber;
     private String address;
     private String gender;
-
+    private String avatarPath;
 
     public Long getId() {
         return id;
@@ -83,4 +83,11 @@ public class StudentModel extends AbstractModel {
         this.dateOfBirth = dateOfBirth;
     }
 
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
 }

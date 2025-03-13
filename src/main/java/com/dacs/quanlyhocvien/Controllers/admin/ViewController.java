@@ -16,9 +16,9 @@ import java.util.List;
 public class ViewController {
     @Autowired
     private StudentService studentService;
-    @GetMapping(value = "/admin")
+    @GetMapping(value = "/dashboard")
     public String admin(){
-        return "views/admin/admin";
+        return "views/admin/Dashboard";
     }
     @GetMapping(value = "/AllStudent")
     public String allStudent(Model model){
