@@ -19,15 +19,15 @@ public class StudentService {
     }
 
     public StudentModel addStudent(StudentModel student, MultipartFile file){
-        if (studentRepository.findByEmail(student.getEmail()) == null){
-            student.setAvatarPath(fileStorageService.storeFile(file,student.getEmail()));
-            student.setPassword("1234");
+        if (studentRepository.findByAccount_Email(student.getAccount().getEmail()) == null){
+            student.setAvatarPath(fileStorageService.storeFile(file,student.getAccount().getEmail()));
+            student.getAccount().setPassword("1234");
             return studentRepository.save(student);
         }
         else return null;
     }
     public StudentModel updateStudent(StudentModel student){
-        student.setPassword("1234");
+        student.getAccount().setPassword("1234");
         return studentRepository.save(student);
     }
     public List<StudentModel> getAllStudents(){

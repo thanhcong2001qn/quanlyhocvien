@@ -43,11 +43,12 @@ public class FileStorageService {
                 Path targetLocation = this.fileStorageLocation.resolve(fileName);
                 // Lưu file vào hệ thống file
                 Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-                String path = "/images/"+fileName;
-                return path;
+                String stringPath = "/images/"+fileName;
+                return stringPath;
 
             } catch (IOException ex) {
                 throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
             }
         }
+        
 }

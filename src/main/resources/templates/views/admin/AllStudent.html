@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<div th:replace="~{/fragments/header :: header}"></div>
-<div th:replace="~{/fragments/menu :: menu}"></div>
+<div th:replace="~{/fragments/admin/header :: header}"></div>
+<div th:replace="~{/fragments/admin/menu :: menu}"></div>
 
 <!--body-->
 <div class="content-wrapper">
@@ -241,8 +241,8 @@
         });
     });
 </script>
-<script th:src="@{js/menu.js}"></script>
-<script th:src="@{js/header.js}"></script>
-<script th:src="@{js/body.js}"></script>
+<script th:src="@{js/admin/menu.js}"></script>
+<script th:src="@{js/admin/header.js}"></script>
+<script th:src="@{js/admin/body.js}"></script>
 </body>
 </html>
