@@ -7,14 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/student")
-public class StudentController {
+public class AdminStudentController {
     private final StudentService studentService;
     @Autowired
-    public StudentController(StudentService studentService) {
+    public AdminStudentController(StudentService studentService) {
         this.studentService = studentService;
     }
     @PostMapping(value = "/apiAddStudent")
