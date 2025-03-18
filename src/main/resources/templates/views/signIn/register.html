@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Student Registration System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/auth/login.css}">
+</head>
+<body>
+<!-- Notification Container -->
+<div class="notification-container" id="notificationContainer">
+    <div class="notification success" id="successNotification">
+        <div class="notification-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-content">
+            <h4>Success!</h4>
+            <p>Your account has been created successfully.</p>
+        </div>
+        <button class="notification-close" onclick="closeNotification()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="notification-progress"></div>
+    </div>
+</div>
+<div class="container-fluid p-0 auth-container">
+    <div class="row g-0">
+        <!-- Image Section -->
+        <div class="col-lg-7 d-none d-lg-block">
+            <div class="image-container register-image">
+                <div class="overlay"></div>
+                <div class="image-text">
+                    <h1>Join Our Community</h1>
+                    <p>Create an account and start learning today</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="col-12 col-lg-5">
+            <div class="auth-form-container">
+<!--                <div class="logo-container text-center">-->
+<!--                    <img src="https://via.placeholder.com/80" alt="Logo" class="logo">-->
+<!--                </div>-->
+
+                <div class="auth-header">
+                    <h2>Create An Account</h2>
+                    <p>Fill out the form to get started</p>
+                </div>
+                <form id="registerForm">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control custom-input" id="username" placeholder="Username" required>
+                        <label for="username">Username</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control custom-input" id="email" placeholder="Email" required>
+                        <label for="email">Email address</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control custom-input" id="password" placeholder="Password" required>
+                        <label for="password">Password</label>
+                        <span class="password-toggle" onclick="togglePasswordReg('password')">
+                                <i class="far fa-eye"></i>
+                            </span>
+                    </div>
+
+                    <div class="password-strength mb-3">
+                        <div class="strength-bar">
+                            <div class="progress">
+                                <div class="progress-bar" id="strength-progress" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <small id="password-feedback">Password strength</small>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control custom-input" id="confirmPassword" placeholder="Confirm Password" required>
+                        <label for="confirmPassword">Confirm Password</label>
+                        <span class="password-toggle" onclick="togglePasswordReg('confirmPassword')">
+                                <i class="far fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                        <label class="form-check-label" for="termsCheck">
+                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 auth-btn">Create Account</button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login" class="login-link">Log in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom JS -->
+<script th:src="@{/js/auth/register.js}"></script>
+</body>
+</html>

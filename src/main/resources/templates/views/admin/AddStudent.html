@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<div th:replace="~{/fragments/header :: header}"></div>
-<div th:replace="~{/fragments/menu :: menu}"></div>
+<div th:replace="~{/fragments/admin/header :: header}"></div>
+<div th:replace="~{/fragments/admin/menu :: menu}"></div>
 <!--&lt;!&ndash;body&ndash;&gt;-->
 <div class="content-wrapper">
     <div class="container">
@@ -92,9 +92,9 @@
     </div>
 </div>
 <!--body-->
-<script th:src="@{/js/menu.js}"></script>
-<script th:src="@{/js/header.js}"></script>
-<script th:src="@{/js/body.js}"></script>
+<script th:src="@{/js/admin/menu.js}"></script>
+<script th:src="@{/js/admin/header.js}"></script>
+<script th:src="@{/js/admin/body.js}"></script>
 <script>
     document.getElementById('studentForm').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -141,9 +141,9 @@
         } else {
             document.getElementById('phoneNumberError').style.display = 'none';
         }
-        if(!studentImage){
+        if (!studentImage) {
             document.getElementById('imageError').style.display = 'block';
-        } else{
+        } else {
             document.getElementById('imageError').style.display = 'none';
         }
         if (!isValid) {
@@ -174,7 +174,7 @@
                 }
             })
     });
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const studentImageInput = document.getElementById('studentImage');
         const cameraButton = document.getElementById('cameraButton');
         const cameraContainer = document.getElementById('cameraContainer');
@@ -192,7 +192,7 @@
             previewContainer.style.display = 'none';
         });
         // Mở camera khi nhấn nút
-        cameraButton.addEventListener('click',() => {
+        cameraButton.addEventListener('click', () => {
             try {
                 previewContainer.style.display = 'none';
                 openCamera();
@@ -224,7 +224,7 @@
             // Chuyển canvas thành blob
             imagePreview.toBlob(blob => {
                 // Tạo file từ blob
-                const file = new File([blob], 'camera_capture.jpg', { type: 'image/jpeg' });
+                const file = new File([blob], 'camera_capture.jpg', {type: 'image/jpeg'});
 
                 // Tạo DataTransfer để có thể gán file vào input
                 const dataTransfer = new DataTransfer();
@@ -258,8 +258,9 @@
                 stream = null;
             }
         }
+
         async function openCamera() {
-            stream =await navigator.mediaDevices.getUserMedia({ video: true });
+            stream = await navigator.mediaDevices.getUserMedia({video: true});
             cameraPreview.srcObject = stream;
             cameraContainer.style.display = 'block';
         }
