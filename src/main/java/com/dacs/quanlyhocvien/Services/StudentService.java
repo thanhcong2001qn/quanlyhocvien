@@ -39,4 +39,10 @@ public class StudentService {
     public void deleteStudent(Long id){
         studentRepository.deleteById(id);
     }
+    public StudentModel getStudentByEmail(String email){
+        return studentRepository.findByAccount_Email(email);
+    }
+    public StudentModel getStudentByUserName(String userName){
+        return studentRepository.findByAccount_Username(userName);
+    }
 }

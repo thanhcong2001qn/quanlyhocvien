@@ -141,9 +141,9 @@
         } else {
             document.getElementById('phoneNumberError').style.display = 'none';
         }
-        if(!studentImage){
+        if (!studentImage) {
             document.getElementById('imageError').style.display = 'block';
-        } else{
+        } else {
             document.getElementById('imageError').style.display = 'none';
         }
         if (!isValid) {
@@ -174,7 +174,7 @@
                 }
             })
     });
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const studentImageInput = document.getElementById('studentImage');
         const cameraButton = document.getElementById('cameraButton');
         const cameraContainer = document.getElementById('cameraContainer');
@@ -192,7 +192,7 @@
             previewContainer.style.display = 'none';
         });
         // Mở camera khi nhấn nút
-        cameraButton.addEventListener('click',() => {
+        cameraButton.addEventListener('click', () => {
             try {
                 previewContainer.style.display = 'none';
                 openCamera();
@@ -224,7 +224,7 @@
             // Chuyển canvas thành blob
             imagePreview.toBlob(blob => {
                 // Tạo file từ blob
-                const file = new File([blob], 'camera_capture.jpg', { type: 'image/jpeg' });
+                const file = new File([blob], 'camera_capture.jpg', {type: 'image/jpeg'});
 
                 // Tạo DataTransfer để có thể gán file vào input
                 const dataTransfer = new DataTransfer();
@@ -258,8 +258,9 @@
                 stream = null;
             }
         }
+
         async function openCamera() {
-            stream =await navigator.mediaDevices.getUserMedia({ video: true });
+            stream = await navigator.mediaDevices.getUserMedia({video: true});
             cameraPreview.srcObject = stream;
             cameraContainer.style.display = 'block';
         }
