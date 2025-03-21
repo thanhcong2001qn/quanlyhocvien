@@ -1,0 +1,31 @@
+.profile-header {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.nav-pills .nav-link.active {
+    background-color: #0d6efd;
+}
+.form-label {
+    font-weight: 600;
+}
+.course-card {
+    transition: transform 0.3s;
+    margin-bottom: 20px;
+}
+.course-card:hover {
+    transform: translateY(-5px);
+}
+.progress {
+    height: 10px;
+}

@@ -1,8 +1,9 @@
-package com.dacs.quanlyhocvien.models;
+package com.dacs.quanlyhocvien.DTO.Request;
 
+import com.dacs.quanlyhocvien.models.StudentModel;
 import org.springframework.web.multipart.MultipartFile;
 
-public class StudentRequestDTO {
+public class StudentRequest {
     private StudentModel student;
     private MultipartFile file;
 

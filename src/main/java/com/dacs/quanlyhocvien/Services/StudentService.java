@@ -18,13 +18,8 @@ public class StudentService {
         this.fileStorageService = fileStorageService;
     }
 
-    public StudentModel addStudent(StudentModel student, MultipartFile file){
-        if (studentRepository.findByAccount_Email(student.getAccount().getEmail()) == null){
-            student.getAccount().setAvatarPath(fileStorageService.storeFile(file,student.getAccount().getEmail()));
-            student.getAccount().setPassword("1234");
-            return studentRepository.save(student);
-        }
-        else return null;
+    public StudentModel addStudent(StudentModel student){
+        return studentRepository.save(student);
     }
     public StudentModel updateStudent(StudentModel student){
         student.getAccount().setPassword("1234");
@@ -38,5 +33,11 @@ public class StudentService {
     }
     public void deleteStudent(Long id){
         studentRepository.deleteById(id);
+    }
+    public StudentModel getStudentByEmail(String email){
+        return studentRepository.findByAccount_Email(email);
+    }
+    public StudentModel getStudentByUserName(String userName){
+        return studentRepository.findByAccount_Username(userName);
     }
 }

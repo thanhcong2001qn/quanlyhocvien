@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "account")
-public class AccountModel extends AbstractModel {
+public class AccountModel{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
@@ -22,7 +22,7 @@ public class AccountModel extends AbstractModel {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "full_name", nullable = false, length = 100)
+    @Column(name = "full_name", length = 100)
     private String fullName;
 
     @Column(name = "date_of_birth")
@@ -40,6 +40,9 @@ public class AccountModel extends AbstractModel {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private RoleModel role;
+
+    @Column(name = "is_email_verified")
+    private Boolean isEmailVerified = false;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
@@ -61,9 +64,6 @@ public class AccountModel extends AbstractModel {
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private StudentModel student;
-
-
-
     // Constructors
     public AccountModel() {
         this.isActive = true;
@@ -206,5 +206,11 @@ public class AccountModel extends AbstractModel {
 
     public void setStudent(StudentModel student) {
         this.student = student;
+    }
+    public Boolean getIsEmailVerified() {
+        return isEmailVerified;
+    }
+    public void setIsEmailVerified(Boolean isEmailVerified) {
+        this.isEmailVerified = isEmailVerified;
     }
 }

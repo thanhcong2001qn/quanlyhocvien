@@ -2,7 +2,7 @@ package com.dacs.quanlyhocvien.Controllers.admin;
 
 import com.dacs.quanlyhocvien.Services.StudentService;
 import com.dacs.quanlyhocvien.models.StudentModel;
-import com.dacs.quanlyhocvien.models.StudentRequestDTO;
+import com.dacs.quanlyhocvien.DTO.Request.StudentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +16,7 @@ public class AdminStudentController {
     public AdminStudentController(StudentService studentService) {
         this.studentService = studentService;
     }
+
 //    @PostMapping(value = "/apiAddStudent")
 //    public ResponseEntity<StudentModel> createStudent(@ModelAttribute StudentRequestDTO requestDTO) {
 //        StudentModel savedStudent = studentService.addStudent(requestDTO.getStudent(),requestDTO.getFile());
@@ -24,6 +25,7 @@ public class AdminStudentController {
 //        }else
 //            return new ResponseEntity<>(savedStudent, HttpStatus.CREATED);
 //    }
+
     @PutMapping(value = "/apiEditStudent")
     public ResponseEntity<StudentModel> updateStudent(@RequestBody StudentModel student) {
         StudentModel savedStudent = studentService.updateStudent(student);

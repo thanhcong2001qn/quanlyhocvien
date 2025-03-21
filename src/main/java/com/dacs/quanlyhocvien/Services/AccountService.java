@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import com.dacs.quanlyhocvien.Repository.IAccountRepository;
+import com.dacs.quanlyhocvien.models.AccountModel;
+import org.springframework.stereotype.Service;
 @Service
 public class AccountService{
     private final IAccountRepository accountRepository;
@@ -38,5 +40,18 @@ public class AccountService{
     public AccountModel getAccountById(Long id) {
         return accountRepository.findById(id).orElse(null);
     }
-
+    public void save(AccountModel account) {
+        accountRepository.save(account);
+    }
+    public AccountModel getAccountByRoleId (Integer roleId) {
+        return accountRepository.findByRole_RoleId(roleId);
+    }
+    public AccountModel getAccountByEmail(String email) {
+        return accountRepository.findByEmail(email);
+    }
+    public AccountModel getAccountByUsername(String username) {
+        return accountRepository.findByUsername(username);
+    }
 }
+
+
