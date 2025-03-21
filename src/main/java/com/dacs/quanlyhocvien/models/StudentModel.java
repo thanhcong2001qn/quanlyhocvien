@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class StudentModel {
     @Id
     @Column(name = "student_id")
-    private Integer studentId;
+    private Long studentId;
 
     @OneToOne
     @MapsId
@@ -17,8 +17,7 @@ public class StudentModel {
     @Column(name = "class", length = 20)
     private String className;
 
-    @Column(name = "avatar_path")
-    private String avatarPath;
+
     // Constructors
     public StudentModel() {
     }
@@ -32,11 +31,11 @@ public class StudentModel {
     }
 
     // Getters and Setters
-    public Integer getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(Integer studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 
@@ -57,11 +56,4 @@ public class StudentModel {
         this.className = className;
     }
 
-    public String getAvatarPath() {
-        return avatarPath;
-    }
-
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
-    }
 }

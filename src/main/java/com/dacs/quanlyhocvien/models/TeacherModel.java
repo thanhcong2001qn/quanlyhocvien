@@ -1,6 +1,5 @@
 package com.dacs.quanlyhocvien.models;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -10,11 +9,11 @@ import java.time.LocalDate;
 public class TeacherModel {
     @Id
     @Column(name = "teacher_id")
-    private Integer teacherId;
+    private Long teacherId;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "teacher_id")
+    @JoinColumn(name = "teacher_id", nullable = false)
     private AccountModel account;
 
     @Column(name = "subject_specialization", length = 100)
@@ -28,6 +27,7 @@ public class TeacherModel {
 
     // Constructors
     public TeacherModel() {
+        this.account = new AccountModel(); // Đảm bảo account không bị null
     }
 
     public TeacherModel(AccountModel account, String subjectSpecialization, String qualification, LocalDate hireDate) {
@@ -38,11 +38,11 @@ public class TeacherModel {
     }
 
     // Getters and Setters
-    public Integer getTeacherId() {
+    public Long getTeacherId() {
         return teacherId;
     }
 
-    public void setTeacherId(Integer teacherId) {
+    public void setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
     }
 
