@@ -1,9 +1,9 @@
-<header class="main-header shadow-sm">
+<header class="main-header shadow-sm" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid p-0">
                 <div class="col-md-3">
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" href="/home">
                         <span class="brand-text">MY<span class="gradient-text">LEARN</span></span>
                     </a>
 
@@ -15,10 +15,10 @@
                 <div class="collapse navbar-collapse col-md-3" id="navbarNav">
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">Trang chủ</a>
+                            <a class="nav-link active" href="/home">Trang chủ</a>
                         </li>
                         <li class="nav-item dropdown hover-dropdown">
-                            <a class="nav-link dropdown-toogle" href="#" data-bs-toggle="dropdown">
+                            <a class="nav-link" href="#" >
                                 Khoá học
                             </a>
                             <ul class="dropdown-menu">
@@ -51,10 +51,48 @@
                             <i class="fas fa-shopping-cart"></i>
                             <span class="badge cart-badge">3</span>
                         </a>
-                        <a href="#" class="btn user-btn">
-                            <i class="fas fa-user"></i>
-                        </a>
+                        <div class="nav-item dropdown hover-dropdown position-relative">
+                            <a href="#" class="btn user-btn" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end auth-dropdown" aria-labelledby="userDropdown">
+                                <!-- Menu khi chưa đăng nhập -->
+                                <div id="not-authenticated-menu">
+                                    <li class="auth-item not-logged-in" >
+                                        <a class="dropdown-item" href="/login">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                        </a>
+                                    </li>
+                                    <li class="auth-item not-logged-in">
+                                        <a class="dropdown-item" href="/register">
+                                            <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                        </a>
+                                    </li>
+                                </div>
 
+                                <!-- Menu khi đã đăng nhập -->
+                                <div id="authenticated-menu" style="display: none;">
+                                    <li class="auth-item logged-in">
+                                        <a class="dropdown-item user-info" href="/user/profile">
+                                            <i class="fas fa-user-circle me-2"></i>
+                                            <span id="username-display">Username</span>
+                                        </a>
+                                    </li>
+
+                                    <li class="auth-item logged-in">
+                                        <a class="dropdown-item" href="/user/courses">
+                                            <i class="fas fa-graduation-cap me-2"></i>Khóa học của tôi
+                                        </a>
+                                    </li>
+
+                                    <li class="auth-item logged-in">
+                                        <a class="dropdown-item text-danger" href="#" onclick="logout()">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        </a>
+                                    </li>
+                                </div>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

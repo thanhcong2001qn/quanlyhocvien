@@ -5,10 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class AuthViewController {
-    @GetMapping(value = "/auth")
-    public String admin(){
-        return "views/signIn/auth";
-    }
     @GetMapping(value = "/register")
     public String register(){
         return "views/signIn/register";

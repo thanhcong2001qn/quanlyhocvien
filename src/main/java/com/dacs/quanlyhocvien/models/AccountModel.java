@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "account")
-public class AccountModel extends AbstractModel {
+public class AccountModel{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
@@ -61,8 +61,6 @@ public class AccountModel extends AbstractModel {
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private StudentModel student;
-
-
     // Constructors
     public AccountModel() {
         this.isActive = true;

@@ -36,16 +36,6 @@ public class VerificationController {
         return "views/signIn/verify-account";
     }
 
-    @PostMapping("/resend-verification")
-    public String resendVerification(@RequestParam("email") String email, Model model) {
-        try {
-            registrationService.resendVerificationToken(email);
-            model.addAttribute("message", "Email xác nhận đã được gửi lại. Vui lòng kiểm tra hộp thư của bạn.");
-        } catch (Exception e) {
-            model.addAttribute("message", "Không thể gửi lại email xác nhận: " + e.getMessage());
-        }
-        return "verify-result";
-    }
     @GetMapping("/reset-password")
     public String resetPassword(@RequestParam("token") String token, Model model) {
         boolean isVerified = authService.verifyToken(token);

@@ -110,8 +110,16 @@ body {
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(126,87,194,0.15);
     padding: 12px 0;
-    animation: dropdownFade 0.3s ease;
     border-top: 3px solid var(--primary-color);
+
+    /* Trạng thái ban đầu */
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+
+    /* Định nghĩa transition cho tất cả thuộc tính thay đổi */
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
 }
 
 @keyframes dropdownFade {
@@ -125,6 +133,17 @@ body {
     }
 }
 
+@keyframes dropdownFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+        visibility: hidden;
+    }
+}
 .dropdown-item {
     font-weight: 500;
     padding: 10px 25px;
@@ -234,19 +253,12 @@ body {
 
 /* Dropdown hover functionality */
 .hover-dropdown:hover > .dropdown-menu {
-    display: block;
-    margin-top: 0;
-    animation: dropdownFade 0.3s ease;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
-
 .hover-dropdown > .dropdown-toggle:active {
     pointer-events: none;
-}
-
-/* Optional: Add small delay before closing to improve usability */
-.dropdown-menu {
-    display: none;
-    transition: all 0.3s ease;
 }
 
 /* Add this if you're having issues with dropdown not staying open when moving from link to menu */
@@ -287,5 +299,57 @@ body {
     .header-buttons .btn {
         width: 40px;
         height: 40px;
+    }
+}
+/* Sửa lỗi dropdown tràn màn hình */
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+
+.auth-dropdown {
+    /*min-width: 250px;*/
+    padding: 8px 0;
+    max-width: 100vw; /* Không vượt quá chiều rộng màn hình */
+    overflow-x: hidden; /* Tránh cuộn ngang */
+}
+
+/* Đảm bảo container dropdown đủ lớn */
+.position-relative {
+    position: relative !important;
+}
+
+/* Làm đẹp nội dung */
+.auth-item {
+    list-style: none;
+    white-space: nowrap; /* Tránh ngắt dòng nội dung */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Hiển thị "..." nếu quá dài */
+}
+
+/* Đảm bảo hiển thị thời gian UTC không bị tràn */
+.time-info {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #6c757d;
+    cursor: default;
+}
+
+.time-info:hover {
+    background-color: transparent;
+}
+
+/* Cải thiện hiển thị cho các màn hình nhỏ */
+@media (max-width: 576px) {
+    .auth-dropdown {
+        width: 100%; /* Chiếm toàn bộ chiều rộng trên mobile */
+        min-width: 200px;
+        right: 0;
+        left: auto;
+    }
+
+    #utc-time-display {
+        font-size: 0.85rem; /* Giảm kích thước font để hiển thị đầy đủ thời gian */
     }
 }

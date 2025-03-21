@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+<!-- Notification container fragment -->
+<div th:fragment="notification">
+  <!-- Toast container for floating notifications -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="notificationContainer">
+    <!-- Notifications will be added here dynamically -->
+  </div>
+
+  <style>
+    .toast {
+      min-width: 280px;
+      max-width: 350px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      border-left: 4px solid #0d6efd;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+    .toast.bg-semi-dark {
+      background-color: rgba(33, 37, 41, 0.85);
+    }
+    .toast.success {
+      border-left-color: #198754;
+    }
+    .toast.error {
+      border-left-color: #dc3545;
+    }
+    .toast.warning {
+      border-left-color: #ffc107;
+    }
+    .toast.info {
+      border-left-color: #0dcaf0;
+    }
+    .toast-header {
+      border-bottom: none;
+      background-color: transparent;
+    }
+    .toast-body {
+      padding-top: 0;
+    }
+    .notification-icon {
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
+    .notification-title {
+      font-weight: 600;
+    }
+  </style>
+
+  <script th:inline="javascript">
+    /**
+     * Shows a notification toast
+     * @param {string} message - The notification message
+     * @param {string} type - Type of notification (success, error, warning, info)
+     * @param {string} title - Optional title for the notification
+     * @param {number} duration - Duration in milliseconds before auto-hide (default: 5000)
+     */
+    function showNotification(message, type = 'info', title = null, duration = 3000) {
+      const container = document.getElementById('notificationContainer');
+
+      // Set default title based on type if not provided
+      if (!title) {
+        switch (type) {
+          case 'success': title = 'Thành công'; break;
+          case 'error': title = 'Lỗi'; break;
+          case 'warning': title = 'Cảnh báo'; break;
+          default: title = 'Thông báo';
+        }
+      }
+
+      // Get icon based on notification type
+      let icon;
+      switch (type) {
+        case 'success': icon = 'fa-check-circle'; break;
+        case 'error': icon = 'fa-exclamation-circle'; break;
+        case 'warning': icon = 'fa-exclamation-triangle'; break;
+        default: icon = 'fa-info-circle';
+      }
+
+      // Create toast element
+      const toastId = 'toast-' + Date.now();
+      const toast = document.createElement('div');
+      toast.className = `toast ${type} bg-semi-dark text-white`;
+      toast.setAttribute('role', 'alert');
+      toast.setAttribute('aria-live', 'assertive');
+      toast.setAttribute('aria-atomic', 'true');
+      toast.id = toastId;
+
+      // Create toast content
+      toast.innerHTML = `
+                    <div class="toast-header bg-transparent text-white">
+                        <i class="fas ${icon} notification-icon"></i>
+                        <strong class="me-auto notification-title">${title}</strong>
+                        <small class="text-white-50">vừa xong</small>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                `;
+
+      // Add to container
+      container.appendChild(toast);
+
+      // Initialize Bootstrap toast
+      const toastInstance = new bootstrap.Toast(toast, {
+        autohide: true,
+        delay: duration
+      });
+
+      // Show toast
+      toastInstance.show();
+
+      // Remove from DOM after hidden
+      toast.addEventListener('hidden.bs.toast', function () {
+        toast.remove();
+      });
+
+      return toastId;
+    }
+
+    /**
+     * Updates an existing notification
+     * @param {string} toastId - ID of the toast to update
+     * @param {string} message - New message
+     * @param {string} type - New type
+     */
+    function updateNotification(toastId, message, type = null) {
+      const toast = document.getElementById(toastId);
+      if (!toast) return false;
+
+      // Update message
+      const toastBody = toast.querySelector('.toast-body');
+      if (toastBody) {
+        toastBody.textContent = message;
+      }
+
+      // Update type/color if specified
+      if (type) {
+        toast.className = toast.className.replace(/success|error|warning|info/g, '');
+        toast.classList.add(type);
+
+        // Update icon if type changed
+        let icon;
+        switch (type) {
+          case 'success': icon = 'fa-check-circle'; break;
+          case 'error': icon = 'fa-exclamation-circle'; break;
+          case 'warning': icon = 'fa-exclamation-triangle'; break;
+          default: icon = 'fa-info-circle';
+        }
+
+        const iconElement = toast.querySelector('.notification-icon');
+        if (iconElement) {
+          iconElement.className = `fas ${icon} notification-icon`;
+        }
+      }
+
+      return true;
+    }
+
+    /**
+     * Dismisses a notification by ID
+     * @param {string} toastId - ID of the toast to dismiss
+     */
+    function dismissNotification(toastId) {
+      const toast = document.getElementById(toastId);
+      if (toast) {
+        const toastInstance = bootstrap.Toast.getInstance(toast);
+        if (toastInstance) {
+          toastInstance.hide();
+        }
+        return true;
+      }
+      return false;
+    }
+
+    /**
+     * Dismisses all notifications
+     */
+    function dismissAllNotifications() {
+      const container = document.getElementById('notificationContainer');
+      const toasts = container.querySelectorAll('.toast');
+      toasts.forEach(toast => {
+        const toastInstance = bootstrap.Toast.getInstance(toast);
+        if (toastInstance) {
+          toastInstance.hide();
+        }
+      });
+    }
+
+    // Example usage:
+    // showNotification('Đăng nhập thành công!', 'success');
+    // showNotification('Không thể kết nối đến máy chủ.', 'error');
+    // showNotification('Phiên làm việc sắp hết hạn.', 'warning');
+    // showNotification('Bạn có thông báo mới.', 'info');
+  </script>
+</div>
+</body>
+</html>

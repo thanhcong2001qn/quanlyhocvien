@@ -64,46 +64,63 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(loginData)
             })
                 .then(response => {
-                    if (response.ok) {
+                    if (!response.ok) {
+                        return response.text().then(errorMsg => {
+                            if (errorMsg === "Invalid username or password") {
+                                showNotification(
+                                    'error',
+                                    'Login Failed',
+                                    'Invalid username or password.',
+                                    5000
+                                )
+                            }
+                            throw new Error(errorMsg);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                        // Đăng nhập thành công, nhận dữ liệu người dùng từ response
                         showNotification(
                             'success',
                             'Login Successful!',
-                            'Your account has been created successfully. Please check your email for verification.',
+                            'You have successfully logged in.',
                             5000 // 5 seconds
                         );
-                        window.location.href = '/user'
-                    }
-                    return response.text().then(errorMsg => {
-                        if (errorMsg === "Invalid username or password") {
-                            showNotification(
-                                'error',
-                                'Login Failed',
-                                'Invalid username or password.',
-                                5000
-                            )
-                        } else if (errorMsg === "Email is not verified"){
-                            showNotification(
-                                'error',
-                                'Login Failed',
-                                'Email is not verified.',
-                                5000
-                            )
+
+                        // Lưu thông tin người dùng vào localStorage
+                        localStorage.setItem('username', data.username);
+                        localStorage.setItem('isAuthenticated', 'true');
+
+                        // Lưu vai trò người dùng
+                        localStorage.setItem('isAdmin', data.isAdmin);
+                        localStorage.setItem('isTeacher', data.isTeacher);
+                        localStorage.setItem('isStudent', data.isStudent);
+
+                        // Nếu API trả về JWT token thì lưu token
+                        if (data.token) {
+                            localStorage.setItem('token', data.token);
                         }
+                        // Chuyển hướng dựa trên vai trò
+                        if (data.isAdmin === true) {
+                            window.location.href = '/dashboard';
+                        } else if (data.isStudent === true || data.isTeacher === true) {
+                            window.location.href = '/home';
+                        } else {
+                            // Trường hợp mặc định nếu không có vai trò xác định
+                            window.location.href = '/home';
+                        }
+                    }).catch(error => {
+                        console.error('Login error:', error);
+                        // Error already displayed in previous error handlers
+                    }).finally(() => {
+                        // Remove loading state
+                        submitBtn.classList.remove('loading');
                     });
-                });
-            // Simulate API call (replace with actual API call)
-            setTimeout(function() {
-                submitBtn.classList.remove('loading');
-
-                // Success message (replace with your actual logic)
-                // alert('Login successful!');
-
-                // In a real application, you would redirect the user
-                // window.location.href = 'dashboard.html';
-            }, 1500);
         });
     }
 });
