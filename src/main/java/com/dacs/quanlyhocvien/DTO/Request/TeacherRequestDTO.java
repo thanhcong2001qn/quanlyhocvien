@@ -1,5 +1,7 @@
-package com.dacs.quanlyhocvien.models;
+package com.dacs.quanlyhocvien.DTO.Request;
 
+import com.dacs.quanlyhocvien.models.AccountModel;
+import com.dacs.quanlyhocvien.models.TeacherModel;
 import org.springframework.web.multipart.MultipartFile;
 
 public class TeacherRequestDTO {

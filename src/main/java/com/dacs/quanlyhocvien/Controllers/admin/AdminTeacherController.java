@@ -1,17 +1,12 @@
 package com.dacs.quanlyhocvien.Controllers.admin;
 
 import com.dacs.quanlyhocvien.Services.TeacherService;
-import com.dacs.quanlyhocvien.models.AccountModel;
-import com.dacs.quanlyhocvien.models.StudentModel;
 import com.dacs.quanlyhocvien.models.TeacherModel;
-import com.dacs.quanlyhocvien.models.TeacherRequestDTO;
+import com.dacs.quanlyhocvien.DTO.Request.TeacherRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/teacher")

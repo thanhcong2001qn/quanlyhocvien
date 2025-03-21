@@ -1,5 +1,6 @@
-package com.dacs.quanlyhocvien.models;
+package com.dacs.quanlyhocvien.DTO.Request;
 
+import com.dacs.quanlyhocvien.models.AdminModel;
 import org.springframework.web.multipart.MultipartFile;
 
 public class AdminRequestDTO {

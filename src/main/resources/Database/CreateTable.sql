@@ -24,6 +24,7 @@ CREATE TABLE account
     phone_number  VARCHAR(15),
     address       VARCHAR(255),
     gender        VARCHAR(10),
+    avatar_path   varchar(100),
     role_id       INT                 NOT NULL,
     is_active     BOOLEAN  DEFAULT TRUE,
     created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -51,10 +52,10 @@ CREATE TABLE teacher
 -- Bảng student (bảng con - chuyên biệt hóa)
 CREATE TABLE student
 (
-    student_id  INT PRIMARY KEY,
+    student_id INT PRIMARY KEY,
     --   admission_number VARCHAR(20) UNIQUE,
-    avatar_path varchar(100),
-    class       VARCHAR(20),
+
+    class      VARCHAR(20),
 --     enrollment_date DATE,
 --     graduation_year INT,
     FOREIGN KEY (student_id) REFERENCES account (account_id) ON DELETE CASCADE

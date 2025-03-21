@@ -2,7 +2,7 @@ package com.dacs.quanlyhocvien.Controllers.admin;
 
 import com.dacs.quanlyhocvien.Services.AdminService;
 import com.dacs.quanlyhocvien.models.AdminModel;
-import com.dacs.quanlyhocvien.models.AdminRequestDTO;
+import com.dacs.quanlyhocvien.DTO.Request.AdminRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

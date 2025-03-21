@@ -20,31 +20,17 @@ import java.util.Optional;
 import com.dacs.quanlyhocvien.Repository.IAccountRepository;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import org.springframework.stereotype.Service;
+
 @Service
 public class AccountService{
-    private final IAccountRepository accountRepository;
-    private final FileStorageService fileStorageService;
-
     @Autowired
-    public AccountService(IAccountRepository accountRepository, FileStorageService fileStorageService) {
-        this.accountRepository = accountRepository;
-        this.fileStorageService = fileStorageService;
-    }
-
-
+    private  IAccountRepository accountRepository;
 
     public List<AccountModel> getAllAccounts() {
         return accountRepository.findAll();
     }
-
-    public AccountModel getAccountById(Long id) {
-        return accountRepository.findById(id).orElse(null);
-    }
     public void save(AccountModel account) {
         accountRepository.save(account);
-    }
-    public AccountModel getAccountByRoleId (Integer roleId) {
-        return accountRepository.findByRole_RoleId(roleId);
     }
     public AccountModel getAccountByEmail(String email) {
         return accountRepository.findByEmail(email);

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Verify token and load profile data
     fetchWithAuth('/api/verify-token')
         .then(response => {
@@ -20,15 +20,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     // Avatar change functionality
-    document.getElementById('change-avatar-btn').addEventListener('click', function() {
+    document.getElementById('change-avatar-btn').addEventListener('click', function () {
         document.getElementById('avatar-upload').click();
     });
 
-    document.getElementById('avatar-upload').addEventListener('change', function(event) {
+    document.getElementById('avatar-upload').addEventListener('change', function (event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 document.getElementById('profile-image').src = e.target.result;
                 uploadAvatar(file);
             };
@@ -37,12 +37,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Form submissions
-    document.getElementById('personal-info-form').addEventListener('submit', function(e) {
+    document.getElementById('personal-info-form').addEventListener('submit', function (e) {
         e.preventDefault();
         updatePersonalInfo();
     });
 
-    document.getElementById('change-password-form').addEventListener('submit', function(e) {
+    document.getElementById('change-password-form').addEventListener('submit', function (e) {
         e.preventDefault();
         changePassword();
     });
@@ -247,7 +247,7 @@ function formatDate(dateString) {
 }
 
 function getStatusBadgeColor(status) {
-    switch(status.toLowerCase()) {
+    switch (status.toLowerCase()) {
         case 'hoàn thành':
         case 'completed':
             return 'success';
@@ -261,7 +261,8 @@ function getStatusBadgeColor(status) {
             return 'info';
     }
 }
-function resendEmail(){
+
+function resendEmail() {
     const email = document.getElementById('email').value;
     const emailData = {
         email: email
@@ -289,7 +290,7 @@ function resendEmail(){
         .then(() => {
             showNotification('Đã gửi email xác thực!');
         }).catch(error => {
-            console.error('Login error:', error);
-            // Error already displayed in previous error handlers
-        })
+        console.error('Login error:', error);
+        // Error already displayed in previous error handlers
+    })
 }

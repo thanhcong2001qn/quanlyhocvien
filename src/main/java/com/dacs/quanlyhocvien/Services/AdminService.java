@@ -30,8 +30,8 @@ public class AdminService {
 
         AccountModel account = admin.getAccount();
         // Kiểm tra xem tài khoản đã tồn tại chưa
-        Optional<AccountModel> existingAccount = accountRepository.findByEmail(account.getEmail());
-        if (existingAccount.isPresent()) {
+        AccountModel existingAccount = accountRepository.findByEmail(account.getEmail());
+        if (existingAccount != null) {
             throw new IllegalArgumentException("Email đã tồn tại, không thể thêm admin mới!");
         } else {
             // Nếu có file ảnh, lưu ảnh
@@ -61,8 +61,7 @@ public class AdminService {
         updatedAccount.setDateOfBirth(admin.getAccount().getDateOfBirth());
         updatedAccount.setPhoneNumber(admin.getAccount().getPhoneNumber());
         updatedAccount.setAddress(admin.getAccount().getAddress());
-        updatedAccount.setGender(admin.getAccount().getGender());
-        updatedAccount.setUpdatedAt(java.time.LocalDate.now()); // Cập nhật thời gian sửa đổi
+        updatedAccount.setGender(admin.getAccount().getGender());// Cập nhật thời gian sửa đổi
 
         accountRepository.save(updatedAccount);
 

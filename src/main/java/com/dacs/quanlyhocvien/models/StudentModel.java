@@ -16,8 +16,6 @@ public class StudentModel {
 
     @Column(name = "class", length = 20)
     private String className;
-
-
     // Constructors
     public StudentModel() {
     }
