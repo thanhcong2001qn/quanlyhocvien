@@ -53,6 +53,9 @@ public class AccountModel{
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "avatar_path", length = 100)
+    private String avatarPath;
+
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private AdminModel admin;
 
@@ -201,5 +204,12 @@ public class AccountModel{
     }
     public void setIsEmailVerified(Boolean isEmailVerified) {
         this.isEmailVerified = isEmailVerified;
+    }
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
     }
 }

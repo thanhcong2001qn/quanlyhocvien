@@ -17,8 +17,7 @@ public class StudentModel {
     @Column(name = "class", length = 20)
     private String className;
 
-    @Column(name = "avatar_path")
-    private String avatarPath;
+
     // Constructors
     public StudentModel() {
     }
@@ -57,11 +56,5 @@ public class StudentModel {
         this.className = className;
     }
 
-    public String getAvatarPath() {
-        return avatarPath;
-    }
 
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
-    }
 }

@@ -22,7 +22,6 @@ public class StudentService {
         return studentRepository.save(student);
     }
     public StudentModel updateStudent(StudentModel student){
-        student.getAccount().setPassword("1234");
         return studentRepository.save(student);
     }
     public List<StudentModel> getAllStudents(){

@@ -24,10 +24,6 @@ public class AdminViewController {
         model.addAttribute("students", studentService.getAllStudents());
         return "views/admin/AllStudent";
     }
-    @GetMapping(value = "/add-student")
-    public String addStudent(){
-        return "views/admin/AddStudent";
-    }
     @GetMapping(value = "/studentDetail/{id}")
     public String editStudent(@PathVariable Long id,Model model){
         StudentModel student = studentService.getStudentById(id);
