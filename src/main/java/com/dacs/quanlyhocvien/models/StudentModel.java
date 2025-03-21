@@ -2,11 +2,9 @@ package com.dacs.quanlyhocvien.models;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Table(name = "student")
-public class StudentModel extends AbstractModel {
+public class StudentModel {
     @Id
     @Column(name = "student_id")
     private Integer studentId;

@@ -1,5 +1,6 @@
 package com.dacs.quanlyhocvien.Services;
 
+import com.dacs.quanlyhocvien.DTO.Request.RegisterRequest;
 import com.dacs.quanlyhocvien.Repository.IAccountRepository;
 import com.dacs.quanlyhocvien.Repository.IRoleRepository;
 import com.dacs.quanlyhocvien.Repository.IStudentRepository;
@@ -9,6 +10,7 @@ import com.dacs.quanlyhocvien.models.RoleModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
 import com.dacs.quanlyhocvien.models.VerificationToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,28 +34,44 @@ public class RegistrationService {
 
     @Autowired
     private IRoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private StudentService studentService;
 
     @Transactional
-    public String registerStudent(AccountModel account, StudentModel student) {
-        RoleModel roleModel = roleRepository.findById(3).orElse(null);
+    public void registerStudent(RegisterRequest registerRequest) {
+        if (accountService.getAccountByUsername(registerRequest.getUsername()) != null) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (accountService.getAccountByEmail(registerRequest.getEmail()) != null) {
+            throw new IllegalArgumentException("Email already exists");
+        }
         // Lưu account với trạng thái chưa xác thực
+        AccountModel account = new AccountModel();
+        account.setUsername(registerRequest.getUsername());
+        account.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        account.setEmail(registerRequest.getEmail());
         account.setIsEmailVerified(false);
-        account.setRole(roleModel);
+        account.setRole(roleRepository.findByRoleName("STUDENT"));
         accountService.save(account);
 
         // Thiết lập mối quan hệ và lưu student
+        StudentModel student = new StudentModel();
         student.setAccount(account);
-        studentRepository.save(student);
-
+        studentService.addStudent(student);
         // Tạo và lưu token xác nhận
         String tokenValue = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken(tokenValue, account);
         tokenRepository.save(verificationToken);
-        return tokenValue;
+        new Thread(() -> {
+            sendEmail(registerRequest, tokenValue);
+        }).start();
     }
     @Transactional
-    public void sendEmail(AccountModel account,String tokenValue) {
-        emailService.sendVerificationEmail(account, tokenValue);
+    public void sendEmail(RegisterRequest registerRequest, String tokenValue) {
+        AccountModel accountModel = accountService.getAccountByEmail(registerRequest.getEmail());
+        emailService.sendVerificationEmail(accountModel, tokenValue);
     }
     @Transactional
     public boolean verifyAccount(String token) {
@@ -69,20 +87,5 @@ public class RegistrationService {
         return false;
     }
 
-    @Transactional
-    public void resendVerificationToken(String email) {
-        AccountModel account = accountService.getAccountByEmail(email);
 
-
-        // Xóa token cũ (nếu có)
-        tokenRepository.deleteByAccount(account);
-
-        // Tạo token mới
-        String tokenValue = UUID.randomUUID().toString();
-        VerificationToken verificationToken = new VerificationToken(tokenValue, account);
-        tokenRepository.save(verificationToken);
-
-        // Gửi lại email xác nhận
-        emailService.sendVerificationEmail(account, tokenValue);
-    }
 }

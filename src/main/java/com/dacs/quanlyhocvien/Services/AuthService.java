@@ -96,4 +96,23 @@ public class AuthService {
         }
         return false;
     }
+    @Transactional
+    public void resendVerificationToken(String email) {
+        AccountModel account = accountService.getAccountByEmail(email);
+        Optional<VerificationToken> token = tokenRepository.findByAccount(account);
+        if (token.isPresent() && !token.get().isExpired()) {
+            throw new IllegalArgumentException("Token is still valid");
+        }
+        // Xóa token cũ (nếu có)
+        tokenRepository.deleteByAccount(account);
+
+        // Tạo token mới
+        String tokenValue = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(tokenValue, account);
+        tokenRepository.save(verificationToken);
+        // Gửi lại email xác nhận
+        new Thread(() -> {
+            emailService.sendVerificationEmail(account,tokenValue);
+        }).start();
+    }
 }

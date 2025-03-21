@@ -23,12 +23,12 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(account.getEmail());
-        message.setSubject("Xác nhận đăng ký tài khoản");
+        message.setSubject("Xác nhận Email");
 
         String confirmationUrl = baseUrl + "/verify-account?token=" + token;
 
         String emailContent = "Chào " + account.getUsername() + ",\n\n"
-                + "Cảm ơn bạn đã đăng ký tài khoản. Vui lòng nhấp vào liên kết dưới đây để xác nhận địa chỉ email của bạn:\n\n"
+                + "Vui lòng nhấp vào liên kết dưới đây để xác nhận địa chỉ email của bạn:\n\n"
                 + confirmationUrl + "\n\n"
                 + "Liên kết này sẽ hết hạn sau 24 giờ.\n\n"
                 + "Trân trọng,\n"
