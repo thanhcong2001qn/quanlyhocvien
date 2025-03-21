@@ -30,8 +30,8 @@ public class AdminService {
 
         AccountModel account = admin.getAccount();
         // Kiểm tra xem tài khoản đã tồn tại chưa
-        Optional<AccountModel> existingAccount = accountRepository.findByEmail(account.getEmail());
-        if (existingAccount.isPresent()) {
+        AccountModel existingAccount = accountRepository.findByEmail(account.getEmail());
+        if (existingAccount != null) {
             throw new IllegalArgumentException("Email đã tồn tại, không thể thêm admin mới!");
         } else {
             // Nếu có file ảnh, lưu ảnh
