@@ -5,21 +5,112 @@ body {
     background: #f5f5f5;
 }
 
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+
+body.sidebar-collapsed .main-content {
+    margin-left: 70px;
+}
+
+@media (max-width: 991px) {
+    .main-content {
+        margin-left: 0;
+    }
+
+    body.sidebar-collapsed .main-content {
+        margin-left: 0;
+    }
+}
+
 .sidebar {
     width: 250px;
     height: 100vh;
-    background: linear-gradient(to bottom, #1A4B7C, #0A2647); /* Gradient cho chiều sâu */
+    background: linear-gradient(to bottom, #1A4B7C, #0A2647);
     color: white;
     position: fixed;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    transition: width 0.3s ease;
+    overflow-x: hidden;
+}
+
+.sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar.with-transition {
+    transition: width 0.3s ease;
+}
+
+/* Fix icon positioning - Sửa đổi ở đây */
+.sidebar .menu-link i,
+.sidebar .menu-link .fas,
+.sidebar .menu-link .far,
+.sidebar .menu-link .fab {
+    position: absolute;
+    left: 25px;
+    width: 20px;
+    text-align: center;
+    transition: none; /* Loại bỏ transition cho icon */
+}
+
+/* Xóa bỏ cách xử lý padding cho icon */
+.sidebar .padding {
+    padding-right: 10px;
+}
+
+/* Đảm bảo padding không thay đổi khi collapsed */
+.sidebar.collapsed .padding {
+    padding-right: 10px; /* Giữ nguyên padding */
+}
+
+/* Text and arrow transitions */
+.sidebar .menu-link span {
+    margin-left: 35px;
+    transition: opacity 0.2s ease, transform 0.3s ease;
+    transform-origin: left;
+}
+
+.sidebar .menu-link .fa-chevron-down {
+    position: absolute;
+    right: 15px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Icon positioning when sidebar is collapsed */
+.sidebar.collapsed .menu-link i,
+.sidebar.collapsed .menu-link .fas,
+.sidebar.collapsed .menu-link .far,
+.sidebar.collapsed .menu-link .fab {
+    position: absolute;
+    left: 25px; /* Giữ icon ở cùng một vị trí */
+}
+
+/* Hide text and arrow when collapsed */
+.sidebar.collapsed .menu-link span,
+.sidebar.collapsed .menu-link .fa-chevron-down {
+    opacity: 0;
+    transform: translateX(-10px);
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
 }
 
 .sidebar .logo {
     display: flex;
-    text-align: center;
-    padding-bottom: 20px;
-    background-color: #FF6B35;
+    align-items: center; /* Thêm vào */
+    background: #fff;
+    border-bottom: 1px solid rgb(193, 197, 200);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     height: 70px;
+    padding: 0; /* Bỏ padding-bottom */
+    text-align: right; /* Thay đổi từ center sang left */
 }
 
 .sidebar .logo img {
@@ -29,19 +120,25 @@ body {
 
 .sidebar .logo h4 {
     margin: 10px 0 0 0;
-    color: #f5f7fa; /* Màu cam nhẹ nhàng hơn */
+    color: #f5f7fa;
     font-weight: 500;
     letter-spacing: 1px;
+    transition: opacity 0.2s ease, transform 0.3s ease;
 }
-.sidebar .padding{
-    padding-right: 10px;
+
+.sidebar.collapsed .logo h4 {
+    opacity: 0;
+    transform: translateX(-10px);
+    visibility: hidden;
 }
+
 .sidebar ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
-.sidebar > ul > li { /* Menu chính */
+
+.sidebar > ul > li {
     padding: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     transition: background-color 0.2s;
@@ -55,10 +152,13 @@ body {
     cursor: pointer;
     user-select: none;
     padding: 15px;
+    padding-left: 25px;
     color: #e6e6e6;
     display: flex;
     align-items: center;
-    /*justify-content: space-between;*/
+    white-space: nowrap;
+    position: relative;
+    height: 46px;
 }
 
 .sidebar ul li a {
@@ -67,29 +167,33 @@ body {
     display: flex;
     align-items: center;
     transition: color 0.2s;
+    white-space: nowrap;
 }
 
 .sidebar ul li a:hover {
     color: white;
 }
 
-
-/* Tùy chỉnh submenu */
+/* Submenu styles */
 .submenu {
     list-style: none;
     padding-left: 0.5rem;
     margin: 0;
     opacity: 0;
     transform: translateY(-10px);
-    transition: max-height 0.25s ease-out, /* Giảm thời gian */
-    opacity 0.2s ease,
-    visibility 0s linear 0.2s,
-    transform 0.2s ease;
+    transition: max-height 0.25s ease-out,
+                opacity 0.2s ease,
+                visibility 0s linear 0.2s,
+                transform 0.2s ease;
     visibility: hidden;
     max-height: 0;
     overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.15); /* Màu nền tối hơn một chút */
+    background-color: rgba(0, 0, 0, 0.15);
     border-radius: 0 0 4px 4px;
+}
+
+.sidebar.collapsed .submenu {
+    display: none;
 }
 
 .menu-item.show .submenu {
@@ -98,16 +202,16 @@ body {
     visibility: visible;
     transform: translateY(0);
     transition: max-height 0.35s ease-in,
-    opacity 0.25s ease,
-    visibility 0s linear,
-    transform 0.25s ease;
-    border-left: 3px solid #FFC466; /* Đường viền bên trái */
+                opacity 0.25s ease,
+                visibility 0s linear,
+                transform 0.25s ease;
+    border-left: 3px solid #FFC466;
 }
 
 .submenu li {
     transform: translateY(-5px);
     opacity: 0;
-    transition: transform 0.2s ease, opacity 0.15s ease; /* Tăng tốc */
+    transition: transform 0.2s ease, opacity 0.15s ease;
     transition-delay: calc(0.05s * var(--item-index, 0));
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -117,15 +221,15 @@ body {
 }
 
 .submenu li a {
-    padding: 10px 10px 10px 20px; /* Lề trái nhiều hơn */
+    padding: 10px 10px 10px 60px;
     display: block;
-    color: #ccc; /* Nhạt hơn menu chính */
+    color: #ccc;
     font-size: 0.95em;
 }
 
 .submenu li a:hover {
     background-color: rgba(255, 255, 255, 0.05);
-    color: #FFC466; /* Đổi màu khi hover */
+    color: #FFC466;
 }
 
 .menu-item.show .submenu li {
@@ -133,9 +237,7 @@ body {
     opacity: 1;
 }
 
-/* Nút mũi tên */
 .menu-link .fa-chevron-down {
-    transition: transform 0.2s ease; /* Tăng tốc */
     font-size: 12px;
     margin-left: auto;
     color: #999;
@@ -143,61 +245,44 @@ body {
 
 .menu-item.show .menu-link .fa-chevron-down {
     transform: rotate(180deg);
-    color: #FFC466; /* Đổi màu khi mở */
+    color: #FFC466;
 }
 
 .menu-item {
     position: relative;
 }
 
-
-/* Thêm highlight cho menu item đang active */
 .menu-item.show > .menu-link {
     background-color: rgba(255, 255, 255, 0.08);
     color: white;
 }
 
-/* Tăng tốc animation đóng */
+/* Closing animation */
 .menu-item.closing .submenu {
-    max-height: 0; /* Giúp đóng nhanh hơn */
+    max-height: 0;
     opacity: 0;
     transform: translateY(-10px);
-    transition: max-height 0.2s ease-out, /* Tăng tốc đóng */
-    opacity 0.15s ease,
-    transform 0.15s ease,
-    visibility 0s linear 0.15s;
-}
-@media (max-width: 992px) {
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-
-    body.sidebar-open .sidebar {
-        transform: translateX(0);
-        z-index: 1001;
-    }
-
-    /* Thêm overlay khi sidebar mở trên mobile */
-    body.sidebar-open:before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-    }
+    transition: max-height 0.2s ease-out,
+                opacity 0.15s ease,
+                transform 0.15s ease,
+                visibility 0s linear 0.15s;
 }
 
-/* Tối ưu performance */
+/* Content wrapper */
+.content-wrapper {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+
+body.sidebar-collapsed .content-wrapper {
+    margin-left: 70px;
+}
+
+/* Performance optimizations */
 .submenu {
     will-change: max-height, opacity, transform;
 }
 
-
-/* Tối ưu hiệu suất animation */
 @media (prefers-reduced-motion: reduce) {
     .submenu {
         transition: none;
@@ -208,4 +293,84 @@ body {
     .menu-link .fa-chevron-down {
         transition: none;
     }
+    .sidebar {
+        transition: none;
+    }
+    .content-wrapper {
+        transition: none;
+    }
+}
+
+/* Toggle button */
+.toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #fff;
+    cursor: pointer;
+    margin-left: 14px;
+    margin-top: 6px;
+    z-index: 1002;
+    border-radius: 4px;
+    padding: 4px 12px;
+    transition: background-color 0.2s ease-in, color 0.2s ease-in, border-color 0.2s ease-in, box-shadow 0.2s;
+}
+
+.toggle-btn:hover {
+    background-color: #1a1a1a; /* Màu nền tối khi hover */
+    border-radius: 5px; /* Làm mềm góc */
+}
+
+.toggle-btn i {
+    color: white; /* Màu icon mặc định */
+    font-size: 20px;
+}
+
+.toggle-btn:hover i {
+    color: white; /* Đảm bảo màu icon vẫn trắng khi hover */
+}
+
+
+.sidebar {
+    z-index: 1001;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease, width 0.3s ease;
+    }
+
+    body.sidebar-open .sidebar {
+        transform: translateX(0);
+        z-index: 1001;
+    }
+
+    body.sidebar-open:before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    body.sidebar-collapsed .content-wrapper {
+        margin-left: 0;
+    }
+}
+
+/* Ensure proper submenu positioning */
+.submenu li a {
+    padding: 10px 10px 10px 60px;
+    position: relative;
+    display: block;
 }

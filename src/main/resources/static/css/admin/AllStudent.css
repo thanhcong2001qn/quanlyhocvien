@@ -1,60 +1,355 @@
-/* Styles for the content area that respects sidebar and header */
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f1c40f;
+    --info-color: #3498db;
+    --text-color: #2c3e50;
+    --border-color: #e0e0e0;
+    --background-color: #f8f9fa;
+    --card-shadow: 0 0 20px rgba(0,0,0,0.1);
+    --header-height: 70px;
+    --sidebar-width: 250px;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+    margin-left: var(--sidebar-width);
+    padding-top: calc(var(--header-height) + 1rem);
+    min-height: 100vh;
+    background-color: var(--background-color);
+    transition: all 0.3s ease;
+}
+
+/* Responsive cho sidebar */
+@media (max-width: 991.98px) {
+    .content-wrapper {
+        margin-left: 0;
+    }
+}
+
+/* Container trong content */
+.container {
+    padding: 1rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Page Header */
+.content-header {
+    margin-bottom: 2rem;
+}
 
 .page-title {
-    display: block;
-}
-.breadcrumb-item a{
-    margin-bottom: 15px;
-    text-decoration: none;
-    color:  #FF6B35;
+    color: var(--text-color);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
 }
 
-/* CSS cho card và table để phù hợp với thiết kế admin */
+/* Breadcrumbs */
+.breadcrumbs-area {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+
+.breadcrumb-item a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--secondary-color);
+}
+
+/* Cards */
 .card {
-    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
-    margin-bottom: 1rem;
-    border-radius: .25rem;
+    background: white;
+    border-radius: 12px;
+    border: none;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 2rem;
+    overflow: hidden;
 }
 
 .card-header {
-    background-color: rgba(0,0,0,.03);
-    border-bottom: 1px solid rgba(0,0,0,.125);
-    padding: .75rem 1.25rem;
-    position: relative;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-.card-header2{
-    background-color: white;
-}
-.card-title {
-    margin-bottom: 0;
-    font-size: 1.1rem;
+
+.card-header .card-title {
+    color: var(--text-color);
+    font-size: 1.25rem;
     font-weight: 600;
+    margin: 0;
 }
 
-.card-tools {
-    margin-left: auto;
+.card-body {
+    padding: 1.5rem;
 }
 
+/* Search Form */
+.search-form .form-label {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.search-form .form-control {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.search-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+/* Table Styling */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.table thead th {
+    background: #f8fafc;
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-color);
+    font-weight: 600;
+    padding: 1rem;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(67, 97, 238, 0.05);
+}
+
+/* Action Buttons */
+.btn-group-sm > .btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    margin: 0 0.2rem;
+    transition: all 0.3s ease;
+}
+
+.btn-info {
+    background-color: var(--info-color);
+    border: none;
+    color: white;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    border: none;
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border: none;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Add New Button */
+.card-tools .btn-success {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+/* Sort Icons */
 .sort-icon {
-    float: left;
-    margin-left: 5px;
+    display: inline-block;
+    margin-left: 0.5rem;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
 }
 
-/* Responsive adjustments */
+th:hover .sort-icon {
+    opacity: 1;
+}
 
-@media (max-width: 767.98px) {
-    .content-header {
-        padding: 15px;
+/* Pagination */
+.card-footer {
+    background: white;
+    border-top: 1px solid var(--border-color);
+    padding: 1rem;
+}
+
+.pagination {
+    margin: 0;
+}
+
+.page-item .page-link {
+    padding: 0.5rem 1rem;
+    margin: 0 0.2rem;
+    color: var(--primary-color);
+    border: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.page-item .page-link:hover {
+    background-color: rgba(67, 97, 238, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Popup Styling */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    z-index: 1000;
+    min-width: 320px;
+}
+
+.popup-content {
+    text-align: center;
+}
+
+.popup-select-button {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.yesNoButton {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#yesPopupButton {
+    background-color: var(--success-color);
+    color: white;
+}
+
+#noPopupButton {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .container {
+        padding: 1rem;
     }
-
-    .content {
-        padding: 15px;
-    }
-
+    
     .card-body {
         padding: 1rem;
     }
+    
+    .search-form .row {
+        flex-direction: column;
+    }
+    
+    .search-form .col-md-5,
+    .search-form .col-md-2 {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .btn-group-sm > .btn {
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .card-tools {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+/* Animation */
+.card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Empty State */
+.text-center {
+    padding: 2rem;
+    color: var(--text-color);
+    font-style: italic;
+}
+
+/* Search Button */
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }

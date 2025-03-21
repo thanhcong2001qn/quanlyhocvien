@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class StudentModel extends AbstractModel {
     @Id
     @Column(name = "student_id")
-    private Integer studentId;
+    private Long studentId;
 
     @OneToOne
     @MapsId
@@ -19,8 +19,7 @@ public class StudentModel extends AbstractModel {
     @Column(name = "class", length = 20)
     private String className;
 
-    @Column(name = "avatar_path")
-    private String avatarPath;
+
     // Constructors
     public StudentModel() {
     }
@@ -34,11 +33,11 @@ public class StudentModel extends AbstractModel {
     }
 
     // Getters and Setters
-    public Integer getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(Integer studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 
@@ -59,11 +58,4 @@ public class StudentModel extends AbstractModel {
         this.className = className;
     }
 
-    public String getAvatarPath() {
-        return avatarPath;
-    }
-
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
-    }
 }

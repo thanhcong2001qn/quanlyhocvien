@@ -11,6 +11,7 @@ body {
     color: #333;
 }
 
+
 /* Header styles */
 .admin-header {
     display: flex;
@@ -22,7 +23,14 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     position: fixed;
     top: 0;
+    border-bottom: 1px solid #fff;
     z-index: 1000;
+    transition: all 0.3s ease; /* Thêm transition */
+}
+
+body.sidebar-collapsed .admin-header {
+    width: calc(100% - 70px);
+    margin-left: 70px;
 }
 @media (min-width: 992px) {
     .admin-header {
@@ -43,6 +51,7 @@ body {
         margin-left: 0;
     }
 }
+
 
 /* Logo section */
 
@@ -454,7 +463,12 @@ body {
     width: calc(100% - 250px);
     margin-left: 250px;
     padding: 20px;
-    transition: margin 0.3s;
+    transition: width 0.3s ease, margin-left 0.3s ease;
+}
+
+body.sidebar-collapsed .main-content {
+    width: calc(100% - 70px);
+    margin-left: 70px;
 }
 
 @media (max-width: 991px) {

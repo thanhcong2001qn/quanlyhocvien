@@ -76,13 +76,15 @@
                 </div>
                 <div class="error-message" id="imageError">Vui lòng chụp một hình ảnh hợp lệ</div>
             </div>
-            <div class="form-group">
-                <button type="submit">Lưu thông tin</button>
+<!--            <div class="form-group">-->
+<!--                <button type="submit">Lưu thông tin</button>-->
+<!--                <button type="reset" id="reset-button" style="background-color: #f44336;">Xóa form</button>-->
+<!--            </div>-->
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-success">Lưu</button>
                 <button type="reset" id="reset-button" style="background-color: #f44336;">Xóa form</button>
             </div>
-
         </form>
-
     </div>
     <div id="popup" class="popup popup-notification" style="display: none;">
         <div class="popup-content">
@@ -97,84 +99,73 @@
 <script th:src="@{/js/admin/body.js}"></script>
 <script>
     document.getElementById('studentForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+    e.preventDefault(); // Ngăn tự reload trang
 
-        // Kiểm tra dữ liệu nhập vào
-        const fullName = document.getElementById('fullName').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const address = document.getElementById('address').value.trim();
-        const dateOfBirth = document.getElementById('dateOfBirth').value.trim();
-        const phoneNumber = document.getElementById('phoneNumber').value.trim();
-        const gender = document.getElementById('gender').value.trim();
-        const studentImage = document.getElementById('studentImage').files[0];
-        let isValid = true;
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const dateOfBirth = document.getElementById('dateOfBirth').value.trim();
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const gender = document.getElementById('gender').value.trim();
+    const studentImage = document.getElementById('studentImage').files[0];
 
-        if (!fullName) {
-            document.getElementById('fullNameError').style.display = 'block';
-            isValid = false;
+    let isValid = true;
+
+    // Kiểm tra dữ liệu nhập vào
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+        document.getElementById('emailError').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('emailError').style.display = 'none';
+    }
+
+    if (!phoneNumber || !/^\d{10}$/.test(phoneNumber)) {
+        document.getElementById('phoneNumberError').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('phoneNumberError').style.display = 'none';
+    }
+
+    if (!isValid) {
+        return; // Ngừng nếu có lỗi
+    }
+
+    // Tạo FormData và gửi request
+    const studentData = new FormData();
+    studentData.append('fullName', fullName);
+    studentData.append('email', email);
+    studentData.append('address', address);
+    studentData.append('dateOfBirth', dateOfBirth);
+    studentData.append('phoneNumber', phoneNumber);
+    studentData.append('gender', gender);
+    studentData.append('file', studentImage);
+
+    fetch('/student/apiAddStudent', {
+        method: 'POST',
+        body: studentData
+    })
+    .then(async response => {
+        if (response.ok && response.status === 201) {
+            showPopupNotification("Thông tin sinh viên được lưu thành công!");
+            document.getElementById('studentForm').reset(); // Reset form sau khi lưu
         } else {
-            document.getElementById('fullNameError').style.display = 'none';
+            const errorMessage = await response.text();
+            console.error('Lỗi từ server:', errorMessage);
+            showPopupNotification('Lỗi: ' + errorMessage);
         }
-        if (!email) {
-            document.getElementById('emailError').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('emailError').style.display = 'none';
-        }
-        if (!address) {
-            document.getElementById('addressError').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('addressError').style.display = 'none';
-        }
-
-        if (!dateOfBirth) {
-            document.getElementById('birthDateError').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('birthDateError').style.display = 'none';
-        }
-
-        if (!phoneNumber || !/^\d{10}$/.test(phoneNumber)) {
-            document.getElementById('phoneNumberError').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('phoneNumberError').style.display = 'none';
-        }
-        if(!studentImage){
-            document.getElementById('imageError').style.display = 'block';
-        } else{
-            document.getElementById('imageError').style.display = 'none';
-        }
-        if (!isValid) {
-            return;
-        }
-        // Tạo đối tượng JSON từ dữ liệu form
-        const studentData = new FormData()
-
-        studentData.append('student.fullName', fullName);
-        studentData.append('student.email', email);
-        studentData.append('student.address', address);
-        studentData.append('student.dateOfBirth', dateOfBirth);
-        studentData.append('student.phoneNumber', phoneNumber);
-        studentData.append('student.gender', gender);
-        studentData.append('file', studentImage);
-
-        fetch('/student/apiAddStudent', {
-            method: 'POST',
-            body: studentData
-        })
-            .then(response => {
-                if (response.ok && response.status === 201) {
-                    showPopupNotification("Thông tin sinh viên được lưu thành công!");
-                    document.getElementById('studentForm').reset();
-                }
-                if (response.status === 409) {
-                    showPopupNotification('Email đã tồn tại trong hệ thống!');
-                }
-            })
+    })
+    .catch(error => {
+        console.error('Lỗi khi gửi dữ liệu:', error);
+        showPopupNotification('Không thể kết nối đến máy chủ!');
     });
-    document.addEventListener('DOMContentLoaded', function() {
+});
+
+function showPopupNotification(message) {
+    alert(message); // Hiển thị đơn giản hoặc thay bằng Bootstrap modal
+}
+
+    // Xử lý chụp ảnh từ camera
+    document.addEventListener('DOMContentLoaded', function () {
         const studentImageInput = document.getElementById('studentImage');
         const cameraButton = document.getElementById('cameraButton');
         const cameraContainer = document.getElementById('cameraContainer');
@@ -185,34 +176,39 @@
         const imagePreview = document.getElementById('imagePreview');
         const saveImageButton = document.getElementById('saveImageButton');
         const retakeButton = document.getElementById('retakeButton');
-        const resetButton = document.getElementById('reset-button');
         let stream = null;
 
-        resetButton.addEventListener('click', () => {
-            previewContainer.style.display = 'none';
-        });
-        // Mở camera khi nhấn nút
-        cameraButton.addEventListener('click',() => {
+        // Mở camera
+        cameraButton.addEventListener('click', async () => {
             try {
                 previewContainer.style.display = 'none';
-                openCamera();
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraPreview.srcObject = stream;
+                cameraContainer.style.display = 'block';
             } catch (err) {
                 alert('Không thể truy cập camera: ' + err.message);
                 console.error('Lỗi truy cập camera:', err);
             }
         });
+
+        // Chụp ảnh từ camera
         captureButton.addEventListener('click', () => {
             const canvas = imagePreview;
             const context = canvas.getContext('2d');
 
             // Đặt kích thước canvas bằng với video
+            if (!cameraPreview.videoWidth || !cameraPreview.videoHeight) {
+                alert('Camera chưa sẵn sàng, vui lòng thử lại.');
+                return;
+            }
+
             canvas.width = cameraPreview.videoWidth;
             canvas.height = cameraPreview.videoHeight;
 
-            // Vẽ frame hiện tại từ video vào canvas
+            // Vẽ frame hiện tại từ video lên canvas
             context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
 
-            // Ẩn camera, hiển thị preview
+            // Hiển thị preview
             cameraContainer.style.display = 'none';
             previewContainer.style.display = 'block';
             saveImageButton.style.display = 'block';
@@ -221,17 +217,17 @@
 
         // Lưu ảnh đã chụp
         saveImageButton.addEventListener('click', () => {
-            // Chuyển canvas thành blob
             imagePreview.toBlob(blob => {
-                // Tạo file từ blob
-                const file = new File([blob], 'camera_capture.jpg', { type: 'image/jpeg' });
+                if (!blob) {
+                    alert('Không thể lưu ảnh, vui lòng thử lại.');
+                    return;
+                }
 
-                // Tạo DataTransfer để có thể gán file vào input
+                const file = new File([blob], 'camera_capture.jpg', { type: 'image/jpeg' });
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
                 studentImageInput.files = dataTransfer.files;
 
-                // Đóng camera và hide các container
                 stopCamera();
                 cameraContainer.style.display = 'none';
                 saveImageButton.style.display = 'none';
@@ -242,7 +238,7 @@
         // Chụp lại ảnh
         retakeButton.addEventListener('click', () => {
             previewContainer.style.display = 'none';
-            cameraContainer.style.display = 'block';
+            openCamera();
         });
 
         // Hủy việc chụp ảnh
@@ -251,17 +247,12 @@
             cameraContainer.style.display = 'none';
         });
 
-        // Dọn dẹp stream khi đóng camera
+        // Dừng camera
         function stopCamera() {
-            if (stream) {
+            if (stream && stream.getTracks) {
                 stream.getTracks().forEach(track => track.stop());
                 stream = null;
             }
-        }
-        async function openCamera() {
-            stream =await navigator.mediaDevices.getUserMedia({ video: true });
-            cameraPreview.srcObject = stream;
-            cameraContainer.style.display = 'block';
         }
     });
 </script>

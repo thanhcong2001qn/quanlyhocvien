@@ -11,7 +11,7 @@ public class AccountModel extends AbstractModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
-    private Integer accountId;
+    private Long accountId;
 
     @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
@@ -45,10 +45,13 @@ public class AccountModel extends AbstractModel {
     private Boolean isActive;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
+
+    @Column(name = "avatar_path", nullable = true)
+    private String avatarPath;
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private AdminModel admin;
@@ -60,19 +63,20 @@ public class AccountModel extends AbstractModel {
     private StudentModel student;
 
 
+
     // Constructors
     public AccountModel() {
         this.isActive = true;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = LocalDate.now();
+        this.updatedAt = LocalDate.now();
     }
 
     // Getters and Setters
-    public Integer getAccountId() {
+    public Long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Integer accountId) {
+    public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
 
@@ -156,20 +160,28 @@ public class AccountModel extends AbstractModel {
         isActive = active;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
     }
 
     public AdminModel getAdmin() {
