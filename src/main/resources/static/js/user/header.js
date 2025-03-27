@@ -102,8 +102,7 @@ function getUserInfoFromToken(token) {
 
 function logout() {
     // Hiển thị xác nhận nếu cần
-    if (confirm('Bạn có chắc muốn đăng xuất?')) {
-        // Xóa token và thông tin người dùng
+    showConfirmation("Bạn có chắc muốn đăng xuất?", function (){
         localStorage.removeItem('token');
         // localStorage.removeItem('refresh_token');
         localStorage.removeItem('username');
@@ -117,5 +116,7 @@ function logout() {
         // Ghi log thời gian đăng xuất
         //const now = new Date();
         //console.log(`Đăng xuất thành công lúc: ${formatUTCDateTime(now)}`);
-    }
+    }, function () {
+        // Không làm gì cả
+    });
 }

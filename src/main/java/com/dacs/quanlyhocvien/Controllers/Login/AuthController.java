@@ -2,16 +2,14 @@ package com.dacs.quanlyhocvien.Controllers.Login;
 
 import com.dacs.quanlyhocvien.DTO.Request.LoginRequest;
 import com.dacs.quanlyhocvien.DTO.Request.RegisterRequest;
-import com.dacs.quanlyhocvien.Services.AccountService;
-import com.dacs.quanlyhocvien.Services.AuthService;
-import com.dacs.quanlyhocvien.Services.RegistrationService;
-import com.dacs.quanlyhocvien.Services.StudentService;
+import com.dacs.quanlyhocvien.Services.*;
 import com.dacs.quanlyhocvien.config.JwtTokenProvider;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,19 +31,24 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping(value = "/api")
 public class AuthController {
+
     @Autowired
     private RegistrationService registrationService;
-    @Autowired
-    private StudentService studentService;
     @Autowired
     private AuthService authService;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private CaptchaService captchaService;
 
     @PostMapping(value ="/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest){
+        boolean isValidCaptcha = captchaService.validateCaptcha(registerRequest.getRecaptchaResponse());
+        if (!isValidCaptcha) {
+            return new ResponseEntity<>("Invalid CAPTCHA verification", HttpStatus.BAD_REQUEST);
+        }
         try {
             registrationService.registerStudent(registerRequest);
             return new ResponseEntity<>(HttpStatus.OK);

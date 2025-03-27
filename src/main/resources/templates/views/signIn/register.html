@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/auth/login.css}">
+    <!-- Google reCAPTCHA v2 -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 <!-- Notification Container -->
@@ -44,17 +46,14 @@
         <!-- Form Section -->
         <div class="col-12 col-lg-5">
             <div class="auth-form-container">
-<!--                <div class="logo-container text-center">-->
-<!--                    <img src="https://via.placeholder.com/80" alt="Logo" class="logo">-->
-<!--                </div>-->
-
                 <div class="auth-header">
                     <h2>Create An Account</h2>
                     <p>Fill out the form to get started</p>
                 </div>
                 <form id="registerForm">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control custom-input" id="username" placeholder="Username" required>
+                        <input type="text" class="form-control custom-input" id="username" placeholder="Username"
+                               required>
                         <label for="username">Username</label>
                     </div>
 
@@ -64,7 +63,8 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control custom-input" id="password" placeholder="Password" required>
+                        <input type="password" class="form-control custom-input" id="password" placeholder="Password"
+                               required>
                         <label for="password">Password</label>
                         <span class="password-toggle" onclick="togglePasswordReg('password')">
                                 <i class="far fa-eye"></i>
@@ -74,13 +74,15 @@
                     <div class="password-strength mb-3">
                         <div class="strength-bar">
                             <div class="progress">
-                                <div class="progress-bar" id="strength-progress" role="progressbar" style="width: 0%"></div>
+                                <div class="progress-bar" id="strength-progress" role="progressbar"
+                                     style="width: 0%"></div>
                             </div>
                         </div>
                         <small id="password-feedback">Password strength</small>
                     </div>
                     <div class="form-floating mb-4">
-                        <input type="password" class="form-control custom-input" id="confirmPassword" placeholder="Confirm Password" required>
+                        <input type="password" class="form-control custom-input" id="confirmPassword"
+                               placeholder="Confirm Password" required>
                         <label for="confirmPassword">Confirm Password</label>
                         <span class="password-toggle" onclick="togglePasswordReg('confirmPassword')">
                                 <i class="far fa-eye"></i>
@@ -91,6 +93,14 @@
                         <label class="form-check-label" for="termsCheck">
                             I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
                         </label>
+                    </div>
+
+                    <!-- Google reCAPTCHA v2 Checkbox -->
+                    <div class="mb-4">
+                        <div class="g-recaptcha" data-sitekey="6LcsiQErAAAAAOltqMwC9JAg02yaVaY6ykww-29m"></div>
+                        <div id="recaptchaError" class="invalid-feedback" style="display: none;">
+                            Please complete the reCAPTCHA verification
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100 auth-btn">Create Account</button>

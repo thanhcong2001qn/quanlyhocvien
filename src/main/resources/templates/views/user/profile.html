@@ -89,11 +89,22 @@
                                 <input type="tel" class="form-control" id="phone" placeholder="Số điện thoại">
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Địa chỉ</label>
-                            <textarea class="form-control" id="address" rows="3" placeholder="Địa chỉ"></textarea>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="gender" class="form-label">Giới tính</label>
+                                <select class="form-control" id="gender">
+                                    <option value="">Chọn giới tính</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="address" class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" id="address" rows="3" placeholder="Địa chỉ"></textarea>
+                            </div>
                         </div>
-                        <div class="text-end">
+                        <div class="text-start">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i>Lưu thay đổi
                             </button>
@@ -164,7 +175,7 @@
                             <input type="password" class="form-control" id="confirm-password"
                                    placeholder="Xác nhận mật khẩu mới">
                         </div>
-                        <div class="text-end">
+                        <div class="text-start">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-key me-2"></i>Cập nhật mật khẩu
                             </button>

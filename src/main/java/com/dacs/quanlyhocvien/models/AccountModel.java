@@ -64,6 +64,16 @@ public class AccountModel{
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private StudentModel student;
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
     // Constructors
     public AccountModel() {
         this.isActive = true;
