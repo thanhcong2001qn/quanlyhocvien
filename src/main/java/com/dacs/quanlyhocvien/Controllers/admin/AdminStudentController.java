@@ -16,11 +16,16 @@ public class AdminStudentController {
     public AdminStudentController(StudentService studentService) {
         this.studentService = studentService;
     }
-    @PutMapping(value = "/apiEditStudent")
-    public ResponseEntity<StudentModel> updateStudent(@RequestBody StudentModel student) {
-        StudentModel savedStudent = studentService.updateStudent(student);
-        return new ResponseEntity<>(savedStudent, HttpStatus.OK);
-    }
+
+//    @PostMapping(value = "/apiAddStudent")
+//    public ResponseEntity<StudentModel> createStudent(@ModelAttribute StudentRequestDTO requestDTO) {
+//        StudentModel savedStudent = studentService.addStudent(requestDTO.getStudent(),requestDTO.getFile());
+//        if (savedStudent == null) {
+//            return new ResponseEntity<>(HttpStatus.CONFLICT);
+//        }else
+//            return new ResponseEntity<>(savedStudent, HttpStatus.CREATED);
+//    }
+
     @DeleteMapping(value = "/deleteStudent/{id}")
     public ResponseEntity<?> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);

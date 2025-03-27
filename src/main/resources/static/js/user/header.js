@@ -18,7 +18,7 @@ searchBtn.addEventListener('click', function (e) {
         isSearchActive = false;
     }
 });
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateAuthUI();
     updateUtcTime();
 
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(updateUtcTime, 60000);
 
     // Lắng nghe sự kiện storage
-    window.addEventListener('storage', function(e) {
+    window.addEventListener('storage', function (e) {
         if (e.key === 'token' || e.key === 'username') {
             updateAuthUI();
         }
@@ -40,18 +40,18 @@ function updateAuthUI() {
     const usernameDisplay = document.getElementById('username-display');
 
     if (token && !isTokenExpired(token)) {
-    // Đã đăng nhập
-    notAuthMenu.style.display = 'none';
-    authMenu.style.display = 'block';
+        // Đã đăng nhập
+        notAuthMenu.style.display = 'none';
+        authMenu.style.display = 'block';
 
-    // Hiển thị username
-    const userInfo = getUserInfoFromToken(token);
-    usernameDisplay.textContent = userInfo.username || 'Người dùng';
-} else {
-    // Chưa đăng nhập
-    notAuthMenu.style.display = 'block';
-    authMenu.style.display = 'none';
-}
+        // Hiển thị username
+        const userInfo = getUserInfoFromToken(token);
+        usernameDisplay.textContent = userInfo.username || 'Người dùng';
+    } else {
+        // Chưa đăng nhập
+        notAuthMenu.style.display = 'block';
+        authMenu.style.display = 'none';
+    }
 }
 
 function updateUtcTime() {
@@ -85,6 +85,7 @@ function isTokenExpired(token) {
         return true; // Nếu có lỗi, coi như token đã hết hạn
     }
 }
+
 function getUserInfoFromToken(token) {
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -98,12 +99,12 @@ function getUserInfoFromToken(token) {
         return {};
     }
 }
+
 function logout() {
     // Hiển thị xác nhận nếu cần
-    if (confirm('Bạn có chắc muốn đăng xuất?')) {
-        // Xóa token và thông tin người dùng
+    showConfirmation("Bạn có chắc muốn đăng xuất?", function (){
         localStorage.removeItem('token');
-       // localStorage.removeItem('refresh_token');
+        // localStorage.removeItem('refresh_token');
         localStorage.removeItem('username');
 
         // Cập nhật giao diện
@@ -115,5 +116,7 @@ function logout() {
         // Ghi log thời gian đăng xuất
         //const now = new Date();
         //console.log(`Đăng xuất thành công lúc: ${formatUTCDateTime(now)}`);
-    }
+    }, function () {
+        // Không làm gì cả
+    });
 }

@@ -64,7 +64,6 @@ public class JwtTokenProvider {
 
         return claims.getSubject();
     }
-
     // Xác thực JWT token
     public boolean validateToken(String token) {
         try {

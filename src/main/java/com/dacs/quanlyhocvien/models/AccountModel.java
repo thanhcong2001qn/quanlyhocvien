@@ -11,7 +11,7 @@ public class AccountModel{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
-    private Integer accountId;
+    private Long accountId;
 
     @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
@@ -53,7 +53,7 @@ public class AccountModel{
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "avatar_path", length = 100)
+    @Column(name = "avatar_path")
     private String avatarPath;
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
@@ -64,19 +64,27 @@ public class AccountModel{
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private StudentModel student;
-    // Constructors
-    public AccountModel() {
-        this.isActive = true;
+    @PrePersist
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+    // Constructors
+    public AccountModel() {
+        this.isActive = true;
+    }
+
     // Getters and Setters
-    public Integer getAccountId() {
+    public Long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Integer accountId) {
+    public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
 
@@ -176,6 +184,14 @@ public class AccountModel{
         this.updatedAt = updatedAt;
     }
 
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
+
     public AdminModel getAdmin() {
         return admin;
     }
@@ -204,12 +220,5 @@ public class AccountModel{
     }
     public void setIsEmailVerified(Boolean isEmailVerified) {
         this.isEmailVerified = isEmailVerified;
-    }
-    public String getAvatarPath() {
-        return avatarPath;
-    }
-
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
     }
 }

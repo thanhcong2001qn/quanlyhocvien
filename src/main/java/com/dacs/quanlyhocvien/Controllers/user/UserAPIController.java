@@ -1,5 +1,7 @@
 package com.dacs.quanlyhocvien.Controllers.user;
 
+import com.dacs.quanlyhocvien.DTO.Request.ChangePasswordRequest;
+import com.dacs.quanlyhocvien.DTO.Request.UpdateStudentRequest;
 import com.dacs.quanlyhocvien.Services.StudentService;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
@@ -42,6 +44,7 @@ public class UserAPIController {
             if (!student.getAccount().getIsEmailVerified()){
                 profileData.put("isEmailVerified", false);
             }
+            profileData.put("gender", student.getAccount().getGender());
             profileData.put("phone", student.getAccount().getPhoneNumber());
             profileData.put("joinDate", student.getAccount().getCreatedAt());
             //profileData.put("profileImage", student.getAccount().getProfileImage());
@@ -55,40 +58,34 @@ public class UserAPIController {
         }
     }
 
-//    @PostMapping("/update-profile")
-//    public ResponseEntity<?> updateProfile(@RequestBody Map<String, Object> profileData) {
-//        try {
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//            String username = userDetails.getUsername();
-//
-//            StudentModel updatedStudent = studentService.updateProfile(username, profileData);
-//            return ResponseEntity.ok(updatedStudent);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Error updating profile: " + e.getMessage());
-//        }
-//    }
-//
-//    @PostMapping("/change-password")
-//    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> passwordData) {
-//        try {
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//            String username = userDetails.getUsername();
-//
-//            String currentPassword = passwordData.get("currentPassword");
-//            String newPassword = passwordData.get("newPassword");
-//
-//            boolean success = studentService.changePassword(username, currentPassword, newPassword);
-//            if (!success) {
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect");
-//            }
-//
-//            return ResponseEntity.ok().build();
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Error changing password: " + e.getMessage());
-//        }
-//    }
+    @PutMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateStudentRequest profileData) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String username = userDetails.getUsername();
+            StudentModel updatedStudent = studentService.updateStudentByUserName(username, profileData);
+            return ResponseEntity.ok(updatedStudent);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating profile: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest passwordData) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String username = userDetails.getUsername();
+            boolean success = studentService.changePassword(username, passwordData);
+            if (!success) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect");
+            }
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error changing password: " + e.getMessage());
+        }
+    }
 }

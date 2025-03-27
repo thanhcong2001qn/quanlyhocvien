@@ -72,8 +72,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(event) {
         // Kiểm tra nếu sidebar đang mở
         if (document.body.classList.contains('sidebar-open')) {
-            const sidebar = document.querySelector('.sidebar'); // Điều chỉnh selector này cho phù hợp với class sidebar của bạn
-            const mobileToggleElement = document.querySelector('.mobile-toggle'); // Điều chỉnh selector này cho phù hợp
+            const sidebar = document.querySelector('.sidebar');
+            const mobileToggleElement = document.querySelector('.mobile-toggle');
 
             // Nếu click không phải trên sidebar và không phải trên nút toggle
             if (sidebar && !sidebar.contains(event.target) &&
@@ -82,11 +82,48 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
     const sidebar = document.querySelector('.sidebar');
+    const headerDivider = document.querySelector('.header-divider');
+
+    // Xử lý toggle sidebar và border-bottom
+    const sidebarToggleBtn = document.getElementById('toggle-sidebar');
+
+    // Thay đổi phần này trong event listener của sidebarToggleBtn
+    if (sidebarToggleBtn && sidebar && headerDivider) {
+        sidebarToggleBtn.addEventListener('click', function(event) {
+            event.stopPropagation();
+
+            // Toggle sidebar state
+            sidebar.classList.toggle('collapsed');
+            document.body.classList.toggle('sidebar-collapsed');
+
+            // Store sidebar state
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            localStorage.setItem('sidebarState', isCollapsed ? 'collapsed' : 'expanded');
+
+            // Không cần thiết lập width trực tiếp nữa vì đã xử lý bằng CSS
+        });
+    }
+
+    // Xóa phần xử lý width trong window resize event
+    window.addEventListener('resize', function() {
+        // Không cần thiết lập width trực tiếp nữa
+    });
+
+    // Apply saved sidebar state on page load
+    const savedState = localStorage.getItem('sidebarState');
+    if (savedState === 'collapsed' && sidebar && headerDivider) {
+        sidebar.classList.add('collapsed');
+        document.body.classList.add('sidebar-collapsed');
+        headerDivider.style.width = 'calc(100% - 70px)';
+    }
+
+
+
     if (sidebar) {
         sidebar.addEventListener('click', function(event) {
             event.stopPropagation();
         });
     }
-
 });

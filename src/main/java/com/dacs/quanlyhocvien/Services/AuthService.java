@@ -4,15 +4,19 @@ import com.dacs.quanlyhocvien.Repository.IVerificationTokenRepository;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.RoleModel;
 import com.dacs.quanlyhocvien.models.VerificationToken;
+import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class AuthService {
+    private final ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
     private final AccountService accountService;
     private final RoleService roleService;
     private final IVerificationTokenRepository tokenRepository;
@@ -72,7 +76,6 @@ public class AuthService {
         String tokenValue = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken(tokenValue, account);
         tokenRepository.save(verificationToken);
-        // Send email asynchronously so it doesn't block the response
         emailService.sendPasswordResetEmail(account, tokenValue);
     }
     @Transactional
@@ -111,8 +114,12 @@ public class AuthService {
         VerificationToken verificationToken = new VerificationToken(tokenValue, account);
         tokenRepository.save(verificationToken);
         // Gửi lại email xác nhận
-        new Thread(() -> {
+        emailExecutor.submit(() -> {
             emailService.sendVerificationEmail(account,tokenValue);
-        }).start();
+        });
+    }
+    @PreDestroy
+    public void shutdown() {
+        emailExecutor.shutdown();
     }
 }

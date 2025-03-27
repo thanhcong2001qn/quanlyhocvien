@@ -9,6 +9,7 @@ import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.RoleModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
 import com.dacs.quanlyhocvien.models.VerificationToken;
+import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class RegistrationService {
-
+    private final ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
     @Autowired
     private AccountService accountService;
 
@@ -28,9 +31,6 @@ public class RegistrationService {
 
     @Autowired
     private EmailService emailService;
-
-    @Autowired
-    private IStudentRepository studentRepository;
 
     @Autowired
     private IRoleRepository roleRepository;
@@ -64,14 +64,10 @@ public class RegistrationService {
         String tokenValue = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken(tokenValue, account);
         tokenRepository.save(verificationToken);
-        new Thread(() -> {
-            sendEmail(registerRequest, tokenValue);
-        }).start();
-    }
-    @Transactional
-    public void sendEmail(RegisterRequest registerRequest, String tokenValue) {
         AccountModel accountModel = accountService.getAccountByEmail(registerRequest.getEmail());
-        emailService.sendVerificationEmail(accountModel, tokenValue);
+        emailExecutor.submit(() -> {
+            emailService.sendVerificationEmail(accountModel, tokenValue);
+        });
     }
     @Transactional
     public boolean verifyAccount(String token) {
@@ -86,6 +82,9 @@ public class RegistrationService {
         }
         return false;
     }
-
+    @PreDestroy
+    public void shutdown() {
+        emailExecutor.shutdown();
+    }
 
 }

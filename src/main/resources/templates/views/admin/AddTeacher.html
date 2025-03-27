@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thêm Giáo Viên Mới</title>
+  <link rel="stylesheet" th:href="@{/css/admin/header.css}">
+  <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
+  <link rel="stylesheet" th:href="@{/css/admin/body.css}">
+  <link rel="stylesheet" th:href="@{/css/admin/addTeacher.css}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div th:replace="~{/fragments/admin/header :: header}"></div>
+<div th:replace="~{/fragments/admin/menu :: menu}"></div>
+
+<div class="content-wrapper">
+  <div class="container">
+    <div class="form-header">
+      <h1>Thêm Giáo Viên Mới</h1>
+    </div>
+
+    <form id="teacherForm" enctype="multipart/form-data">
+      <!-- Thông tin cơ bản -->
+      <div class="form-section">
+        <h2 class="section-title">Thông tin cá nhân</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required-field" for="fullName">Họ và tên</label>
+            <input type="text" class="form-control" id="fullName" name="teacher.account.fullName"
+                   placeholder="Nhập họ và tên" required>
+            <div class="error-message" id="fullNameError">Vui lòng nhập họ tên</div>
+          </div>
+
+          <div class="form-group">
+            <label class="required-field" for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="teacher.account.email"
+                   placeholder="example@domain.com" required>
+            <div class="error-message" id="emailError">Vui lòng nhập email hợp lệ</div>
+          </div>
+
+          <div class="form-group">
+            <label for="gender">Giới tính</label>
+            <select class="form-control" name="teacher.account.gender" id="gender">
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="required-field" for="dateOfBirth">Ngày sinh</label>
+            <input type="date" class="form-control" id="dateOfBirth"
+                   name="teacher.account.dateOfBirth" required>
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">Số điện thoại</label>
+            <input type="tel" class="form-control" id="phoneNumber"
+                   name="teacher.account.phoneNumber" placeholder="0123456789">
+          </div>
+
+          <div class="form-group">
+            <label for="address">Địa chỉ</label>
+            <input type="text" class="form-control" id="address"
+                   name="teacher.account.address" placeholder="Nhập địa chỉ">
+          </div>
+        </div>
+      </div>
+
+      <!-- Thông tin chuyên môn -->
+      <div class="form-section">
+        <h2 class="section-title">Thông tin chuyên môn</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required-field" for="subjectSpecialization">Chuyên môn</label>
+            <input type="text" class="form-control" id="subjectSpecialization"
+                   name="teacher.subjectSpecialization" placeholder="Nhập chuyên môn giảng dạy" required>
+          </div>
+
+          <div class="form-group">
+            <label class="required-field" for="qualification">Bằng cấp/Chứng chỉ</label>
+            <input type="text" class="form-control" id="qualification"
+                   name="teacher.qualification" placeholder="Nhập thông tin bằng cấp, chứng chỉ" required>
+          </div>
+
+          <div class="form-group">
+            <label class="required-field" for="hireDate">Ngày nhận việc</label>
+            <input type="date" class="form-control" id="hireDate"
+                   name="teacher.hireDate" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hình ảnh -->
+      <div class="form-section">
+        <h2 class="section-title">Hình ảnh đại diện</h2>
+        <div class="form-group">
+          <div class="file-input-wrapper">
+            <label class="file-input-button" for="teacherImage">
+              <i class="fas fa-upload"></i> Chọn hình ảnh
+            </label>
+            <input type="file" id="teacherImage" name="teacher.account.avatar_path"
+                   accept="image/*" style="display: none;">
+            <div id="selectedFileName" class="mt-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <input type="hidden" name="teacher.account.role.roleId" value="2">
+
+      <!-- Nút submit -->
+      <div class="text-center mt-4">
+        <button type="submit" class="submit-button" id="addTeacherBtn">
+          <i class="fas fa-user-plus me-2"></i>Thêm Giáo Viên
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Popup Notification -->
+  <div id="popup" class="popup" style="display: none;">
+    <div class="popup-content">
+      <p id="message-popup-notification"></p>
+      <button class="submit-button" id="closePopupButton">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/admin/menu.js}"></script>
+<script th:src="@{/js/admin/header.js}"></script>
+<script>
+  // Hiển thị tên file đã chọn
+  document.getElementById('teacherImage').addEventListener('change', function(e) {
+      const fileName = e.target.files[0]?.name || 'Chưa chọn file';
+      document.getElementById('selectedFileName').textContent = fileName;
+  });
+
+  // Xử lý form submit
+  document.getElementById('teacherForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Thêm class loading khi đang xử lý
+      this.classList.add('loading');
+
+      const teacherForm = new FormData(this);
+
+      if (!teacherForm.has("username") || !teacherForm.get("username")) {
+          teacherForm.append("username", teacherForm.get("teacher.account.email"));
+      }
+
+      const fileInput = document.getElementById("teacherImage");
+      if (fileInput.files.length === 0) {
+          teacherForm.delete("teacherImage");
+      }
+
+      fetch('/teacher/apiAddTeacher', {
+          method: 'POST',
+          body: teacherForm
+      })
+      .then(async response => {
+          if (response.ok) {
+              showNotification("Thêm giáo viên thành công!", "success");
+              this.reset();
+              document.getElementById('selectedFileName').textContent = '';
+          } else {
+              const errorMessage = await response.text();
+              showNotification(errorMessage, "error");
+          }
+      })
+      .catch(error => {
+          showNotification("Không thể kết nối đến máy chủ!", "error");
+      })
+      .finally(() => {
+          this.classList.remove('loading');
+      });
+  });
+
+  function showNotification(message, type) {
+      const popup = document.getElementById('popup');
+      const messageElement = document.getElementById('message-popup-notification');
+
+      messageElement.textContent = message;
+      popup.style.display = 'block';
+
+      if (type === 'error') {
+          popup.classList.add('error');
+      } else {
+          popup.classList.remove('error');
+      }
+
+      // Tự động đóng sau 3 giây
+      setTimeout(() => {
+          popup.style.display = 'none';
+      }, 3000);
+  }
+
+  // Đóng popup khi click nút đóng
+  document.getElementById('closePopupButton').addEventListener('click', function() {
+      document.getElementById('popup').style.display = 'none';
+  });
+</script>
+</body>
+</html>

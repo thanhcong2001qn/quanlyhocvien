@@ -146,9 +146,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-
+            const recaptchaResponse = grecaptcha.getResponse();
+            const recaptchaError = document.getElementById('recaptchaError');
             // Perform validation
             let isValid = true;
+
+            if (!recaptchaResponse) {
+                // Hiển thị lỗi reCAPTCHA
+                recaptchaError.style.display = 'block';
+                return;
+            } else {
+                recaptchaError.style.display = 'none';
+            }
 
             if (username.length < 3) {
                 isValid = false;
@@ -179,7 +188,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const registerData = {
                     username: username,
                     email: email,
-                    password: password
+                    password: password,
+                    recaptchaResponse: recaptchaResponse
                 }
                 fetch('api/register', {
                     method: 'POST',
@@ -198,6 +208,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             );
                             // Clear form fields
                             registerForm.reset();
+                            setTimeout(() => {
+                                window.location.href = '/login';
+                            }, 3000);
                         }
                         return response.text().then(errorMsg => {
                             if (errorMsg === "Username already exists") {

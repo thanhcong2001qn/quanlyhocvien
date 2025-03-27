@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hồ sơ học viên</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" th:href="@{/css/user/header.css}">
-  <link rel="stylesheet" th:href="@{/css/user/profile.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ học viên</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/user/header.css}">
+    <link rel="stylesheet" th:href="@{/css/user/profile.css}">
 </head>
 <body>
 <!-- Main Header -->
@@ -15,157 +15,176 @@
 <div th:replace="~{fragments/user/notification :: notification}"></div>
 
 <div class="container py-5">
-  <div class="profile-header row">
-    <div class="col-md-3 text-center">
-      <img id="profile-image" src="/images/icon/output-onlinepngtools.png" alt="Avatar" class="profile-avatar">
-      <button class="btn btn-sm btn-outline-primary mt-3" id="change-avatar-btn">
-        <i class="fas fa-camera me-2"></i>Đổi ảnh
-      </button>
-      <input type="file" id="avatar-upload" hidden accept="image/*">
+    <div class="profile-header row">
+        <div class="col-md-3 text-center">
+            <img id="profile-image" src="/images/icon/output-onlinepngtools.png" alt="Avatar" class="profile-avatar">
+            <button class="btn btn-sm btn-outline-primary mt-3" id="change-avatar-btn">
+                <i class="fas fa-camera me-2"></i>Đổi ảnh
+            </button>
+            <input type="file" id="avatar-upload" hidden accept="image/*">
+        </div>
+        <div class="col-md-9">
+            <h2 id="student-name">Đang tải...</h2>
+            <p class="text-muted mb-2" id="student-id"><i class="fas fa-id-card me-2"></i>Mã học viên: Đang tải...</p>
+            <p class="text-muted mb-2" id="student-email"><i class="fas fa-envelope me-2"></i>Đang tải...</p>
+            <p class="text-muted mb-2" id="student-phone"><i class="fas fa-phone me-2"></i>Đang tải...</p>
+            <p class="text-muted mb-2" id="join-date"><i class="fas fa-calendar-alt me-2"></i>Ngày tham gia: Đang tải...
+            </p>
+        </div>
     </div>
-    <div class="col-md-9">
-      <h2 id="student-name">Đang tải...</h2>
-      <p class="text-muted mb-2" id="student-id"><i class="fas fa-id-card me-2"></i>Mã học viên: Đang tải...</p>
-      <p class="text-muted mb-2" id="student-email"><i class="fas fa-envelope me-2"></i>Đang tải...</p>
-      <p class="text-muted mb-2" id="student-phone"><i class="fas fa-phone me-2"></i>Đang tải...</p>
-      <p class="text-muted mb-2" id="join-date"><i class="fas fa-calendar-alt me-2"></i>Ngày tham gia: Đang tải...</p>
-    </div>
-  </div>
 
-  <ul class="nav nav-pills mb-4" id="profileTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="personal-tab" data-bs-toggle="pill" data-bs-target="#personal" type="button" role="tab">
-        <i class="fas fa-user me-2"></i>Thông tin cá nhân
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="academic-tab" data-bs-toggle="pill" data-bs-target="#academic" type="button" role="tab">
-        <i class="fas fa-graduation-cap me-2"></i>Học tập
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="security-tab" data-bs-toggle="pill" data-bs-target="#security" type="button" role="tab">
-        <i class="fas fa-lock me-2"></i>Bảo mật
-      </button>
-    </li>
-  </ul>
+    <ul class="nav nav-pills mb-4" id="profileTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="personal-tab" data-bs-toggle="pill" data-bs-target="#personal"
+                    type="button" role="tab">
+                <i class="fas fa-user me-2"></i>Thông tin cá nhân
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="academic-tab" data-bs-toggle="pill" data-bs-target="#academic" type="button"
+                    role="tab">
+                <i class="fas fa-graduation-cap me-2"></i>Học tập
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="security-tab" data-bs-toggle="pill" data-bs-target="#security" type="button"
+                    role="tab">
+                <i class="fas fa-lock me-2"></i>Bảo mật
+            </button>
+        </li>
+    </ul>
 
-  <div class="tab-content" id="profileTabContent">
-    <!-- Personal Information Tab -->
-    <div class="tab-pane fade show active" id="personal" role="tabpanel">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title mb-4">Thông tin cá nhân</h4>
-          <form id="personal-info-form">
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="full-name" class="form-label">Họ và tên</label>
-                <input type="text" class="form-control" id="full-name" placeholder="Họ và tên">
-              </div>
-              <div class="col-md-6">
-                <label for="date-of-birth" class="form-label">Ngày sinh</label>
-                <input type="date" class="form-control" id="date-of-birth">
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="email" class="form-label">Email</label>
-                <div id="is-verified-email">
-                  <div class="alert alert-warning alert-dismissible fade show mt-1 mb-2 py-2" role="alert" id="email-not-verified" style="display: none;">
-                    <small><i class="fas fa-exclamation-triangle me-2"></i>Email chưa được xác thực.
-                    <a id="resend-verification" class="alert-link" onclick="resendEmail()" style="cursor: pointer">Gửi lại mã xác thực</a></small>
-                  </div>
+    <div class="tab-content" id="profileTabContent">
+        <!-- Personal Information Tab -->
+        <div class="tab-pane fade show active" id="personal" role="tabpanel">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Thông tin cá nhân</h4>
+                    <form id="personal-info-form">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="full-name" class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" id="full-name" placeholder="Họ và tên">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="date-of-birth" class="form-label">Ngày sinh</label>
+                                <input type="date" class="form-control" id="date-of-birth">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <div id="is-verified-email">
+                                    <div class="alert alert-warning alert-dismissible fade show mt-1 mb-2 py-2"
+                                         role="alert" id="email-not-verified" style="display: none;">
+                                        <small><i class="fas fa-exclamation-triangle me-2"></i>Email chưa được xác thực.
+                                            <a id="resend-verification" class="alert-link" onclick="resendEmail()"
+                                               style="cursor: pointer">Gửi lại mã xác thực</a></small>
+                                    </div>
+                                </div>
+                                <input type="email" class="form-control" id="email" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" id="phone" placeholder="Số điện thoại">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="gender" class="form-label">Giới tính</label>
+                                <select class="form-control" id="gender">
+                                    <option value="">Chọn giới tính</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="address" class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" id="address" rows="3" placeholder="Địa chỉ"></textarea>
+                            </div>
+                        </div>
+                        <div class="text-start">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <input type="email" class="form-control" id="email" disabled>
-              </div>
-              <div class="col-md-6">
-                <label for="phone" class="form-label">Số điện thoại</label>
-                <input type="tel" class="form-control" id="phone" placeholder="Số điện thoại">
-              </div>
             </div>
-            <div class="mb-3">
-              <label for="address" class="form-label">Địa chỉ</label>
-              <textarea class="form-control" id="address" rows="3" placeholder="Địa chỉ"></textarea>
-            </div>
-            <div class="text-end">
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save me-2"></i>Lưu thay đổi
-              </button>
-            </div>
-          </form>
         </div>
-      </div>
-    </div>
 
-    <!-- Academic Information Tab -->
-    <div class="tab-pane fade" id="academic" role="tabpanel">
-      <div class="card mb-4">
-        <div class="card-body">
-          <h4 class="card-title">Khóa học đã đăng ký</h4>
-          <div class="row" id="enrolled-courses-container">
-            <!-- Courses will be loaded here -->
-            <div class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Đang tải...</span>
-              </div>
+        <!-- Academic Information Tab -->
+        <div class="tab-pane fade" id="academic" role="tabpanel">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">Khóa học đã đăng ký</h4>
+                    <div class="row" id="enrolled-courses-container">
+                        <!-- Courses will be loaded here -->
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Đang tải...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">Lịch sử học tập</h4>
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-              <tr>
-                <th>Khóa học</th>
-                <th>Điểm</th>
-                <th>Tiến độ</th>
-                <th>Trạng thái</th>
-              </tr>
-              </thead>
-              <tbody id="learning-history">
-              <!-- Learning history will be loaded here -->
-              <tr>
-                <td colspan="4" class="text-center">Đang tải...</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Lịch sử học tập</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Khóa học</th>
+                                <th>Điểm</th>
+                                <th>Tiến độ</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                            </thead>
+                            <tbody id="learning-history">
+                            <!-- Learning history will be loaded here -->
+                            <tr>
+                                <td colspan="4" class="text-center">Đang tải...</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Security Tab -->
-    <div class="tab-pane fade" id="security" role="tabpanel">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title mb-4">Thay đổi mật khẩu</h4>
-          <form id="change-password-form">
-            <div class="mb-3">
-              <label for="current-password" class="form-label">Mật khẩu hiện tại</label>
-              <input type="password" class="form-control" id="current-password" placeholder="Mật khẩu hiện tại">
+        <!-- Security Tab -->
+        <div class="tab-pane fade" id="security" role="tabpanel">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Thay đổi mật khẩu</h4>
+                    <form id="change-password-form">
+                        <div class="mb-3">
+                            <label for="current-password" class="form-label">Mật khẩu hiện tại</label>
+                            <input type="password" class="form-control" id="current-password"
+                                   placeholder="Mật khẩu hiện tại">
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-password" class="form-label">Mật khẩu mới</label>
+                            <input type="password" class="form-control" id="new-password" placeholder="Mật khẩu mới">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm-password" class="form-label">Xác nhận mật khẩu mới</label>
+                            <input type="password" class="form-control" id="confirm-password"
+                                   placeholder="Xác nhận mật khẩu mới">
+                        </div>
+                        <div class="text-start">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-key me-2"></i>Cập nhật mật khẩu
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="mb-3">
-              <label for="new-password" class="form-label">Mật khẩu mới</label>
-              <input type="password" class="form-control" id="new-password" placeholder="Mật khẩu mới">
-            </div>
-            <div class="mb-3">
-              <label for="confirm-password" class="form-label">Xác nhận mật khẩu mới</label>
-              <input type="password" class="form-control" id="confirm-password" placeholder="Xác nhận mật khẩu mới">
-            </div>
-            <div class="text-end">
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-key me-2"></i>Cập nhật mật khẩu
-              </button>
-            </div>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <!-- Bootstrap & JS -->

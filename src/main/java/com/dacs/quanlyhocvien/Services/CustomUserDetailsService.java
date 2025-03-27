@@ -37,12 +37,10 @@ public class CustomUserDetailsService implements UserDetailsService {
             return Collections.emptyList();
             // Hoặc: return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
         }
-
         String roleName = role.getRoleName();
         if (roleName == null || roleName.isEmpty()) {
             return Collections.emptyList();
         }
-
         // Thêm tiền tố ROLE_ nếu chưa có
         String formattedRole = roleName.startsWith("ROLE_") ? roleName.toUpperCase() : "ROLE_" + roleName.toUpperCase();
 
