@@ -1,0 +1,200 @@
+/* Overwrite các style mặc định cho dark mode */
+body {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #242424 !important;
+    border-right: 1px solid #404040 !important;
+}
+
+.sidebar .nav-link {
+    color: #e0e0e0 !important;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #323232 !important;
+    color: #ffffff !important;
+}
+
+.sidebar .nav-link.active {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+}
+
+/* Header */
+.navbar {
+    background-color: #242424 !important;
+    border-bottom: 1px solid #404040 !important;
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: #e0e0e0 !important;
+}
+
+/* Tables */
+.table {
+    background-color: #242424 !important;
+    color: #e0e0e0 !important;
+}
+
+.table thead th {
+    background-color: #323232 !important;
+    color: #ffffff !important;
+    border-color: #404040 !important;
+}
+
+.table tbody tr {
+    border-color: #404040 !important;
+}
+
+.table tbody tr:hover {
+    background-color: #323232 !important;
+    color: #ffffff !important;
+}
+
+.table td, .table th {
+    border-color: #404040 !important;
+}
+
+/* Cards */
+.card {
+    background-color: #242424 !important;
+    border-color: #404040 !important;
+}
+
+.card-header {
+    background-color: #323232 !important;
+    border-bottom-color: #404040 !important;
+    color: #ffffff !important;
+}
+
+.card-body {
+    color: #e0e0e0 !important;
+}
+
+/* Form elements */
+.form-control, .form-select {
+    background-color: #323232 !important;
+    border-color: #404040 !important;
+    color: #e0e0e0 !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #323232 !important;
+    border-color: #0d6efd !important;
+    color: #ffffff !important;
+}
+
+/* Buttons */
+.btn-light {
+    background-color: #323232 !important;
+    border-color: #404040 !important;
+    color: #e0e0e0 !important;
+}
+
+.btn-light:hover {
+    background-color: #404040 !important;
+    color: #ffffff !important;
+}
+
+/* Dropdowns */
+.dropdown-menu {
+    background-color: #242424 !important;
+    border-color: #404040 !important;
+}
+
+.dropdown-item {
+    color: #e0e0e0 !important;
+}
+
+.dropdown-item:hover {
+    background-color: #323232 !important;
+    color: #ffffff !important;
+}
+
+/* Modal */
+.modal-content {
+    background-color: #242424 !important;
+    border-color: #404040 !important;
+}
+
+.modal-header {
+    background-color: #323232 !important;
+    border-bottom-color: #404040 !important;
+}
+
+.modal-footer {
+    border-top-color: #404040 !important;
+}
+
+/* Pagination */
+.pagination .page-link {
+    background-color: #323232 !important;
+    border-color: #404040 !important;
+    color: #e0e0e0 !important;
+}
+
+.pagination .page-link:hover {
+    background-color: #404040 !important;
+    color: #ffffff !important;
+}
+
+.pagination .active .page-link {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+    color: #ffffff !important;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background-color: #242424 !important;
+    border-color: #404040 !important;
+}
+
+.breadcrumb-item a {
+    color: #e0e0e0 !important;
+}
+
+.breadcrumb-item.active {
+    color: #ffffff !important;
+}
+
+/* List groups */
+.list-group-item {
+    background-color: #242424 !important;
+    border-color: #404040 !important;
+    color: #e0e0e0 !important;
+}
+
+/* Badges */
+.badge {
+    background-color: #323232 !important;
+}
+
+/* Status indicators */
+.text-success { color: #28a745 !important; }
+.text-danger { color: #dc3545 !important; }
+.text-warning { color: #ffc107 !important; }
+.text-info { color: #17a2b8 !important; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #242424;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #404040;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555555;
+}

@@ -11,8 +11,7 @@ public class TeacherModel {
     @Column(name = "teacher_id")
     private Long teacherId;
 
-    @OneToOne
-    @MapsId
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "teacher_id", nullable = false)
     private AccountModel account;
 

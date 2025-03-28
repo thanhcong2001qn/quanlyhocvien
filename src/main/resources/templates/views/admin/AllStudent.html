@@ -3,235 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Student</title>
+    <title>All Students</title>
     <link rel="stylesheet" th:href="@{/css/admin/header.css}">
     <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
     <link rel="stylesheet" th:href="@{/css/admin/body.css}">
     <link rel="stylesheet" th:href="@{/css/admin/AllStudent.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/common.css}">
 </head>
 <body>
+
 <div th:replace="~{/fragments/admin/header :: header}"></div>
 <div th:replace="~{/fragments/admin/menu :: menu}"></div>
+<div th:replace="~{/fragments/common/confirm-popup}"></div>
 
-<!--body-->
+<!-- Body -->
 <div class="content-wrapper">
     <div class="container">
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="breadcrumbs-area mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0 page-title">Quản Lý Sinh Viên</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a th:href="@{/admin}">Trang chủ</a></li>
-                            <li class="breadcrumb-item active">Quản lý sinh viên</li>
-                        </ol>
-                    </div>
+        <!-- Breadcrumb -->
+        <div class="breadcrumbs-area">
+            <div class="row">
+                <div class="col-12 mb-2">
+                    <h1 class="page-title">Quản Lý Sinh Viên</h1>
+                </div>
+                <div class="col-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/admin}">Trang chủ</a></li>
+                        <li class="breadcrumb-item active">Quản lý sinh viên</li>
+                    </ol>
                 </div>
             </div>
         </div>
 
-        <!-- Main content -->
-        <div class="content">
-            <div class="container-fluid">
-                <!-- Khu vực Tìm kiếm -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h3 class="card-title">Tìm kiếm sinh viên</h3>
+        <!-- Search Card -->
+        <div class="card search-card">
+            <div class="card-body">
+                <form th:action="@{/students/search}" method="get" class="search-form">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label class="form-label">Tìm kiếm theo tên</label>
+                            <input type="text" class="form-control" name="name" th:value="${param.name}"
+                                   placeholder="Nhập tên sinh viên...">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Tìm kiếm theo lớp</label>
+                            <input type="text" class="form-control" name="class" th:value="${param.class}"
+                                   placeholder="Nhập tên lớp...">
+                        </div>
+                        <div class="col-md-2 d-flex">
+                            <button type="button" class="btn btn-outline-secondary clear-search w-100">
+                                <i class="fas fa-times"></i> Xóa bộ lọc
+                            </button>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form th:action="@{/students/search}" method="get" class="row g-3">
-                            <div class="col-md-5">
-                                <label for="nameSearch" class="form-label">Tìm kiếm theo tên</label>
-                                <input type="text" class="form-control" id="nameSearch" name="name"
-                                       th:value="${param.name}" placeholder="Nhập tên sinh viên...">
-                            </div>
-
-                            <div class="col-md-5">
-                                <label for="classSearch" class="form-label">Tìm kiếm theo lớp</label>
-                                <input type="text" class="form-control" id="classSearch" name="class"
-                                       th:value="${param.class}" placeholder="Nhập tên lớp...">
-                            </div>
-
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-search"></i> Tìm kiếm
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Khu vực Bảng Sinh viên -->
-                    <div class="card-header card-header2">
-                        <h3 class="card-title">Danh sách sinh viên</h3>
-<!--                        <div class="card-tools">-->
-<!--                            <a th:href="@{/add-student}" class="btn btn-sm btn-success">-->
-<!--                                <i class="fas fa-plus"></i> Thêm mới-->
-<!--                            </a>-->
-<!--                        </div>-->
-                    </div>
-                    <div class="card-body table-responsive p-0">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th scope="col" th:data-sort="id">
-                                    #ID
-                                </th>
-                                <th scope="col" th:data-sort="name">
-                                    Họ và tên
-                                    <span class="sort-icon">
-                                        <i class="fas fa-sort"></i>
-                                    </span>
-                                </th>
-                                <th scope="col" th:data-sort="gender">
-                                    Giới tính
-                                    <span class="sort-icon">
-                                        <i class="fas fa-sort"></i>
-                                    </span>
-                                </th>
-                                <th scope="col" th:data-sort="class">
-                                    Lớp
-                                    <span class="sort-icon">
-                                        <i class="fas fa-sort"></i>
-                                    </span>
-                                </th>
-                                <th scope="col" th:data-sort="birthDate">
-                                    Ngày sinh
-                                    <span class="sort-icon">
-                                        <i class="fas fa-sort"></i>
-                                    </span>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="student : ${students}">
-                                <td th:text="${student.id}"></td>
-                                <td th:text="${student.fullName}"></td>
-                                <td th:text="${student.gender}"></td>
-                                <td th:text="fafawfa"></td>
-                                <td th:text="${#temporals.format(student.dateOfBirth, 'dd/MM/yyyy')}"></td>
-                                <td th:text="${student.address}"></td>
-                                <td th:text="${student.phoneNumber}"></td>
-                                <td>
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <!--                                    <a th:href="@{/studentDetail}" class="btn btn-info">-->
-                                        <!--                                        <i class="fas fa-eye"></i>-->
-                                        <!--                                    </a>-->
-                                        <button class="btn btn-info edit-student" th:data-id="${student.id}">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-danger delete-student" th:data-id="${student.id}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- Thông báo nếu không có sinh viên -->
-                            <tr th:if="${#lists.isEmpty(students)}">
-                                <td colspan="7" class="text-center">Không tìm thấy sinh viên nào</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer">
-                        <!-- Phân trang -->
-                        <nav aria-label="Pagination" th:if="${totalPages > 1}">
-                            <ul class="pagination justify-content-center m-0">
-                                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                    <a class="page-link"
-                                       th:href="@{${'/students'}(page=${currentPage - 1}, size=${pageSize}, sort=${sort})}"
-                                       aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
-                                    th:classappend="${pageNumber == currentPage} ? 'active'">
-                                    <a class="page-link" th:text="${pageNumber}"
-                                       th:href="@{${'/students'}(page=${pageNumber}, size=${pageSize}, sort=${sort})}"></a>
-                                </li>
-                                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                    <a class="page-link"
-                                       th:href="@{${'/students'}(page=${currentPage + 1}, size=${pageSize}, sort=${sort})}"
-                                       aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
-    </div>
-    <div id="popup" class="popup popup-notification" style="display: none;">
-        <div class="popup-content">
-            <p id="message-popup-notification"></p>
-            <button id="closePopupButton">Đóng</button>
-        </div>
-    </div>
-    <div id="popup-select" class="popup popup-select" style="display: none;">
-        <div class="popup-content" >
-            <p id="message-popup-select"></p>
-            <div class="popup-select-button">
-                <button id="yesPopupButton" class="yesNoButton">Có</button>
-                <button id="noPopupButton" class="yesNoButton">Không</button>
+
+        <!-- Table Card -->
+        <div class="card table-card">
+            <div class="card-header">
+                <h5 class="card-title">Danh sách sinh viên</h5>
+                <div class="card-tools">
+                    <a th:href="@{/add-student}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Thêm mới
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Họ và tên <i class="fas fa-sort sort-icon"></i></th>
+                            <th>Giới tính <i class="fas fa-sort sort-icon"></i></th>
+                            <th>Lớp <i class="fas fa-sort sort-icon"></i></th>
+                            <th>Ngày sinh <i class="fas fa-sort sort-icon"></i></th>
+                            <th>Địa chỉ</th>
+                            <th>Số điện thoại</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="student : ${students}">
+                            <td th:text="${student.id}"></td>
+                            <td th:text="${student.fullName}"></td>
+                            <td>
+                                <span class="gender-badge"
+                                      th:classappend="${student.gender == 'Nam' ? 'male' : 'female'}"
+                                      th:text="${student.gender}">
+                                </span>
+                            </td>
+                            <td th:text="${student.class}"></td>
+                            <td th:text="${#temporals.format(student.dateOfBirth, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${student.address}"></td>
+                            <td th:text="${student.phoneNumber}"></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-icon btn-edit" th:data-id="${student.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-icon btn-delete" th:data-id="${student.id}">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(students)}">
+                            <td colspan="8" class="text-center">Không tìm thấy sinh viên nào</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <nav aria-label="Pagination" th:if="${totalPages > 1}">
+                    <ul class="pagination justify-content-center m-0">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{${'/students'}(page=${currentPage - 1}, size=${pageSize}, sort=${sort})}">&laquo;</a>
+                        </li>
+                        <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
+                            th:classappend="${pageNumber == currentPage} ? 'active'">
+                            <a class="page-link" th:text="${pageNumber}"
+                               th:href="@{${'/students'}(page=${pageNumber}, size=${pageSize}, sort=${sort})}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                            <a class="page-link" th:href="@{${'/students'}(page=${currentPage + 1}, size=${pageSize}, sort=${sort})}">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
 </div>
-<!--body-->
-<!-- Xử lý sắp xếp cho các cột -->
-<script>
-    async function fetchStudents() {
-        try {
-            const response = await fetch('/students'); // URL tương ứng với API của bạn
-            if (!response.ok) throw new Error('Network response was not ok');
-            const students = await response.json(); // Gán dữ liệu trả về cho biến
-        } catch (error) {
-            console.error('Có lỗi khi lấy dữ liệu:', error);
-        }
-    }
 
+<!-- Scripts -->
+<script th:src="@{/js/admin/menu.js}"></script>
+<script th:src="@{/js/admin/header.js}"></script>
+<script th:src="@{/js/admin/body.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/common/popup.js}"></script>
+
+<!-- Delete and Edit functionality -->
+<script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Lắng nghe sự kiện click trên các nút xoá
-        document.querySelectorAll('.delete-student').forEach(button => {
+        // Delete student
+        document.querySelectorAll('.btn-delete').forEach(button => {
             button.addEventListener('click', function () {
                 const studentId = this.getAttribute('data-id');
-                // Hiển thị hộp thoại xác nhận
-                showPopupSelect('Bạn có chắc muốn xóa sinh viên này?').then(result => {
-                    if (result) {
-                        // Gửi yêu cầu xoá đến server bằng fetch API
-                        fetch('/student/deleteStudent/' + studentId, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                // Thêm CSRF token nếu bạn sử dụng Spring Security
-                                // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+                showConfirmPopup('Bạn có chắc muốn xóa sinh viên này?', function () {
+                    fetch('/student/deleteStudent/' + studentId, { method: 'DELETE' })
+                        .then(response => response.text())
+                        .then(message => {
+                            console.log("✅ Xóa thành công:", message);
+                            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('confirmPopup'));
+                            if (confirmModal) {
+                                confirmModal.hide();
                             }
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
                         })
-                            .then(response => {
-                                if (response.ok) {
-                                    // Xoá hàng trong bảng nếu thành công
-                                    const row = this.closest('tr');
-                                    row.parentNode.removeChild(row);
-                                    showPopupNotification('Xoá sinh viên thành công!');
-                                } else {
-                                    showPopupNotification('Đã xảy ra lỗi khi xoá sinh viên.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Lỗi:', error);
-                                showPopupNotification('Đã xảy ra lỗi khi xoá sinh viên.');
-                            });
-                    }
+                        .catch(error => {
+                            console.error('❌ Lỗi khi xoá sinh viên:', error);
+                            alert('Đã xảy ra lỗi khi xoá sinh viên.');
+                        });
                 });
             });
         });
-        document.querySelectorAll('.edit-student').forEach(button => {
+
+        // Edit student
+        document.querySelectorAll('.btn-edit').forEach(button => {
             button.addEventListener('click', function () {
                 const studentId = this.getAttribute('data-id');
                 window.location.href = '/studentDetail/' + studentId;
@@ -239,8 +183,5 @@
         });
     });
 </script>
-<script th:src="@{js/admin/menu.js}"></script>
-<script th:src="@{js/admin/header.js}"></script>
-<script th:src="@{js/admin/body.js}"></script>
 </body>
 </html>

@@ -7,10 +7,9 @@
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f5f7fa;
-    color: #333;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
 }
-
 
 /* Header styles */
 .admin-header {
@@ -19,42 +18,40 @@ body {
     align-items: center;
     padding: 0 1.5rem;
     height: 70px;
-    background: #fff;
+    background: #242424;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     position: fixed;
     top: 0;
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid #333;
     z-index: 1000;
-    transition: all 0.3s ease; /* Thêm transition */
+    transition: all 0.3s ease;
 }
 
 body.sidebar-collapsed .admin-header {
     width: calc(100% - 70px);
     margin-left: 70px;
 }
+
 @media (min-width: 992px) {
     .admin-header {
         width: calc(100% - 250px);
         margin-left: 250px
-
     }
 }
+
 @media (max-width: 991px) {
     .admin-header {
         width: 100%;
         margin-left: 0;
     }
 
-    /* Để xử lý sidebar khi màn hình nhỏ - giả sử có class .sidebar-collapsed */
     .sidebar-collapsed .admin-header {
         width: 100%;
         margin-left: 0;
     }
 }
 
-
 /* Logo section */
-
 .header-logo {
     display: flex;
     align-items: center;
@@ -66,7 +63,7 @@ body.sidebar-collapsed .admin-header {
 }
 
 .header-logo h2 {
-    color: #1A4B7C;
+    color: #7BDCB5;
     font-size: 1.3rem;
     font-weight: 600;
 }
@@ -82,7 +79,7 @@ body.sidebar-collapsed .admin-header {
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: #1A4B7C;
+    color: #7BDCB5;
     cursor: pointer;
 }
 
@@ -95,18 +92,19 @@ body.sidebar-collapsed .admin-header {
 .header-search input {
     width: 100%;
     padding: 10px 40px 10px 15px;
-    border: 1px solid #e1e5eb;
+    border: 1px solid #404040;
     border-radius: 20px;
-    background-color: #f5f7fa;
+    background-color: #333;
     outline: none;
     font-size: 0.9rem;
     transition: all 0.3s;
+    color: #e0e0e0;
 }
 
 .header-search input:focus {
     border-color: #7BDCB5;
     box-shadow: 0 0 0 3px rgba(123, 220, 181, 0.2);
-    background-color: #fff;
+    background-color: #404040;
 }
 
 .header-search button {
@@ -116,14 +114,14 @@ body.sidebar-collapsed .admin-header {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #667780;
+    color: #7BDCB5;
     cursor: pointer;
     font-size: 0.9rem;
     transition: color 0.2s;
 }
 
 .header-search button:hover {
-    color: #1A4B7C;
+    color: #8ee6c1;
 }
 
 /* Actions section */
@@ -144,7 +142,7 @@ body.sidebar-collapsed .admin-header {
     height: 40px;
     width: 40px;
     border-radius: 50%;
-    color: #667780;
+    color: #e0e0e0;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
@@ -153,8 +151,8 @@ body.sidebar-collapsed .admin-header {
 }
 
 .notification-btn:hover {
-    background-color: #f5f7fa;
-    color: #1A4B7C;
+    background-color: #333;
+    color: #7BDCB5;
 }
 
 .notification-badge {
@@ -178,13 +176,14 @@ body.sidebar-collapsed .admin-header {
     top: 50px;
     right: -5px;
     width: 320px;
-    background: white;
+    background: #242424;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.15);
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
     transition: all 0.2s;
+    border: 1px solid #333;
 }
 
 .header-notification.active .notification-dropdown {
@@ -195,7 +194,7 @@ body.sidebar-collapsed .admin-header {
 
 .notification-header {
     padding: 15px;
-    border-bottom: 1px solid #e1e5eb;
+    border-bottom: 1px solid #333;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -203,7 +202,7 @@ body.sidebar-collapsed .admin-header {
 
 .notification-header h4 {
     font-size: 0.9rem;
-    color: #5a6169;
+    color: #e0e0e0;
 }
 
 .notification-header a {
@@ -214,7 +213,7 @@ body.sidebar-collapsed .admin-header {
 }
 
 .notification-header a:hover {
-    color: #1A4B7C;
+    color: #8ee6c1;
 }
 
 .notification-list {
@@ -224,7 +223,7 @@ body.sidebar-collapsed .admin-header {
 
 .notification-item {
     padding: 12px 15px;
-    border-bottom: 1px solid #f5f7fa;
+    border-bottom: 1px solid #333;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -233,14 +232,14 @@ body.sidebar-collapsed .admin-header {
 }
 
 .notification-item:hover {
-    background-color: #f5f7fa;
+    background-color: #333;
 }
 
 .notification-item-icon {
     height: 36px;
     width: 36px;
     border-radius: 50%;
-    background-color: rgba(123, 220, 181, 0.2);
+    background-color: rgba(123, 220, 181, 0.1);
     color: #7BDCB5;
     display: flex;
     align-items: center;
@@ -254,17 +253,18 @@ body.sidebar-collapsed .admin-header {
 .notification-item-content p {
     font-size: 0.85rem;
     margin-bottom: 3px;
+    color: #e0e0e0;
 }
 
 .notification-item-content small {
-    color: #949ca5;
+    color: #888;
     font-size: 0.75rem;
 }
 
 .notification-footer {
     padding: 12px;
     text-align: center;
-    border-top: 1px solid #e1e5eb;
+    border-top: 1px solid #333;
 }
 
 .notification-footer a {
@@ -275,7 +275,7 @@ body.sidebar-collapsed .admin-header {
 }
 
 .notification-footer a:hover {
-    color: #1A4B7C;
+    color: #8ee6c1;
 }
 
 /* User profile */
@@ -295,7 +295,7 @@ body.sidebar-collapsed .admin-header {
 }
 
 .profile-btn:hover .profile-name {
-    color: #1A4B7C;
+    color: #7BDCB5;
 }
 
 .profile-avatar {
@@ -303,7 +303,7 @@ body.sidebar-collapsed .admin-header {
     width: 40px;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid #e1e5eb;
+    border: 2px solid #404040;
 }
 
 .profile-avatar img {
@@ -320,13 +320,13 @@ body.sidebar-collapsed .admin-header {
 .profile-name {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #333;
+    color: #e0e0e0;
     transition: color 0.2s;
 }
 
 .profile-role {
     font-size: 0.75rem;
-    color: #949ca5;
+    color: #888;
 }
 
 .profile-dropdown {
@@ -334,13 +334,14 @@ body.sidebar-collapsed .admin-header {
     top: 50px;
     right: 0;
     width: 220px;
-    background: white;
+    background: #242424;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.15);
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
     transition: all 0.2s;
+    border: 1px solid #333;
 }
 
 .header-profile.active .profile-dropdown {
@@ -352,7 +353,7 @@ body.sidebar-collapsed .admin-header {
 .profile-dropdown-header {
     padding: 15px;
     text-align: center;
-    border-bottom: 1px solid #e1e5eb;
+    border-bottom: 1px solid #333;
 }
 
 .profile-dropdown-header .profile-avatar {
@@ -376,14 +377,14 @@ body.sidebar-collapsed .admin-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #5a6169;
+    color: #e0e0e0;
     text-decoration: none;
     transition: all 0.2s;
 }
 
 .profile-dropdown-item:hover {
-    background-color: #f5f7fa;
-    color: #1A4B7C;
+    background-color: #333;
+    color: #7BDCB5;
 }
 
 .profile-dropdown-item i {
@@ -394,7 +395,7 @@ body.sidebar-collapsed .admin-header {
 
 .profile-dropdown-footer {
     padding: 10px 20px;
-    border-top: 1px solid #e1e5eb;
+    border-top: 1px solid #333;
 }
 
 .logout-btn {
@@ -414,10 +415,10 @@ body.sidebar-collapsed .admin-header {
 }
 
 .logout-btn:hover {
-    color: #e74c3c;
+    color: #ff8585;
 }
 
-/* For larger screens, show profile info */
+/* For larger screens */
 @media (min-width: 768px) {
     .profile-info {
         display: block;
@@ -449,7 +450,7 @@ body.sidebar-collapsed .admin-header {
     }
 }
 
-/* Content spacer to prevent header overlap */
+/* Content spacer */
 .content-spacer {
     height: 70px;
 }
@@ -464,6 +465,7 @@ body.sidebar-collapsed .admin-header {
     margin-left: 250px;
     padding: 20px;
     transition: width 0.3s ease, margin-left 0.3s ease;
+    background-color: #1a1a1a;
 }
 
 body.sidebar-collapsed .main-content {
@@ -477,3 +479,24 @@ body.sidebar-collapsed .main-content {
         margin-left: 0;
     }
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #242424;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #404040;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #505050;
+}
+
+

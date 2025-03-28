@@ -13,7 +13,7 @@
     --sidebar-width: 250px;
 }
 
-/* Content Wrapper */
+/* Content Wrapper - Cập nhật */
 .content-wrapper {
     margin-left: var(--sidebar-width);
     padding-top: calc(var(--header-height) + 0.5rem);
@@ -21,15 +21,40 @@
     min-height: 100vh;
     background-color: var(--background-color);
     transition: all 0.3s ease;
+    position: relative;
 }
 
-/* Container adjustments */
-.container {
-    width: calc(100% - 2rem);
-    max-width: 98%;
-    margin: 0 auto;
-    padding: 0.5rem;
+/* Thêm class mới cho trạng thái collapsed */
+body.sidebar-collapsed .content-wrapper {
+     margin-left: 70px; /* Chiều rộng của sidebar khi collapse */
+     width: calc(100% - 70px); /* Tính toán lại width */
 }
+
+/* Container adjustment */
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .content-wrapper,
+    body.sidebar-collapsed .content-wrapper {
+        margin-left: 0;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .container {
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+}
+
+
 
 /* Page Header */
 .content-header {

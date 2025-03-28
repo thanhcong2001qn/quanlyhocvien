@@ -9,7 +9,7 @@ public class TeacherRequestDTO {
     private MultipartFile file;
 
     public TeacherRequestDTO() {
-        this.teacher = new TeacherModel(); // Tạo teacher mặc định để tránh null
+        this.teacher = new TeacherModel();
         this.teacher.setAccount(new AccountModel());
     }
 
