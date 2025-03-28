@@ -7,19 +7,8 @@ import com.dacs.quanlyhocvien.Repository.IAccountRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import com.dacs.quanlyhocvien.Repository.IAccountRepository;
-import com.dacs.quanlyhocvien.models.AccountModel;
-import org.springframework.stereotype.Service;
+
 @Service
 public class AccountService{
     private final IAccountRepository accountRepository;
@@ -51,6 +40,10 @@ public class AccountService{
     }
     public AccountModel getAccountByUsername(String username) {
         return accountRepository.findByUsername(username);
+    }
+    public List<AccountModel> searchAccounts(String keyword, Integer role, Boolean status) {
+        // Logic tìm kiếm tài khoản
+        return accountRepository.findAccountsByCriteria(keyword, role, status);
     }
 }
 

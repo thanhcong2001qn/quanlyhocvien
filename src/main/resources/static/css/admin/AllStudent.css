@@ -34,6 +34,7 @@
     padding: 1rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
+    transition: all 0.3s ease;
 }
 
 /* Page Header */
@@ -79,7 +80,7 @@
     border-radius: 12px;
     border: none;
     box-shadow: var(--card-shadow);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     overflow: hidden;
 }
 
