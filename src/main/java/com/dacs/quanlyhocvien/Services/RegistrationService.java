@@ -5,10 +5,7 @@ import com.dacs.quanlyhocvien.Repository.IAccountRepository;
 import com.dacs.quanlyhocvien.Repository.IRoleRepository;
 import com.dacs.quanlyhocvien.Repository.IStudentRepository;
 import com.dacs.quanlyhocvien.Repository.IVerificationTokenRepository;
-import com.dacs.quanlyhocvien.models.AccountModel;
-import com.dacs.quanlyhocvien.models.RoleModel;
-import com.dacs.quanlyhocvien.models.StudentModel;
-import com.dacs.quanlyhocvien.models.VerificationToken;
+import com.dacs.quanlyhocvien.models.*;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,6 +35,8 @@ public class RegistrationService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private AdminService adminService;
 
     @Transactional
     public void registerStudent(RegisterRequest registerRequest) {
@@ -56,6 +55,9 @@ public class RegistrationService {
         account.setRole(roleRepository.findByRoleName("STUDENT"));
         accountService.save(account);
 
+//        AdminModel admin = new AdminModel();
+//        admin.setAccount(account);
+//        adminService.saveAdmin(admin);
         // Thiết lập mối quan hệ và lưu student
         StudentModel student = new StudentModel();
         student.setAccount(account);

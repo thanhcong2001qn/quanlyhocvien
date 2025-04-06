@@ -1,0 +1,65 @@
+:root {
+    /* Theme Colors */
+    --primary-color: #7BDCB5;
+    --secondary-color: #FFC466;
+    --success-color: #2ecc71;
+    --danger-color: #FF6B6B;
+    --warning-color: #f1c40f;
+    --info-color: #3498db;
+
+    /* Light Theme (Default) */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #f1f3f9;
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --text-muted: #95a5a6;
+    --border-color: #e0e0e0;
+    --card-bg: #ffffff;
+    --header-bg: #ffffff;
+    --sidebar-bg: #ffffff;
+    --card-shadow: 0 0 20px rgba(0,0,0,0.1);
+
+    /* Input & Form */
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --input-color: #495057;
+    --input-focus-border: #7BDCB5;
+
+    /* Table */
+    --table-header-bg: #f8f9fa;
+    --table-hover-bg: #f5f5f5;
+
+    /* Chart Colors */
+    --chart-grid: #e0e0e0;
+    --chart-text: #2c3e50;
+}
+
+[data-theme="dark"] {
+    /* Dark Theme Colors */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #242424;
+    --bg-tertiary: #2d2d2d;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --text-muted: #718096;
+    --border-color: #333333;
+    --card-bg: #242424;
+    --header-bg: #242424;
+    --sidebar-bg: #242424;
+    --card-shadow: 0 0 20px rgba(0,0,0,0.2);
+
+    /* Input & Form */
+    --input-bg: #333333;
+    --input-border: #404040;
+    --input-color: #e0e0e0;
+    --input-focus-border: #7BDCB5;
+
+    /* Table */
+    --table-header-bg: #333333;
+    --table-hover-bg: #2d2d2d;
+
+    /* Chart Colors */
+    --chart-grid: #333333;
+    --chart-text: #e0e0e0;
+}

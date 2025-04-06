@@ -29,11 +29,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // URLs công khai
                         .requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**","/api/login","/api/register","/forgot-password","/verify-account","/user/profile",
-                                "/api/resend-verification-email","/**").permitAll()
+                                "/api/resend-verification-email","/dashboard","/**").permitAll()
 //                        .requestMatchers("/home").authenticated()
 //                        .requestMatchers("/api/home-data", "/api/verify-token").authenticated()
                         // URLs chỉ dành cho ADMIN
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**","/**").hasRole("ADMIN")
                         // URLs chỉ dành cho TEACHER
                         .requestMatchers("/teacher/**").hasRole("TEACHER")
                         // URLs dành cho STUDENT (có thể xóa /home ở đây nếu nó đã là URL công khai)

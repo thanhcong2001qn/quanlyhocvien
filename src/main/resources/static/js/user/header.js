@@ -21,7 +21,7 @@ searchBtn.addEventListener('click', function (e) {
 document.addEventListener('DOMContentLoaded', function () {
     updateAuthUI();
     updateUtcTime();
-
+    active();
     // Cập nhật thời gian UTC mỗi phút
     setInterval(updateUtcTime, 60000);
 
@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
             updateAuthUI();
         }
     });
+
 });
 
 function updateAuthUI() {
@@ -118,5 +119,17 @@ function logout() {
         //console.log(`Đăng xuất thành công lúc: ${formatUTCDateTime(now)}`);
     }, function () {
         // Không làm gì cả
+    });
+}
+function active(){
+    const navLinks = document.querySelectorAll('.nav-link-header');
+    const currentPath = window.location.pathname;
+    navLinks.forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (linkPath === currentPath) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
     });
 }

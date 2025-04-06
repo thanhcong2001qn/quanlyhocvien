@@ -4,7 +4,9 @@ import com.dacs.quanlyhocvien.Repository.ITeacherRepository;
 import com.dacs.quanlyhocvien.models.TeacherModel;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.Repository.IAccountRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -15,12 +17,14 @@ public class TeacherService {
     private final ITeacherRepository teacherRepository;
     private final IAccountRepository accountRepository;
     private final FileStorageService fileStorageService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public TeacherService(ITeacherRepository teacherRepository, IAccountRepository accountRepository, FileStorageService fileStorageService) {
+    public TeacherService(ITeacherRepository teacherRepository, IAccountRepository accountRepository, FileStorageService fileStorageService, PasswordEncoder passwordEncoder) {
         this.teacherRepository = teacherRepository;
         this.accountRepository = accountRepository;
         this.fileStorageService = fileStorageService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public TeacherModel addTeacher(TeacherModel teacher, MultipartFile file) {
@@ -34,17 +38,16 @@ public class TeacherService {
         if (existingAccount != null) {
             throw new IllegalArgumentException("Email đã tồn tại, không thể thêm giáo viên mới!");
         }else{
-
         // Nếu có file ảnh, lưu ảnh
             if (file != null && !file.isEmpty()) {
                 account.setAvatarPath(fileStorageService.storeFile(file, account.getEmail()));
             }
-            account.setPassword("1234"); // Gán password mặc định
+            account.setPassword(passwordEncoder.encode("1234")); // Gán password mặc định
             account = accountRepository.save(account); // Lưu tài khoản trước
         }
-
-        teacher.setAccount(account); // Gán account đã lưu vào teacher
-        return teacherRepository.save(teacher);
+        TeacherModel teacherModel = new TeacherModel();
+        teacherModel.setAccount(account); // Gán account đã lưu vào teacher
+        return teacherRepository.save(teacherModel);
     }
 
     public TeacherModel updateTeacher(TeacherModel teacher) {
@@ -78,14 +81,8 @@ public class TeacherService {
         return teacherRepository.save(updatedTeacher);
     }
 
-
-
-    //    public List<TeacherModel> getAllTeachers(){
-//        return teacherRepository.findAll();
-//    }
     public List<TeacherModel> getAllTeachers(){
         List<TeacherModel> teachers = teacherRepository.findAll();
-        //System.out.println("📌 Dữ liệu lấy từ database: " + teachers); // Debug
         return teachers;
     }
 
@@ -93,7 +90,16 @@ public class TeacherService {
         return teacherRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public void deleteTeacher(Long id){
         teacherRepository.deleteById(id);
+    }
+
+    public List<TeacherModel> searchTeachers(String name, String subject) {
+        if ((name == null || name.trim().isEmpty()) &&
+                (subject == null || subject.trim().isEmpty())) {
+            return teacherRepository.findAll();
+        }
+        return teacherRepository.searchTeachers(name, subject);
     }
 }

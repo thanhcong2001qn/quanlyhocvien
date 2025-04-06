@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+
+<body>
+
+<!-- Fragment bắt đầu -->
+<tbody>
+<tr th:each="account : ${accounts}">
+    <td th:text="${account.accountId}"></td>
+    <td th:text="${account.username}"></td>
+    <td th:text="${account.fullName}"></td>
+    <td th:text="${account.email}"></td>
+    <td>
+        <span class="role-badge"
+              th:classappend="${'role-' + account.role.roleId}"
+              th:text="${account.role.roleName}"></span>
+    </td>
+    <td>
+        <span class="status-badge"
+              th:classappend="${account.isActive ? 'status-active' : 'status-inactive'}"
+              th:text="${account.isActive ? 'Hoạt động' : 'Đã khóa'}"></span>
+    </td>
+    <td th:text="${#temporals.format(account.createdAt, 'dd/MM/yyyy')}"></td>
+    <td>
+        <div class="action-buttons">
+            <button class="btn btn-icon btn-edit" th:data-id="${account.accountId}">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-icon btn-delete" th:data-id="${account.accountId}">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+    </td>
+</tr>
+</tbody>
+
+</body>
+</html>

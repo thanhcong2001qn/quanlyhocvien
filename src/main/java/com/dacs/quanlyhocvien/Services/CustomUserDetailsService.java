@@ -43,7 +43,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         // Thêm tiền tố ROLE_ nếu chưa có
         String formattedRole = roleName.startsWith("ROLE_") ? roleName.toUpperCase() : "ROLE_" + roleName.toUpperCase();
-
         return Collections.singletonList(new SimpleGrantedAuthority(formattedRole));
     }
 }

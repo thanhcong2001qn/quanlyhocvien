@@ -1,0 +1,20 @@
+/* Nút Xóa Bộ Lọc - phiên bản tinh gọn và nhẹ */
+.clear-search {
+    font-weight: 500;
+    background-color: #6c757d; /* Xám mặc định */
+    border: none;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.clear-search:hover {
+    background-color: #8a939b; /* Màu xám nhạt hơn khi hover */
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.clear-search:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.4); /* focus nhẹ nhàng */
+}
