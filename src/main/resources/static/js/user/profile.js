@@ -189,7 +189,7 @@ function updatePersonalInfo() {
         personalInfo[key] !== initialValues[key]
     );
     if (!hasAnyValueChanged) {
-        showNotification('Không có thông tin nào thay đổi!');
+        showNotification('Không có thông tin nào thay đổi!','warning','warning');
         return;
     }
     fetchWithAuth('/api/user/update-profile', {
@@ -206,12 +206,14 @@ function updatePersonalInfo() {
             return response.json();
         })
         .then(data => {
-            showNotification('Cập nhật thông tin cá nhân thành công!');
-            window.location.reload();
+            showNotification('Cập nhật thông tin cá nhân thành công!', 'success', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            },1000);
         })
         .catch(error => {
             console.error('Error updating profile:', error);
-            showNotification('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.');
+            showNotification('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.','error','error');
         });
 }
 
@@ -221,7 +223,7 @@ function changePassword() {
     const confirmPassword = document.getElementById('confirm-password').value;
 
     if (newPassword !== confirmPassword) {
-        showNotification('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+        showNotification('Mật khẩu mới và xác nhận mật khẩu không khớp!','error','error');
         return;
     }
     const passwordata = {
@@ -239,14 +241,14 @@ function changePassword() {
             if (!response.ok) {
                 throw new Error('Failed to change password');
             }else{
-                showNotification('Đổi mật khẩu thành công!');
+                showNotification('Đổi mật khẩu thành công!', 'success', 'success');
                 document.getElementById('change-password-form').reset();
             }
 
         })
         .catch(error => {
             console.error('Error changing password:', error);
-            showNotification('Đã xảy ra lỗi khi đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.');
+            showNotification('Đã xảy ra lỗi khi đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.','error','error');
         });
 }
 
@@ -314,7 +316,7 @@ function resendEmail() {
             if (!response.ok) {
                 return response.text().then(errorMsg => {
                     if (errorMsg === "Token is still valid") {
-                        showNotification('Email đã được gửi, vui lòng kiểm tra hộp thư đến hoặc spam');
+                        showNotification('Email đã được gửi, vui lòng kiểm tra hộp thư đến hoặc spam','warning','warning');
                     }
                     throw new Error(errorMsg);
                 });
@@ -322,7 +324,7 @@ function resendEmail() {
             return response.json();
         })
         .then(() => {
-            showNotification('Đã gửi email xác thực!');
+            showNotification('Đã gửi email xác thực!', 'success', 'success');
         }).catch(error => {
         console.error('Login error:', error);
         // Error already displayed in previous error handlers

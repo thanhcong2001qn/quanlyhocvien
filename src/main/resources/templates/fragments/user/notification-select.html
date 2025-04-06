@@ -1,146 +1,146 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 </head>
 <body>
 <!-- Confirmation dialog fragment -->
 <div th:fragment="confirmation-dialog">
-  <!-- Modal container for confirmation dialog -->
-  <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0">
-        <div class="modal-header border-bottom-0 bg-light">
-          <h5 class="modal-title" id="confirmationModalTitle">Xác nhận</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Modal container for confirmation dialog -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header border-bottom-0 bg-light">
+                    <h5 class="modal-title" id="confirmationModalTitle">Xác nhận</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4 text-center" id="confirmationModalBody">
+                    Bạn có chắc chắn muốn thực hiện hành động này?
+                </div>
+                <div class="modal-footer border-top-0 bg-light">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="confirmationNoBtn">Không
+                    </button>
+                    <button type="button" class="btn btn-primary" id="confirmationYesBtn">Có</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body py-4 text-center" id="confirmationModalBody">
-          Bạn có chắc chắn muốn thực hiện hành động này?
-        </div>
-        <div class="modal-footer border-top-0 bg-light">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="confirmationNoBtn">Không</button>
-          <button type="button" class="btn btn-primary" id="confirmationYesBtn">Có</button>
-        </div>
-      </div>
     </div>
-  </div>
-
-  <style>
-    #confirmationModal .modal-content {
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-    }
-
-    #confirmationModal .modal-header {
-      border-radius: 8px 8px 0 0;
-    }
-
-    #confirmationModal .modal-footer {
-      border-radius: 0 0 8px 8px;
-    }
-
-    #confirmationYesBtn, #confirmationNoBtn {
-      min-width: 80px;
-      font-weight: 500;
-    }
-
-    #confirmationModal.warning .modal-header {
-      background-color: #fff3cd;
-      color: #856404;
-    }
-
-    #confirmationModal.danger .modal-header {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-
-    #confirmationModal.info .modal-header {
-      background-color: #d1ecf1;
-      color: #0c5460;
-    }
-  </style>
-
-  <script th:inline="javascript">
-    /**
-     * Shows a confirmation dialog with Yes/No options
-     * @param {string} message - The question or confirmation message
-     * @param {Function} yesCallback - Function to call when "Yes" is clicked
-     * @param {Function} noCallback - Optional function to call when "No" is clicked
-     * @param {string} title - Optional custom title (default: "Xác nhận")
-     * @param {string} type - Dialog type: 'default', 'warning', 'danger', 'info'
-     * @return {Object} - The modal instance
-     */
-    function showConfirmation(message, yesCallback, noCallback = null, title = "Xác nhận", type = 'default') {
-      // Get modal elements
-      const modal = document.getElementById('confirmationModal');
-      const modalTitle = document.getElementById('confirmationModalTitle');
-      const modalBody = document.getElementById('confirmationModalBody');
-      const yesBtn = document.getElementById('confirmationYesBtn');
-      const noBtn = document.getElementById('confirmationNoBtn');
-
-      // Reset modal class and add type if specified
-      modal.className = 'modal fade';
-      if (['warning', 'danger', 'info'].includes(type)) {
-        modal.classList.add(type);
-      }
-
-      // Set content
-      modalTitle.textContent = title;
-      modalBody.textContent = message;
-
-      // Create Bootstrap modal instance
-      const modalInstance = new bootstrap.Modal(modal);
-
-      // Set up event handlers
-      const handleYes = () => {
-        modalInstance.hide();
-        if (typeof yesCallback === 'function') {
-          yesCallback();
+    <style>
+        #confirmationModal .modal-content {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
-      };
 
-      const handleNo = () => {
-        modalInstance.hide();
-        if (typeof noCallback === 'function') {
-          noCallback();
+        #confirmationModal .modal-header {
+            border-radius: 8px 8px 0 0;
         }
-      };
 
-      // Remove existing event listeners to prevent duplicates
-      const newYesBtn = yesBtn.cloneNode(true);
-      const newNoBtn = noBtn.cloneNode(true);
+        #confirmationModal .modal-footer {
+            border-radius: 0 0 8px 8px;
+        }
 
-      yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
-      noBtn.parentNode.replaceChild(newNoBtn, noBtn);
+        #confirmationYesBtn, #confirmationNoBtn {
+            min-width: 80px;
+            font-weight: 500;
+        }
 
-      // Add new event listeners
-      newYesBtn.addEventListener('click', handleYes);
-      newNoBtn.addEventListener('click', handleNo);
-      modal.addEventListener('hidden.bs.modal', () => {
-        newYesBtn.removeEventListener('click', handleYes);
-        newNoBtn.removeEventListener('click', handleNo);
-      }, { once: true });
+        #confirmationModal.warning .modal-header {
+            background-color: #fff3cd;
+            color: #856404;
+        }
 
-      // Show the modal
-      modalInstance.show();
+        #confirmationModal.danger .modal-header {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
 
-      return modalInstance;
-    }
+        #confirmationModal.info .modal-header {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+    <script th:inline="javascript">
+        /**
+         * Shows a confirmation dialog with Yes/No options
+         * @param {string} message - The question or confirmation message
+         * @param {Function} yesCallback - Function to call when "Yes" is clicked
+         * @param {Function} noCallback - Optional function to call when "No" is clicked
+         * @param {string} title - Optional custom title (default: "Xác nhận")
+         * @param {string} type - Dialog type: 'default', 'warning', 'danger', 'info'
+         * @return {Object} - The modal instance
+         */
+        function showConfirmation(message, yesCallback, noCallback = null, title = "Xác nhận", type = 'default') {
+            // Get modal elements
+            const modal = document.getElementById('confirmationModal');
+            const modalTitle = document.getElementById('confirmationModalTitle');
+            const modalBody = document.getElementById('confirmationModalBody');
+            const yesBtn = document.getElementById('confirmationYesBtn');
+            const noBtn = document.getElementById('confirmationNoBtn');
 
-    /**
-     * Shorthand for a warning confirmation dialog
-     */
-    function confirmWarning(message, yesCallback, noCallback = null) {
-      return showConfirmation(message, yesCallback, noCallback, "Cảnh báo", "warning");
-    }
+            // Reset modal class and add type if specified
+            modal.className = 'modal fade';
+            if (['warning', 'danger', 'info'].includes(type)) {
+                modal.classList.add(type);
+            }
 
-    /**
-     * Shorthand for a danger/delete confirmation dialog
-     */
-    function confirmDanger(message, yesCallback, noCallback = null) {
-      return showConfirmation(message, yesCallback, noCallback, "Xác nhận xóa", "danger");
-    }
-  </script>
+            // Set content
+            modalTitle.textContent = title;
+            modalBody.textContent = message;
+
+            // Create Bootstrap modal instance
+            const modalInstance = new bootstrap.Modal(modal);
+
+            // Set up event handlers
+            const handleYes = () => {
+                modalInstance.hide();
+                if (typeof yesCallback === 'function') {
+                    yesCallback();
+                }
+            };
+
+            const handleNo = () => {
+                modalInstance.hide();
+                if (typeof noCallback === 'function') {
+                    noCallback();
+                }
+            };
+
+            // Remove existing event listeners to prevent duplicates
+            const newYesBtn = yesBtn.cloneNode(true);
+            const newNoBtn = noBtn.cloneNode(true);
+
+            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+            noBtn.parentNode.replaceChild(newNoBtn, noBtn);
+
+            // Add new event listeners
+            newYesBtn.addEventListener('click', handleYes);
+            newNoBtn.addEventListener('click', handleNo);
+            modal.addEventListener('hidden.bs.modal', () => {
+                newYesBtn.removeEventListener('click', handleYes);
+                newNoBtn.removeEventListener('click', handleNo);
+            }, {once: true});
+
+            // Show the modal
+            modalInstance.show();
+
+            return modalInstance;
+        }
+
+        /**
+         * Shorthand for a warning confirmation dialog
+         */
+        function confirmWarning(message, yesCallback, noCallback = null) {
+            return showConfirmation(message, yesCallback, noCallback, "Cảnh báo", "warning");
+        }
+
+        /**
+         * Shorthand for a danger/delete confirmation dialog
+         */
+        function confirmDanger(message, yesCallback, noCallback = null) {
+            return showConfirmation(message, yesCallback, noCallback, "Xác nhận xóa", "danger");
+        }
+    </script>
 </div>
 </body>
 </html>

@@ -34,8 +34,8 @@ public class AdminViewController {
     }
     @GetMapping(value = "/AllStudent")
     public String allStudent(Model model){
-        List<StudentModel> students = studentService.getAllStudents();
-        model.addAttribute("students", studentService.getAllStudents());
+//        List<StudentModel> students = studentService.getAllStudents();
+//        model.addAttribute("students", studentService.getAllStudents());
         return "views/admin/AllStudent";
     }
     @GetMapping(value = "/studentDetail/{id}")

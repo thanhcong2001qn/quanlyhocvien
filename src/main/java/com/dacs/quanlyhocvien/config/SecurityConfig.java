@@ -33,7 +33,7 @@ public class SecurityConfig {
 //                        .requestMatchers("/home").authenticated()
 //                        .requestMatchers("/api/home-data", "/api/verify-token").authenticated()
                         // URLs chỉ dành cho ADMIN
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**","/**").hasRole("ADMIN")
                         // URLs chỉ dành cho TEACHER
                         .requestMatchers("/teacher/**").hasRole("TEACHER")
                         // URLs dành cho STUDENT (có thể xóa /home ở đây nếu nó đã là URL công khai)

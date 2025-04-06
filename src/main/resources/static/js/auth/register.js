@@ -219,18 +219,24 @@ document.addEventListener('DOMContentLoaded', function() {
                                     'Registration Failed',
                                     'Username is already taken. Please choose a different username.'
                                 );
-                            } else if (errorMsg === "Email already exists") {
+                                grecaptcha.reset();
+
+                            }
+                            if (errorMsg === "Email already exists") {
                                 showNotification(
                                     'error',
                                     'Registration Failed',
                                     'An account with that email already exists. Please use a different email address.'
                                 );
-                            } else if (response.status === 0) {
+                                grecaptcha.reset();
+                            }
+                            if (response.status === 0) {
                                 showNotification(
                                     'error',
                                     'Registration Failed',
                                     'An error occurred during registration. Please try again later.'
                                 );
+                                grecaptcha.reset();
                             }
                         });
                     });

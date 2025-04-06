@@ -1,14 +1,17 @@
 package com.dacs.quanlyhocvien.Controllers.admin;
 
+import com.dacs.quanlyhocvien.DTO.Request.TeacherRequestDTO;
 import com.dacs.quanlyhocvien.Services.TeacherService;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
 import com.dacs.quanlyhocvien.models.TeacherModel;
-import com.dacs.quanlyhocvien.models.TeacherRequestDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -29,7 +32,6 @@ public class AdminTeacherController {
         if (requestDTO.getTeacher() == null || requestDTO.getTeacher().getAccount() == null) {
             return new ResponseEntity<>("Lỗi: Thiếu thông tin giáo viên hoặc tài khoản", HttpStatus.BAD_REQUEST);
         }
-
         // Nếu username null, đặt bằng email
         if (requestDTO.getTeacher().getAccount().getUsername() == null) {
             requestDTO.getTeacher().getAccount().setUsername(requestDTO.getTeacher().getAccount().getEmail());

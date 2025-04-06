@@ -90,4 +90,7 @@ public class AdminService {
     public void deleteAdmin(Long id) {
         adminRepository.deleteById(id);
     }
+    public void saveAdmin(AdminModel admin) {
+        adminRepository.save(admin);
+    }
 }
