@@ -107,7 +107,7 @@
         </div>
       </div>
 
-      <input type="hidden" name="teacher.account.role.roleId" value="2">
+<!--      <input type="hidden" name="teacher.account.role.roleId" value="2">-->
 
       <!-- Nút submit -->
       <div class="text-center mt-4">
@@ -126,9 +126,6 @@
     </div>
   </div>
 </div>
-
-<script th:src="@{/js/admin/menu.js}"></script>
-<script th:src="@{/js/admin/header.js}"></script>
 <script>
   // Hiển thị tên file đã chọn
   document.getElementById('teacherImage').addEventListener('change', function(e) {
@@ -154,51 +151,35 @@
           teacherForm.delete("teacherImage");
       }
 
-      fetch('/teacher/apiAddTeacher', {
-          method: 'POST',
-          body: teacherForm
+      fetchWithAuth('/teacher/apiAddTeacher', {
+        method: 'POST',
+        body: teacherForm
       })
       .then(async response => {
           if (response.ok) {
-              showNotification("Thêm giáo viên thành công!", "success");
+              Alert.success('Thêm giáo viên thành công!');
               this.reset();
               document.getElementById('selectedFileName').textContent = '';
           } else {
-              const errorMessage = await response.text();
-              showNotification(errorMessage, "error");
+              const errorResponse = await response.json();
+              const message = errorResponse.message || 'Có lỗi xảy ra khi thêm Teacher!';
+              AlertUtils.error(message);
           }
       })
       .catch(error => {
-          showNotification("Không thể kết nối đến máy chủ!", "error");
+          Alert.error(error.message || 'Không thể kết nối đến máy chủ!');
       })
       .finally(() => {
           this.classList.remove('loading');
       });
   });
-
-  function showNotification(message, type) {
-      const popup = document.getElementById('popup');
-      const messageElement = document.getElementById('message-popup-notification');
-
-      messageElement.textContent = message;
-      popup.style.display = 'block';
-
-      if (type === 'error') {
-          popup.classList.add('error');
-      } else {
-          popup.classList.remove('error');
-      }
-
-      // Tự động đóng sau 3 giây
-      setTimeout(() => {
-          popup.style.display = 'none';
-      }, 3000);
-  }
-
-  // Đóng popup khi click nút đóng
-  document.getElementById('closePopupButton').addEventListener('click', function() {
-      document.getElementById('popup').style.display = 'none';
-  });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:src="@{/js/common/Alert.js}"></script>
+
+<script th:src="@{/js/admin/menu.js}"></script>
+<script th:src="@{/js/admin/header.js}"></script>
+<script th:src="@{/js/utils/api.js}"></script>
 </body>
 </html>

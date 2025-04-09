@@ -32,7 +32,7 @@ public class AdminViewController {
     public String admin(){
         return "views/admin/Dashboard";
     }
-    @GetMapping(value = "/AllStudent")
+    @GetMapping(value = "/all-student")
     public String allStudent(Model model){
         List<StudentModel> students = studentService.getAllStudents();
         model.addAttribute("students", studentService.getAllStudents());
@@ -55,9 +55,14 @@ public class AdminViewController {
     }
     @GetMapping(value = "/all-admin")
     public String allAdmin(Model model){
-        List<AdminModel> admins = adminService.getAllAdmins();
-        model.addAttribute("admins", admins);
+        model.addAttribute("dummy", "dummyValue"); // ✅ thêm dòng bảo vệ tránh lỗi Thymeleaf
         return "views/admin/AllAdmin";
+    }
+    @GetMapping(value = "/adminDetail/{id}")
+    public String editAdmin(@PathVariable Long id,Model model){
+        AdminModel admin = adminService.getAdminById(id);
+        model.addAttribute("admin",admin);
+        return "views/admin/AdminDetail";
     }
 
     @GetMapping(value = "/all-account")

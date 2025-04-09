@@ -1,0 +1,24 @@
+<!-- fragments/admin/admins-table.html -->
+<tbody xmlns:th="http://www.w3.org/1999/xhtml">
+<tr th:each="admin : ${admins}">
+    <td th:text="${admin.adminId}"></td>
+    <td th:text="${admin.account != null ? admin.account.fullName : 'N/A'}"></td>
+    <td th:text="${admin.account != null ? admin.account.email : 'N/A'}"></td>
+    <td th:text="${admin.account != null && admin.account.role != null ? admin.account.role.roleName : 'N/A'}"></td>
+    <td th:text="${admin.account != null && admin.account.createdAt != null ? #temporals.format(admin.account.createdAt, 'dd/MM/yyyy') : 'N/A'}"></td>
+    <td>
+        <div class="action-buttons">
+            <button class="btn btn-icon btn-edit" th:data-id="${admin.adminId}">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-icon btn-delete" th:data-id="${admin.adminId}">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+    </td>
+</tr>
+
+<tr th:if="${#lists.isEmpty(admins)}">
+    <td colspan="6" class="text-center">Không tìm thấy admin nào</td>
+</tr>
+</tbody>

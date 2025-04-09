@@ -1,26 +1,26 @@
-<div class="admin-container">
-    <!-- Sidebar sẽ được thêm vào đây -->
+<!--    <div class="admin-container" >-->
+<!--    &lt;!&ndash; Sidebar sẽ được thêm vào đây &ndash;&gt;-->
 
-    <div class="main-content">
+<!--    <div class="main-content">-->
 
-        <header class="admin-header">
+        <header class="admin-header" th:fragment="header" xmlns:th="http://www.thymeleaf.org">
             <!-- Mobile Toggle Button -->
 <!--            <button class="mobile-toggle">-->
 <!--                <i class="fas fa-bars"></i>-->
 <!--            </button>-->
             <!-- Trong header -->
-            <div class="theme-switch">
-                <input type="checkbox" id="theme-toggle" />
-                <label for="theme-toggle">
-                <span class="slider">
-                  <i class="fas fa-sun"></i>
-                </span>
-                </label>
-            </div>
-            <!-- Logo -->
-<!--            <div class="header-logo">-->
-<!--                <h2>Admin<span>Panel</span></h2>-->
+<!--            <div class="theme-switch">-->
+<!--                <input type="checkbox" id="theme-toggle" />-->
+<!--                <label for="theme-toggle">-->
+<!--                <span class="slider">-->
+<!--                  <i class="fas fa-sun"></i>-->
+<!--                </span>-->
+<!--                </label>-->
 <!--            </div>-->
+<!--             Logo-->
+            <div class="header-logo">
+                <h2>Admin<span>Panel</span></h2>
+            </div>
 
             <!-- Search -->
             <label class="header-search">
@@ -125,5 +125,5 @@
                 </div>
             </div>
         </header>
-    </div>
-</div>
+<!--    </div>-->
+<!--</div>-->
