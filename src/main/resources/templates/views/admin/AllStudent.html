@@ -7,7 +7,6 @@
     <link rel="stylesheet" th:href="@{/css/admin/header.css}">
     <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
     <link rel="stylesheet" th:href="@{/css/admin/body.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/AllStudent.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/common.css}">
@@ -39,21 +38,26 @@
         <!-- Search Card -->
         <div class="card search-card">
             <div class="card-body">
-                <form th:action="@{/students/search}" method="get" class="search-form">
+                <form th:action="@{/student/search}" method="get" class="search-form">
                     <div class="row g-3">
                         <div class="col-md-5">
-                            <label class="form-label">Tìm kiếm theo tên</label>
-                            <input type="text" class="form-control" name="name" th:value="${param.name}"
-                                   placeholder="Nhập tên sinh viên...">
+                            <div class="search-box">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" class="form-control" name="name" th:value="${param.name}"
+                                       placeholder="Nhập tên sinh viên...">
+                            </div>
                         </div>
                         <div class="col-md-5">
-                            <label class="form-label">Tìm kiếm theo lớp</label>
-                            <input type="text" class="form-control" name="class" th:value="${param.class}"
-                                   placeholder="Nhập tên lớp...">
+                            <div class="search-box">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" class="form-control" name="className" th:value="${param.class}"
+                                       placeholder="Nhập tên lớp...">
+                            </div>
                         </div>
                         <div class="col-md-2 d-flex">
-                            <button type="button" class="btn btn-outline-secondary clear-search w-100">
-                                <i class="fas fa-times"></i> Xóa bộ lọc
+                            <button type="button" class="btn clear-search w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fas fa-times"></i>
+                                Xóa bộ lọc
                             </button>
                         </div>
                     </div>
@@ -63,7 +67,7 @@
 
         <!-- Table Card -->
         <div class="card table-card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title">Danh sách sinh viên</h5>
                 <div class="card-tools">
                     <a th:href="@{/add-student}" class="btn btn-success">
@@ -119,32 +123,15 @@
                 </div>
             </div>
             <div class="card-footer">
-                <nav aria-label="Pagination" th:if="${totalPages > 1}">
-                    <ul class="pagination justify-content-center m-0">
-                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                            <a class="page-link" th:href="@{${'/students'}(page=${currentPage - 1}, size=${pageSize}, sort=${sort})}">&laquo;</a>
-                        </li>
-                        <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
-                            th:classappend="${pageNumber == currentPage} ? 'active'">
-                            <a class="page-link" th:text="${pageNumber}"
-                               th:href="@{${'/students'}(page=${pageNumber}, size=${pageSize}, sort=${sort})}"></a>
-                        </li>
-                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                            <a class="page-link" th:href="@{${'/students'}(page=${currentPage + 1}, size=${pageSize}, sort=${sort})}">&raquo;</a>
-                        </li>
+                <nav aria-label="Page navigation">
+                    <ul id="pagination" class="pagination justify-content-center m-0">
+                        <!-- JavaScript sẽ render phân trang -->
                     </ul>
                 </nav>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Scripts -->
-<script th:src="@{/js/admin/menu.js}"></script>
-<script th:src="@{/js/admin/header.js}"></script>
-<script th:src="@{/js/admin/body.js}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/js/common/popup.js}"></script>
 
 <!-- Delete and Edit functionality -->
 <script>
@@ -183,5 +170,14 @@
         });
     });
 </script>
+<!--Js-->
+<!-- Scripts -->
+<script th:src="@{/js/admin/searching/students-search.js}"></script>
+<script th:src="@{/js/admin/list/student-list.js}"></script>
+
+<div id="loadingSpinner">
+    <i class="fas fa-spinner fa-spin"></i>
+</div>
+<div th:replace="fragments/common/footer.html :: footer-scripts"></div>
 </body>
 </html>
