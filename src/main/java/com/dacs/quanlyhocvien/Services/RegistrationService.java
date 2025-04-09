@@ -5,10 +5,8 @@ import com.dacs.quanlyhocvien.Repository.IAccountRepository;
 import com.dacs.quanlyhocvien.Repository.IRoleRepository;
 import com.dacs.quanlyhocvien.Repository.IStudentRepository;
 import com.dacs.quanlyhocvien.Repository.IVerificationTokenRepository;
-import com.dacs.quanlyhocvien.models.AccountModel;
-import com.dacs.quanlyhocvien.models.RoleModel;
-import com.dacs.quanlyhocvien.models.StudentModel;
-import com.dacs.quanlyhocvien.models.VerificationToken;
+import com.dacs.quanlyhocvien.models.*;
+import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,10 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class RegistrationService {
-
+    private final ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
     @Autowired
     private AccountService accountService;
 
@@ -30,14 +30,13 @@ public class RegistrationService {
     private EmailService emailService;
 
     @Autowired
-    private IStudentRepository studentRepository;
-
-    @Autowired
     private IRoleRepository roleRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private AdminService adminService;
 
     @Transactional
     public void registerStudent(RegisterRequest registerRequest) {
@@ -56,6 +55,9 @@ public class RegistrationService {
         account.setRole(roleRepository.findByRoleName("STUDENT"));
         accountService.save(account);
 
+//        AdminModel admin = new AdminModel();
+//        admin.setAccount(account);
+//        adminService.saveAdmin(admin);
         // Thiết lập mối quan hệ và lưu student
         StudentModel student = new StudentModel();
         student.setAccount(account);
@@ -64,14 +66,10 @@ public class RegistrationService {
         String tokenValue = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken(tokenValue, account);
         tokenRepository.save(verificationToken);
-        new Thread(() -> {
-            sendEmail(registerRequest, tokenValue);
-        }).start();
-    }
-    @Transactional
-    public void sendEmail(RegisterRequest registerRequest, String tokenValue) {
         AccountModel accountModel = accountService.getAccountByEmail(registerRequest.getEmail());
-        emailService.sendVerificationEmail(accountModel, tokenValue);
+        emailExecutor.submit(() -> {
+            emailService.sendVerificationEmail(accountModel, tokenValue);
+        });
     }
     @Transactional
     public boolean verifyAccount(String token) {
@@ -86,6 +84,9 @@ public class RegistrationService {
         }
         return false;
     }
-
+    @PreDestroy
+    public void shutdown() {
+        emailExecutor.shutdown();
+    }
 
 }

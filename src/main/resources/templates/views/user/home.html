@@ -1,35 +1,470 @@
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My learn</title>
+    <title>My Learn - Nền tảng học tập trực tuyến</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/user/header.css}">
+    <link rel="stylesheet" th:href="@{/css/user/home.css}">
+
 </head>
 <body>
 <!-- Main Header -->
 <div th:replace="~{/fragments/user/header :: header}"></div>
+<div th:replace="~{fragments/user/notification-select :: confirmation-dialog}"></div>
+
+<main id="not-authenticated">
+    <!-- Hero Section -->
+    <section class="hero-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 fade-in fade-in-delay-1">
+                    <h1 class="display-4 fw-bold mb-4">Học lập trình <span class="gradient-text">hiệu quả</span> cùng My
+                        Learn</h1>
+                    <p class="lead mb-4">Khám phá hơn 100+ khóa học chất lượng cao từ các chuyên gia hàng đầu trong
+                        ngành công nghệ.</p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        <a href="/register" class="btn btn-primary btn-lg px-4 me-md-2">Đăng ký ngay</a>
+                        <a href="/login" class="btn btn-outline-primary btn-lg px-4">Đăng nhập</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block fade-in fade-in-delay-2">
+                    <img th:src="@{/images/hero-illustration.svg}" alt="Learning" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5 fade-in">Tại sao chọn My Learn?</h2>
+            <div class="row g-4">
+                <div class="col-md-4 fade-in fade-in-delay-1">
+                    <div class="feature-card text-center p-4 h-100">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-laptop-code fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Khóa học chất lượng</h3>
+                        <p>Nội dung được biên soạn kỹ lưỡng, cập nhật liên tục với các công nghệ mới nhất.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in fade-in-delay-2">
+                    <div class="feature-card text-center p-4 h-100">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-user-graduate fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Học theo lộ trình</h3>
+                        <p>Lộ trình học tập được thiết kế khoa học, phù hợp với mọi trình độ từ cơ bản đến nâng cao.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in fade-in-delay-3">
+                    <div class="feature-card text-center p-4 h-100">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-comments fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Hỗ trợ 24/7</h3>
+                        <p>Đội ngũ giảng viên và mentor luôn sẵn sàng hỗ trợ giải đáp thắc mắc của bạn.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Courses -->
+    <section class="popular-courses py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fade-in">Khóa học nổi bật</h2>
+                <a href="/courses" class="btn btn-outline-primary fade-in">Xem tất cả</a>
+            </div>
+            <div class="courses-grid fade-in fade-in-delay-1">
+                <!-- Featured Course 1 -->
+                <div class="course-card">
+                    <div class="course-image">
+                        <img src="https://via.placeholder.com/300x180" alt="Java Course">
+                        <div class="course-badge">Bestseller</div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">Java Programming Masterclass</h3>
+                        <div class="course-meta">
+                            <span><i class="fas fa-book"></i> 42 bài học</span>
+                            <span><i class="fas fa-clock"></i> 24 giờ</span>
+                        </div>
+                        <div class="course-rating">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star-half-alt text-warning"></i>
+                            <span>4.5 (128)</span>
+                        </div>
+                        <div class="course-footer">
+                            <a href="/login" class="btn btn-primary btn-sm">Đăng ký</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Featured Course 2 -->
+                <div class="course-card">
+                    <div class="course-image">
+                        <img src="https://via.placeholder.com/300x180" alt="Spring Boot Course">
+                        <div class="course-badge">Hot</div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">Spring Boot cho người mới bắt đầu</h3>
+                        <div class="course-meta">
+                            <span><i class="fas fa-book"></i> 36 bài học</span>
+                            <span><i class="fas fa-clock"></i> 18 giờ</span>
+                        </div>
+                        <div class="course-rating">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="far fa-star text-warning"></i>
+                            <span>4.0 (85)</span>
+                        </div>
+                        <div class="course-footer">
+                            <a href="/login" class="btn btn-primary btn-sm">Đăng ký</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section py-5 bg-primary text-white text-center">
+        <div class="container">
+            <h2 class="mb-4 fade-in">Sẵn sàng bắt đầu hành trình học tập?</h2>
+            <p class="lead mb-4 fade-in fade-in-delay-1">Đăng ký ngay hôm nay để truy cập đầy đủ các khóa học và tài
+                nguyên.</p>
+            <div class="fade-in fade-in-delay-2">
+                <a href="/register" class="btn btn-light btn-lg px-4 me-2">Đăng ký miễn phí</a>
+                <a href="/login" class="btn btn-outline-light btn-lg px-4">Đăng nhập</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+<main class="container py-4" id="authenticated" style="display: none">
+    <!-- Welcome Section -->
+    <section class="welcome-section mb-4">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-5 fw-bold text-primary">Xin chào, <span id="username">Học viên</span>!</h1>
+                <p class="lead mb-4">Hôm nay bạn muốn học gì? Tiếp tục hành trình học tập của bạn.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="#continue-learning" class="btn btn-primary btn-lg px-4 me-md-2">Tiếp tục học</a>
+                    <a href="#explore-courses" class="btn btn-outline-primary btn-lg px-4">Khám phá khóa học</a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <img th:src="@{/images/learning-illustration.svg}" alt="Learning" class="img-fluid">
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Stats -->
+    <section class="dashboard-stats mb-4">
+        <div class="stat-card stat-primary">
+            <div class="stat-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="stat-content">
+                <h3>5</h3>
+                <div class="stat-label">Khóa học đã đăng ký</div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-success">
+            <div class="stat-icon">
+                <i class="fas fa-award"></i>
+            </div>
+            <div class="stat-content">
+                <h3>12</h3>
+                <div class="stat-label">Bài học hoàn thành</div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-info">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>8.5</h3>
+                <div class="stat-label">Giờ học tập</div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-warning">
+            <div class="stat-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-content">
+                <h3>120</h3>
+                <div class="stat-label">Điểm thành tích</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Continue Learning Section -->
+    <section id="continue-learning" class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h3">Tiếp tục học tập</h2>
+            <a href="#" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+        </div>
+        <div class="continue-learning-card bg-white p-4 rounded shadow-sm">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://via.placeholder.com/60" alt="Course" class="rounded me-3">
+                        <div>
+                            <h4 class="h5 mb-1">Lập trình web với Spring Boot</h4>
+                            <p class="text-muted mb-0">Bài 8: Spring Security - Authentication và Authorization</p>
+                        </div>
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 65%;" aria-valuenow="65"
+                             aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Hoàn thành: 65%</span>
+                        <span class="text-muted small">Thời gian còn lại: 45 phút</span>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3 mt-md-0 d-flex align-items-center justify-content-md-end">
+                    <a href="#" class="btn btn-primary">Tiếp tục học <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Courses -->
+    <section id="explore-courses" class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h3">Khóa học nổi bật</h2>
+            <a href="/user/all-source" class="btn btn-sm btn-outline-primary">Xem tất
+                cả khóa học</a>
+        </div>
+        <div class="courses-grid">
+            <!-- Course Card 1 -->
+            <div class="course-card">
+                <div class="course-image">
+                    <img src="https://via.placeholder.com/300x180" alt="Course">
+                    <div class="course-badge">Hot</div>
+                </div>
+                <div class="course-content">
+                    <h3 class="course-title">Java Programming Masterclass</h3>
+                    <div class="course-meta">
+                        <span><i class="fas fa-book"></i> 42 bài học</span>
+                        <span><i class="fas fa-clock"></i> 24 giờ</span>
+                    </div>
+                    <div class="course-rating">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star-half-alt text-warning"></i>
+                        <span>4.5 (128)</span>
+                    </div>
+                    <div class="course-footer">
+                        <a href="/user/course-detail" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Card 2 -->
+            <div class="course-card">
+                <div class="course-image">
+                    <img src="https://via.placeholder.com/300x180" alt="Course">
+                    <div class="course-badge">Mới</div>
+                </div>
+                <div class="course-content">
+                    <h3 class="course-title">Spring Boot cho người mới bắt đầu</h3>
+                    <div class="course-meta">
+                        <span><i class="fas fa-book"></i> 36 bài học</span>
+                        <span><i class="fas fa-clock"></i> 18 giờ</span>
+                    </div>
+                    <div class="course-rating">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="far fa-star text-warning"></i>
+                        <span>4.0 (85)</span>
+                    </div>
+                    <div class="course-footer">
+                        <a href="#" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Card 3 -->
+            <div class="course-card">
+                <div class="course-image">
+                    <img src="https://via.placeholder.com/300x180" alt="Course">
+                </div>
+                <div class="course-content">
+                    <h3 class="course-title">React JS - Từ cơ bản đến nâng cao</h3>
+                    <div class="course-meta">
+                        <span><i class="fas fa-book"></i> 54 bài học</span>
+                        <span><i class="fas fa-clock"></i> 32 giờ</span>
+                    </div>
+                    <div class="course-rating">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <span>4.9 (210)</span>
+                    </div>
+                    <div class="course-footer">
+                        <a href="#" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Path -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h3">Lộ trình học tập của bạn</h2>
+        </div>
+        <div class="bg-white p-4 rounded shadow-sm">
+            <div class="learning-path">
+                <div class="path-item completed">
+                    <div class="path-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="path-content">
+                        <h4>Java cơ bản</h4>
+                        <p>Hoàn thành ngày 15/08/2023</p>
+                    </div>
+                </div>
+                <div class="path-item completed">
+                    <div class="path-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="path-content">
+                        <h4>OOP trong Java</h4>
+                        <p>Hoàn thành ngày 29/09/2023</p>
+                    </div>
+                </div>
+                <div class="path-item active">
+                    <div class="path-icon">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <div class="path-content">
+                        <h4>Spring Framework</h4>
+                        <p>Đang học - 65% hoàn thành</p>
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="path-item">
+                    <div class="path-icon">
+                        <i class="far fa-circle"></i>
+                    </div>
+                    <div class="path-content">
+                        <h4>Spring Boot & Microservices</h4>
+                        <p>Chưa bắt đầu</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming Events -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h3">Sự kiện sắp diễn ra</h2>
+            <a href="#" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Tên sự kiện</th>
+                    <th>Thời gian</th>
+                    <th>Loại</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Workshop: Xây dựng RESTful API với Spring Boot</td>
+                    <td>25/07/2023, 19:00</td>
+                    <td><span class="badge bg-info">Workshop</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Đăng ký</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Q&A: Giải đáp về lập trình Java</td>
+                    <td>28/07/2023, 20:00</td>
+                    <td><span class="badge bg-success">Livestream</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Đăng ký</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Chia sẻ kinh nghiệm phỏng vấn Java Developer</td>
+                    <td>02/08/2023, 19:30</td>
+                    <td><span class="badge bg-warning text-dark">Webinar</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Đăng ký</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-light py-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>My Learn</h5>
+                <p class="text-muted">Nền tảng học tập trực tuyến hàng đầu cho lập trình viên</p>
+            </div>
+            <div class="col-md-3">
+                <h5>Liên kết</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="#">Khóa học</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Theo dõi</h5>
+                <div class="d-flex gap-2">
+                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="text-center text-muted">
+            <small>&copy; 2023 My Learn. All rights reserved.</small>
+        </div>
+    </div>
+</footer>
 
 <!-- Bootstrap & JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/utils/api.js}"></script>
 <script th:src="@{/js/user/header.js}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        fetchWithAuth('/api/verify-token')
-            .then(response => {
-                if (!response.ok) {
-                    localStorage.clear();
-                }
-            })
-            .then(data => {
-                localStorage.setItem('username', data.username);
-                localStorage.setItem('isAuthenticated', 'true');
-            })
-    });
-</script>
-
+<script th:src="@{/js/user/home.js}"></script>
 </body>
 </html>

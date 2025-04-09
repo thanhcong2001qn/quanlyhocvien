@@ -17,13 +17,13 @@ public class AdminModel {
     @JoinColumn(name = "admin_id")
     private AccountModel account;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AdminRole adminRole = AdminRole.SUPER_ADMIN;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AccessLevel accessLevel = AccessLevel.FULL_ACCESS;
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private AdminRole adminRole = AdminRole.SUPER_ADMIN;
+//
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private AccessLevel accessLevel = AccessLevel.FULL_ACCESS;
 
     // No-arg constructor required by JPA
 

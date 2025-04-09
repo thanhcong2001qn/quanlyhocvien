@@ -35,11 +35,6 @@ public class AdminStudentController {
 //            return new ResponseEntity<>(savedStudent, HttpStatus.CREATED);
 //    }
 
-    @PutMapping(value = "/apiEditStudent")
-    public ResponseEntity<StudentModel> updateStudent(@RequestBody StudentModel student) {
-        StudentModel savedStudent = studentService.updateStudent(student);
-        return new ResponseEntity<>(savedStudent, HttpStatus.OK);
-    }
     @DeleteMapping(value = "/deleteStudent/{id}")
     public ResponseEntity<?> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);

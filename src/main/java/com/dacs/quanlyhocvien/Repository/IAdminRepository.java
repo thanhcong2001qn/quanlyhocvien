@@ -9,4 +9,5 @@ import java.util.List;
 public interface IAdminRepository extends JpaRepository<AdminModel, Long> {
     AdminModel findByAccount_Email(String email);
     List<AdminModel> findByAccountFullNameContainingIgnoreCaseAndAccountRoleRoleId(String name, Integer roleId);
+
 }

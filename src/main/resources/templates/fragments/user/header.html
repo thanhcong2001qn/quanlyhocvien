@@ -1,4 +1,5 @@
-<header class="main-header shadow-sm" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<header class="main-header shadow-sm">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid p-0">
@@ -15,26 +16,26 @@
                 <div class="collapse navbar-collapse col-md-3" id="navbarNav">
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" href="/home">Trang chủ</a>
+                            <a class="nav-link nav-link-header" href="/home" >Trang chủ</a>
                         </li>
                         <li class="nav-item dropdown hover-dropdown">
-                            <a class="nav-link" href="#" >
+                            <a class="nav-link nav-link-header" href="/user/all-course" >
                                 Khoá học
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Khoá học</a></li>
-                                <li><a class="dropdown-item" href="#">Bán chạy</a></li>
-                                <li><a class="dropdown-item" href="#">Giảm giá</a></li>
-                            </ul>
+<!--                            <ul class="dropdown-menu">-->
+<!--                                <li><a class="dropdown-item" href="/user/all-source">Tất cả khoá học</a></li>-->
+<!--                                <li><a class="dropdown-item" href="#">Khoá học bán chạy</a></li>-->
+<!--                                <li><a class="dropdown-item" href="#">Khoá học giảm giá</a></li>-->
+<!--                            </ul>-->
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Cộng đồng</a>
+                            <a class="nav-link nav-link-header" href="#">Cộng đồng</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Liên hệ</a>
+                            <a class="nav-link nav-link-header" href="#">Liên hệ</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Tư vấn</a>
+                            <a class="nav-link nav-link-header" href="#">Tư vấn</a>
                         </li>
                     </ul>
                     <div id="search-modal" class="search-modal col-md-4">
@@ -86,7 +87,7 @@
                                     </li>
 
                                     <li class="auth-item logged-in">
-                                        <a class="dropdown-item text-danger" href="#" onclick="logout()">
+                                        <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="logout()">
                                             <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                         </a>
                                     </li>

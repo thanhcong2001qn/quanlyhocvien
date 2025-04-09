@@ -1,11 +1,15 @@
 package com.dacs.quanlyhocvien.Services;
 
+import com.dacs.quanlyhocvien.DTO.Request.ChangePasswordRequest;
+import com.dacs.quanlyhocvien.DTO.Request.UpdateStudentRequest;
 import com.dacs.quanlyhocvien.Repository.IStudentRepository;
 import com.dacs.quanlyhocvien.models.StudentModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.dacs.quanlyhocvien.models.dto.StudentResponseDTO;
@@ -17,12 +21,16 @@ import java.util.List;
 public class StudentService {
     private final IStudentRepository studentRepository;
     private final FileStorageService fileStorageService;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public StudentService(IStudentRepository studentRepository, PasswordEncoder passwordEncoder) {
+        this.studentRepository = studentRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
 
     public StudentModel addStudent(StudentModel student){
-        return studentRepository.save(student);
-    }
-    public StudentModel updateStudent(StudentModel student){
-        student.getAccount().setPassword("1234");
         return studentRepository.save(student);
     }
     public List<StudentModel> getAllStudents(){
@@ -59,5 +67,26 @@ public class StudentService {
                 .address(student.getAccount() != null ? student.getAccount().getAddress() : null)
                 .phoneNumber(student.getAccount() != null ? student.getAccount().getPhoneNumber() : null)
                 .build();
+    }
+    public StudentModel updateStudentByUserName(String userName, UpdateStudentRequest student){
+        StudentModel studentModel = studentRepository.findByAccount_Username(userName);
+        studentModel.getAccount().setFullName(student.getFullName());
+        studentModel.getAccount().setPhoneNumber(student.getPhone());
+        studentModel.getAccount().setGender(student.getGender());
+        studentModel.getAccount().setDateOfBirth(student.getDateOfBirth());
+        studentModel.getAccount().setAddress(student.getAddress());
+        return studentRepository.save(studentModel);
+    }
+    public boolean changePassword(String userName, ChangePasswordRequest passwordData){
+        StudentModel studentModel = studentRepository.findByAccount_Username(userName);
+        String newPassword = passwordData.getNewPassword();
+        String oldPassword = passwordData.getOldPassword();
+        if (!passwordEncoder.matches(oldPassword, studentModel.getAccount().getPassword())){
+           return false;
+        }
+        studentModel.getAccount().setPassword(passwordEncoder.encode(newPassword));
+        studentRepository.save(studentModel);
+        return true;
+
     }
 }

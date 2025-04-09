@@ -64,8 +64,7 @@ public class AdminService {
         updatedAccount.setDateOfBirth(admin.getAccount().getDateOfBirth());
         updatedAccount.setPhoneNumber(admin.getAccount().getPhoneNumber());
         updatedAccount.setAddress(admin.getAccount().getAddress());
-        updatedAccount.setGender(admin.getAccount().getGender());
-        updatedAccount.setUpdatedAt(java.time.LocalDate.now()); // Cập nhật thời gian sửa đổi
+        updatedAccount.setGender(admin.getAccount().getGender());// Cập nhật thời gian sửa đổi
 
         accountRepository.save(updatedAccount);
 
@@ -112,8 +111,7 @@ public class AdminService {
             adminRepository.deleteById(id);
         }
     }
-
-    public Page<AdminResponseDTO> getAdmins(Pageable pageable) {
+  public Page<AdminResponseDTO> getAdmins(Pageable pageable) {
         return adminRepository.findAll(pageable)
                 .map(this::mapToDto);
     }
@@ -135,6 +133,9 @@ public class AdminService {
             }
         }
         return dto;
+    }
+    public void saveAdmin(AdminModel admin) {
+        adminRepository.save(admin);
     }
 
 }

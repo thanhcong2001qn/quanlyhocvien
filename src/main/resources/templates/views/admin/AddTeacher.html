@@ -150,7 +150,6 @@
       if (fileInput.files.length === 0) {
           teacherForm.delete("teacherImage");
       }
-
       fetchWithAuth('/teacher/apiAddTeacher', {
         method: 'POST',
         body: teacherForm

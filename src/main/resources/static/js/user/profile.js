@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Verify token and load profile data
     fetchWithAuth('/api/verify-token')
         .then(response => {
@@ -18,17 +18,16 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error loading profile:', error);
         });
-
     // Avatar change functionality
-    document.getElementById('change-avatar-btn').addEventListener('click', function() {
+    document.getElementById('change-avatar-btn').addEventListener('click', function () {
         document.getElementById('avatar-upload').click();
     });
 
-    document.getElementById('avatar-upload').addEventListener('change', function(event) {
+    document.getElementById('avatar-upload').addEventListener('change', function (event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 document.getElementById('profile-image').src = e.target.result;
                 uploadAvatar(file);
             };
@@ -37,16 +36,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Form submissions
-    document.getElementById('personal-info-form').addEventListener('submit', function(e) {
+    document.getElementById('personal-info-form').addEventListener('submit', function (e) {
         e.preventDefault();
         updatePersonalInfo();
     });
 
-    document.getElementById('change-password-form').addEventListener('submit', function(e) {
+    document.getElementById('change-password-form').addEventListener('submit', function (e) {
         e.preventDefault();
         changePassword();
     });
 });
+
+let initialValues = {};
+
+// Function to capture initial values
+function captureInitialValues() {
+    initialValues = {
+        fullName: document.getElementById('full-name').value,
+        dateOfBirth: document.getElementById('date-of-birth').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        gender: document.getElementById('gender').value
+    };
+}
 
 function populateProfileData(data) {
     // Update profile header
@@ -66,10 +78,12 @@ function populateProfileData(data) {
     document.getElementById('email').value = data.email;
     document.getElementById('phone').value = data.phone || '';
     document.getElementById('address').value = data.address || '';
+    document.getElementById('gender').value = data.gender || '';
     if (data.isEmailVerified === false) {
         document.getElementById('email-not-verified').value = 'Email chưa được xác thực';
         document.getElementById('email-not-verified').style.display = 'block';
     }
+    captureInitialValues();
 }
 
 function loadEnrolledCourses() {
@@ -156,15 +170,33 @@ function loadLearningHistory() {
 }
 
 function updatePersonalInfo() {
-    const personalInfo = {
-        fullName: document.getElementById('full-name').value,
-        dateOfBirth: document.getElementById('date-of-birth').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value
-    };
+    let fullName = document.getElementById('full-name').value;
+    let dateOfBirth = document.getElementById('date-of-birth').value;
+    let phone = document.getElementById('phone').value;
+    let address = document.getElementById('address').value;
+    let gender = document.getElementById('gender').value;
 
-    fetchWithAuth('/api/student/update-profile', {
-        method: 'POST',
+    const personalInfo = {
+        fullName: fullName,
+        dateOfBirth: dateOfBirth,
+        phone: phone,
+        address: address,
+        gender : gender
+    };
+    console.log("Giá trị hiện tại:", personalInfo);
+    console.log("Giá trị ban đầu:", initialValues);
+    const hasAnyValueChanged = Object.keys(personalInfo).some(key =>
+        personalInfo[key] !== initialValues[key]
+    );
+    if (!hasAnyValueChanged) {
+        showNotification('Không có thông tin nào thay đổi!','warning','warning');
+        return;
+    }
+    fetchWithAuth('/api/user/update-profile', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(personalInfo)
     })
         .then(response => {
@@ -174,12 +206,14 @@ function updatePersonalInfo() {
             return response.json();
         })
         .then(data => {
-            alert('Cập nhật thông tin cá nhân thành công!');
-            populateProfileData(data);
+            showNotification('Cập nhật thông tin cá nhân thành công!', 'success', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            },1000);
         })
         .catch(error => {
             console.error('Error updating profile:', error);
-            alert('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.');
+            showNotification('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.','error','error');
         });
 }
 
@@ -189,30 +223,32 @@ function changePassword() {
     const confirmPassword = document.getElementById('confirm-password').value;
 
     if (newPassword !== confirmPassword) {
-        alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+        showNotification('Mật khẩu mới và xác nhận mật khẩu không khớp!','error','error');
         return;
     }
-
-    fetchWithAuth('/api/student/change-password', {
+    const passwordata = {
+        newPassword : newPassword,
+        oldPassword : currentPassword
+    }
+    fetchWithAuth('/api/user/change-password', {
         method: 'POST',
-        body: JSON.stringify({
-            currentPassword,
-            newPassword
-        })
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(passwordata)
     })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to change password');
+            }else{
+                showNotification('Đổi mật khẩu thành công!', 'success', 'success');
+                document.getElementById('change-password-form').reset();
             }
-            return response.json();
-        })
-        .then(() => {
-            alert('Đổi mật khẩu thành công!');
-            document.getElementById('change-password-form').reset();
+
         })
         .catch(error => {
             console.error('Error changing password:', error);
-            alert('Đã xảy ra lỗi khi đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.');
+            showNotification('Đã xảy ra lỗi khi đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.','error','error');
         });
 }
 
@@ -247,7 +283,7 @@ function formatDate(dateString) {
 }
 
 function getStatusBadgeColor(status) {
-    switch(status.toLowerCase()) {
+    switch (status.toLowerCase()) {
         case 'hoàn thành':
         case 'completed':
             return 'success';
@@ -261,7 +297,8 @@ function getStatusBadgeColor(status) {
             return 'info';
     }
 }
-function resendEmail(){
+
+function resendEmail() {
     const email = document.getElementById('email').value;
     const emailData = {
         email: email
@@ -279,7 +316,7 @@ function resendEmail(){
             if (!response.ok) {
                 return response.text().then(errorMsg => {
                     if (errorMsg === "Token is still valid") {
-                        showNotification('Email đã được gửi, vui lòng kiểm tra hộp thư đến hoặc spam');
+                        showNotification('Email đã được gửi, vui lòng kiểm tra hộp thư đến hoặc spam','warning','warning');
                     }
                     throw new Error(errorMsg);
                 });
@@ -287,9 +324,9 @@ function resendEmail(){
             return response.json();
         })
         .then(() => {
-            showNotification('Đã gửi email xác thực!');
+            showNotification('Đã gửi email xác thực!', 'success', 'success');
         }).catch(error => {
-            console.error('Login error:', error);
-            // Error already displayed in previous error handlers
-        })
+        console.error('Login error:', error);
+        // Error already displayed in previous error handlers
+    })
 }
