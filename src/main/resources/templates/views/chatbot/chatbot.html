@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trợ lý AI Cơ sở dữ liệu</title>
+    <link rel="stylesheet" href="/css/chatbot/chatbot.css">
+</head>
+<body>
+<div class="chat-container">
+    <div class="chat-header">
+        <h2>Trợ lý Cơ sở dữ liệu</h2>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+        <div class="message bot-message">
+            <div class="message-content">
+                <p>Xin chào! Tôi có thể giúp bạn tìm thông tin từ cơ sở dữ liệu. Bạn muốn biết điều gì?</p>
+            </div>
+        </div>
+    </div>
+    <form id="chat-form" class="chat-input">
+        <input type="text" id="user-input" placeholder="Hỏi tôi về dữ liệu của bạn...">
+        <button type="submit">Gửi</button>
+    </form>
+</div>
+<script src="/js/chatbot/chatbot.js"></script>
+</body>
+</html>
