@@ -14,18 +14,16 @@ public class StudentModel {
     @JoinColumn(name = "student_id")
     private AccountModel account;
 
-    @Column(name = "class", length = 20)
+    @Column(name = "class_name", length = 50) // sửa lại tên cột cho hợp lý
     private String className;
+
     // Constructors
     public StudentModel() {
     }
 
-    public StudentModel(AccountModel account, String className
-    ) {
+    public StudentModel(AccountModel account, String className) {
         this.account = account;
-
         this.className = className;
-
     }
 
     // Getters and Setters
@@ -45,7 +43,6 @@ public class StudentModel {
         this.account = account;
     }
 
-
     public String getClassName() {
         return className;
     }
@@ -53,5 +50,4 @@ public class StudentModel {
     public void setClassName(String className) {
         this.className = className;
     }
-
 }

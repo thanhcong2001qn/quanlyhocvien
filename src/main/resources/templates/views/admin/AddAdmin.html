@@ -69,29 +69,29 @@
             </div>
 
             <!-- Thông tin quyền hạn -->
-            <div class="form-section">
-                <h2 class="section-title">Quyền hạn và vai trò</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="adminRole">Vai trò Admin</label>
-                        <select class="form-control" name="admin.adminRole" id="adminRole">
-                            <option value="SUPER_ADMIN">Super Admin</option>
-                            <option value="COURSE_ADMIN">Course Admin</option>
-                            <option value="USER_ADMIN">User Admin</option>
-                            <option value="CONTENT_ADMIN">Content Admin</option>
-                        </select>
-                    </div>
+<!--            <div class="form-section">-->
+<!--                <h2 class="section-title">Quyền hạn và vai trò</h2>-->
+<!--                <div class="form-grid">-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="adminRole">Vai trò Admin</label>-->
+<!--                        <select class="form-control" name="admin.adminRole" id="adminRole">-->
+<!--                            <option value="SUPER_ADMIN">Super Admin</option>-->
+<!--                            <option value="COURSE_ADMIN">Course Admin</option>-->
+<!--                            <option value="USER_ADMIN">User Admin</option>-->
+<!--                            <option value="CONTENT_ADMIN">Content Admin</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
 
-                    <div class="form-group">
-                        <label for="accessLevel">Cấp độ truy cập</label>
-                        <select class="form-control" name="admin.accessLevel" id="accessLevel">
-                            <option value="FULL_ACCESS">Full Access</option>
-                            <option value="RESTRICTED_ACCESS">Restricted Access</option>
-                            <option value="LIMITED_ACCESS">Limited Access</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+<!--                    <div class="form-group">-->
+<!--                        <label for="accessLevel">Cấp độ truy cập</label>-->
+<!--                        <select class="form-control" name="admin.accessLevel" id="accessLevel">-->
+<!--                            <option value="FULL_ACCESS">Full Access</option>-->
+<!--                            <option value="RESTRICTED_ACCESS">Restricted Access</option>-->
+<!--                            <option value="LIMITED_ACCESS">Limited Access</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!-- Hình ảnh -->
             <div class="form-section">
@@ -125,9 +125,6 @@
         </div>
     </div>
 </div>
-
-<script th:src="@{/js/admin/menu.js}"></script>
-<script th:src="@{/js/admin/header.js}"></script>
 <script>
     // Hiển thị tên file đã chọn
     document.getElementById('adminImage').addEventListener('change', function(e) {
@@ -156,22 +153,23 @@
             adminForm.delete("adminImage");
         }
 
-        fetch('/admin/apiAddAdmin', {
+        fetchWithAuth('/admin/apiAddAdmin', {
             method: 'POST',
             body: adminForm
         })
         .then(async response => {
             if (response.ok) {
-                showNotification("Thêm admin thành công!", "success");
+                Alert.success("Thêm admin thành công");
                 this.reset();
                 document.getElementById('selectedFileName').textContent = '';
             } else {
-                const errorMessage = await response.text();
-                showNotification(errorMessage, "error");
+                const errorResponse = await response.json();
+                const message = errorResponse.message || 'Có lỗi xảy ra khi thêm Admin!';
+                AlertUtils.error(message);
             }
         })
         .catch(error => {
-            showNotification("Không thể kết nối đến máy chủ!", "error");
+            Alert.error(error.message || 'Không thể kết nối đến máy chủ!');
         })
         .finally(() => {
             this.classList.remove('loading');
@@ -202,5 +200,14 @@
         document.getElementById('popup').style.display = 'none';
     });
 </script>
+
+<!--Alert-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:src="@{/js/common/Alert.js}"></script>
+
+<!--Js-->
+<script th:src="@{/js/admin/menu.js}"></script>
+<script th:src="@{/js/admin/header.js}"></script>
+<script th:src="@{/js/utils/api.js}"></script>
 </body>
 </html>

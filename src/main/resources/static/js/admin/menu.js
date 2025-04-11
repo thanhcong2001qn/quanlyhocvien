@@ -52,6 +52,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const link = item.querySelector('.menu-link');
         if (link) {
             link.addEventListener('click', function(e) {
+                const href = link.getAttribute('href');
+
+                // Nếu link là # hoặc không có href -> Chặn click để mở menu
+                if (href === '#' || href === null) {
+                    e.preventDefault();
+                }
+
                 if (!sidebar.classList.contains('collapsed')) {
                     if (item.classList.contains('show')) {
                         closeSubmenuSmoothly(item);
@@ -66,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
+
         }
     });
 
@@ -79,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
 
     // Hàm đóng submenu một cách mượt mà
     function closeSubmenuSmoothly(menuItem) {

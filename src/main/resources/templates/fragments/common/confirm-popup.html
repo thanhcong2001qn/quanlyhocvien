@@ -1,5 +1,5 @@
 <!-- fragments/confirm-popup.html -->
-<div id="confirmPopup" class="modal fade" tabindex="-1" aria-labelledby="confirmPopupLabel" aria-hidden="true">
+<div th:fragment="confirm-popup" xmlns:th="http://www.thymeleaf.org" id="confirmPopup" class="modal fade" tabindex="-1" aria-labelledby="confirmPopupLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -10,7 +10,8 @@
         <p id="confirmPopupMessage">Bạn có chắc chắn muốn thực hiện thao tác này?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <!-- Sửa lại nút Cancel như sau -->
+        <button type="button" class="btn btn-secondary" id="cancelPopupBtn" data-bs-dismiss="modal">Hủy</button>
         <button type="button" class="btn btn-danger" id="confirmPopupBtn">Xác nhận</button>
       </div>
     </div>

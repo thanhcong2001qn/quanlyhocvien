@@ -7,7 +7,6 @@
     <link rel="stylesheet" th:href="@{/css/admin/header.css}">
     <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
     <link rel="stylesheet" th:href="@{/css/admin/body.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/AllAccounts.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/common.css}">
@@ -74,8 +73,9 @@
 <!--                                </button>-->
 <!--                            </div>-->
                             <div class="col-md-2 d-flex">
-                                <button type="button" class="btn btn-outline-secondary clear-search w-100">
-                                    <i class="fas fa-times"></i> Xóa bộ lọc
+                                <button type="button" class="btn clear-search w-100 d-flex align-items-center justify-content-center gap-2">
+                                    <i class="fas fa-times"></i>
+                                    Xóa bộ lọc
                                 </button>
                             </div>
                         </form>
@@ -84,7 +84,7 @@
 
                 <!-- Accounts Table -->
                 <div class="card table-card">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="card-title">Danh sách tài khoản</h3>
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -142,36 +142,9 @@
                     </div>
                     <!-- Pagination -->
                     <div class="card-footer">
-                        <nav aria-label="Page navigation" th:if="${totalPages > 1}">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
-                                    <a class="page-link"
-                                       th:href="@{/account/accounts(page=${currentPage - 1},
-                                                         keyword=${param.keyword},
-                                                         role=${param.role},
-                                                         status=${param.status})}">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item"
-                                    th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
-                                    th:classappend="${pageNum == currentPage ? 'active' : ''}">
-                                    <a class="page-link"
-                                       th:href="@{/account/accounts(page=${pageNum},
-                                                         keyword=${param.keyword},
-                                                         role=${param.role},
-                                                         status=${param.status})}"
-                                       th:text="${pageNum}"></a>
-                                </li>
-                                <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
-                                    <a class="page-link"
-                                       th:href="@{/account/accounts(page=${currentPage + 1},
-                                                         keyword=${param.keyword},
-                                                         role=${param.role},
-                                                         status=${param.status})}">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
+                        <nav aria-label="Page navigation">
+                            <ul id="pagination" class="pagination justify-content-center m-0">
+                                <!-- JavaScript sẽ render phân trang -->
                             </ul>
                         </nav>
                     </div>
@@ -180,11 +153,13 @@
         </div>
     </div>
 </div>
-<script th:src="@{/js/admin/menu.js}"></script>
-<script th:src="@{/js/admin/header.js}"></script>
-<script th:src="@{/js/admin/body.js}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/js/common/popup.js}"></script>
-<script th:src="@{/js/admin/accounts-search.js}"></script>
+<!--Js-->
+<script th:src="@{/js/admin/searching/accounts-search.js}"></script>
+<script th:src="@{/js/admin/list/account-list.js}"></script>
+
+<div id="loadingSpinner">
+    <i class="fas fa-spinner fa-spin"></i>
+</div>
+<div th:replace="fragments/common/footer.html :: footer-scripts"></div>
 </body>
 </html>

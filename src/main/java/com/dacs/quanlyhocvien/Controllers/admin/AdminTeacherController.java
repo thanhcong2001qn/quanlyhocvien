@@ -1,12 +1,22 @@
 package com.dacs.quanlyhocvien.Controllers.admin;
 
 import com.dacs.quanlyhocvien.DTO.Request.TeacherRequestDTO;
+import com.dacs.quanlyhocvien.Repository.ITeacherRepository;
+
 import com.dacs.quanlyhocvien.Services.TeacherService;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
 import com.dacs.quanlyhocvien.models.TeacherModel;
+
+import com.dacs.quanlyhocvien.models.TeacherRequestDTO;
+import com.dacs.quanlyhocvien.models.dto.TeacherResponseDTO;
+
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,13 +29,10 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/teacher")
+@RequiredArgsConstructor
 public class AdminTeacherController {
     private final TeacherService teacherService;
-
-    @Autowired
-    public AdminTeacherController(TeacherService teacherService) {
-        this.teacherService = teacherService;
-    }
+    private final ITeacherRepository teacherRepository;
 
     @PostMapping(value = "/apiAddTeacher", consumes = "multipart/form-data")
     public ResponseEntity<?> createTeacher(@ModelAttribute TeacherRequestDTO requestDTO) {
@@ -69,10 +76,19 @@ public class AdminTeacherController {
 
         // Kiểm tra nếu là AJAX request → trả về fragment
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            return "fragments/teacher/teacher-table :: tbody"; // chỉ return <tbody>
+            return "fragments/teacher/teachers-table :: tbody"; // chỉ return <tbody>
         }
 
         return "views/admin/AllTeacher"; // return full page nếu không phải AJAX
     }
 
+    @GetMapping("/api/teachers")
+    public ResponseEntity<Page<TeacherResponseDTO>> getTeachers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<TeacherResponseDTO> teacherDTOs = teacherService.getTeachers(pageable); // 👉 gọi service
+        return ResponseEntity.ok(teacherDTOs);
+    }
 }

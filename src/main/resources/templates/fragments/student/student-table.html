@@ -1,0 +1,37 @@
+<!-- fragments/student/student-table.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head><title>Student Table Fragment</title></head>
+<body>
+<tbody>
+<tr th:each="student : ${students}">
+    <td th:text="${student.studentId}"></td> <!-- ✅ đúng là studentId -->
+    <td th:text="${student.account != null ? student.account.fullName : 'N/A'}"></td>
+    <td>
+        <span class="gender-badge"
+              th:classappend="${student.account != null && student.account.gender == 'Nam' ? 'male' : 'female'}"
+              th:text="${student.account != null ? student.account.gender : 'N/A'}">
+        </span>
+    </td>
+    <td th:text="${student.className != null ? student.className : 'N/A'}"></td> <!-- ✅ tên lớp -->
+    <td th:text="${student.account != null && student.account.dateOfBirth != null ? #temporals.format(student.account.dateOfBirth, 'dd/MM/yyyy') : 'N/A'}"></td>
+    <td th:text="${student.account != null ? student.account.address : 'N/A'}"></td>
+    <td th:text="${student.account != null ? student.account.phoneNumber : 'N/A'}"></td>
+    <td>
+        <div class="action-buttons">
+            <button class="btn btn-icon btn-edit" th:data-id="${student.studentId}">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-icon btn-delete" th:data-id="${student.studentId}">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+    </td>
+</tr>
+
+<tr th:if="${#lists.isEmpty(students)}">
+    <td colspan="8" class="text-center">Không tìm thấy sinh viên nào</td>
+</tr>
+</tbody>
+</body>
+</html>

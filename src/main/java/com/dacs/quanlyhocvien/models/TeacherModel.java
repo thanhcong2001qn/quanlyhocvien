@@ -9,9 +9,11 @@ import java.time.LocalDate;
 public class TeacherModel {
     @Id
     @Column(name = "teacher_id")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teacherId;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @MapsId
     @JoinColumn(name = "teacher_id", nullable = false)
     private AccountModel account;
 
