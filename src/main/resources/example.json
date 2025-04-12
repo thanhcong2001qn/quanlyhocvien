@@ -1,0 +1,27 @@
+[
+  {
+    "question": "Liệt kê tất cả khóa học có giá trên {giá} đồng",
+    "analysis": "Câu hỏi đang hỏi về bảng courses, với điều kiện lọc trên cột price.",
+    "sql": "SELECT * FROM courses WHERE price > {giá};"
+  },
+  {
+    "question": "Có bao nhiêu học viên đã đăng ký vào khóa học {tên_khóa_học}",
+    "analysis": "Câu hỏi đang hỏi về số lượng học viên đăng ký theo tên khóa học trong bảng course_enrollments và courses.",
+    "sql": "SELECT COUNT(*) FROM course_enrollments ce JOIN courses c ON ce.course_id = c.course_id WHERE c.course_name = '{tên_khóa_học}';"
+  },
+  {
+    "question": "Danh sách học viên có điểm trung bình cao hơn {điểm}",
+    "analysis": "Câu hỏi đang hỏi về bảng student và course_enrollments, cần tính điểm trung bình và lọc theo điều kiện.",
+    "sql": "SELECT s.student_id, a.full_name, AVG(ce.grade) AS avg_grade FROM student s JOIN account a ON s.student_id = a.account_id JOIN course_enrollments ce ON s.student_id = ce.student_id GROUP BY s.student_id, a.full_name HAVING avg_grade > {điểm};"
+  },
+  {
+    "question": "Thống kê số lượng giáo viên dạy trên {số_lượng} khóa học",
+    "analysis": "Câu hỏi yêu cầu thống kê số giáo viên dạy nhiều hơn một số lượng khóa học nhất định.",
+    "sql": "SELECT COUNT(*) FROM (SELECT t.teacher_id FROM teacher t JOIN courses c ON t.teacher_id = c.teacher_id GROUP BY t.teacher_id HAVING COUNT(c.course_id) > {số_lượng}) AS temp;"
+  },
+  {
+    "question": "Tổng doanh thu từ tất cả các khóa học",
+    "analysis": "Câu hỏi yêu cầu tính tổng doanh thu từ bảng courses dựa trên cột price.",
+    "sql": "SELECT SUM(price) AS total_revenue FROM courses;"
+  }
+]

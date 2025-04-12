@@ -3,13 +3,17 @@ package com.dacs.quanlyhocvien.Services;
 import com.dacs.quanlyhocvien.Utils.DatabaseMapping;
 import com.dacs.quanlyhocvien.Utils.DatabaseSchemaExtractor;
 import com.dacs.quanlyhocvien.config.GeminiConfig;
+import com.dacs.quanlyhocvien.models.Example;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,26 +35,28 @@ public class ChatbotService {
     @Autowired
     private DatabaseSchemaExtractor schemaExtractor;
 
-    // Cache schema để không phải truy vấn lại mỗi lần
     private String cachedSchema = null;
 
     public String processQuery(String userQuestion) {
         try {
             logger.info("Xử lý câu hỏi: " + userQuestion);
 
-            // 1. Phân tích câu hỏi của người dùng bằng Gemini
+            if (!isValidQuestion(userQuestion)) {
+                return "Xin lỗi, tôi chỉ hỗ trợ các câu hỏi liên quan đến truy vấn dữ liệu học viên, giáo viên hoặc khóa học.";
+            }
+
             String intent = analyzeQuestionIntent(userQuestion);
             logger.info("Ý định được phân tích: " + intent);
 
-            // 2. Tạo và thực thi truy vấn SQL dựa trên ý định
             String sqlQuery = generateSqlQuery(intent, userQuestion);
+            if (!isValidSql(sqlQuery)) {
+                throw new RuntimeException("SQL không hợp lệ. Bot tạo sai cú pháp.");
+            }
             logger.info("SQL được tạo: " + sqlQuery);
 
-            // 3. Thực thi truy vấn
             List<Map<String, Object>> results = executeQuery(sqlQuery);
             logger.info("Kết quả thu được: " + (results != null ? results.size() : 0) + " bản ghi");
 
-            // 4. Định dạng kết quả và tạo phản hồi
             return generateResponse(userQuestion, results);
         } catch (Exception e) {
             logger.severe("Lỗi khi xử lý câu hỏi: " + e.getMessage());
@@ -59,86 +65,35 @@ public class ChatbotService {
         }
     }
 
+    private boolean isValidQuestion(String question) {
+        String q = question.toLowerCase();
+        return q.contains("học viên") || q.contains("giáo viên") || q.contains("khóa học") || q.contains("lớp học");
+    }
+
+    private boolean isValidSql(String sql) {
+        sql = sql.toLowerCase();
+        return sql.contains("select") && sql.contains("from");
+    }
+
     private String analyzeQuestionIntent(String question) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("x-goog-api-key", geminiConfig.getApiKey());
 
-            // Đảm bảo schema được nạp
             if (cachedSchema == null) {
                 cachedSchema = schemaExtractor.getCompleteSchema();
             }
 
-            // Xây dựng ánh xạ thuật ngữ tiếng Việt sang tiếng Anh
             String mappingInfo = buildMappingInfo();
-
-            // Xây dựng ví dụ few-shot
-            String examples = buildExamples();
-
-            Map<String, Object> part = new HashMap<>();
-            part.put("text",
-                    "Bạn là một trợ lý phân tích câu hỏi tiếng Việt và chuyển thành thông tin về bảng dữ liệu SQL.\n\n" +
-                            "SCHEMA CƠ SỞ DỮ LIỆU:\n" + cachedSchema + "\n\n" +
-                            "BẢNG ÁNH XẠ THUẬT NGỮ TIẾNG VIỆT SANG TÊN BẢNG VÀ CỘT:\n" + mappingInfo + "\n\n" +
-                            "VÍ DỤ PHÂN TÍCH:\n" + examples + "\n\n" +
-                            "Bây giờ hãy phân tích câu hỏi sau và cho tôi biết nó đang hỏi về những bảng, cột dữ liệu nào (sử dụng tên tiếng Anh trong schema):\n" +
-                            question
-            );
-
-            Map<String, Object> content = new HashMap<>();
-            content.put("role", "user");
-            content.put("parts", List.of(part));
-
-            Map<String, Object> request = new HashMap<>();
-            request.put("contents", List.of(content));
-            request.put("generationConfig", Map.of(
-                    "temperature", 0.1,  // Giảm xuống để kết quả nhất quán hơn
-                    "topK", 40,
-                    "topP", 0.95,
-                    "maxOutputTokens", 1024
-            ));
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
-
-            logger.info("Gửi yêu cầu phân tích ý định đến Gemini API");
-            Map response = restTemplate.postForObject(geminiConfig.getApiUrl(), entity, Map.class);
-            logger.info("Nhận phản hồi từ Gemini API");
-
-            String extractedIntent = extractTextFromResponse(response);
-
-            // Ứng dụng ánh xạ từ ngữ để đảm bảo tên bảng/cột chính xác
-            return DatabaseMapping.translateQuery(extractedIntent);
-        } catch (Exception e) {
-            logger.severe("Lỗi khi phân tích ý định: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Không thể phân tích ý định câu hỏi", e);
-        }
-    }
-
-    private String generateSqlQuery(String intent, String question) {
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("x-goog-api-key", geminiConfig.getApiKey());
-
-            // Đảm bảo schema được nạp
-            if (cachedSchema == null) {
-                cachedSchema = schemaExtractor.getCompleteSchema();
-            }
-
-            // Xây dựng ví dụ SQL tương ứng với câu hỏi
-            String sqlExamples = buildSqlExamples();
+            List<Example> examplesList = loadExamples();
+            String examples = buildPromptFromExamples(examplesList);
 
             Map<String, Object> part = new HashMap<>();
-            part.put("text",
-                    "Bạn là một chuyên gia SQL giỏi và nhiệm vụ của bạn là tạo truy vấn SQL chính xác dựa trên câu hỏi tiếng Việt.\n\n" +
-                            "SCHEMA CƠ SỞ DỮ LIỆU:\n" + cachedSchema + "\n\n" +
-                            "VÍ DỤ VỀ CÂU HỎI VÀ TRUY VẤN SQL TƯƠNG ỨNG:\n" + sqlExamples + "\n\n" +
-                            "Câu hỏi: " + question + "\n" +
-                            "Phân tích ý định: " + intent + "\n\n" +
-                            "Tạo một truy vấn SQL chính xác và hiệu quả cho câu hỏi trên. Chỉ trả về truy vấn SQL không kèm giải thích."
-            );
+            part.put("text", "Bạn là trợ lý AI. Dựa vào SCHEMA dưới đây, hãy phân tích ý định câu hỏi.\n\n" +
+                    "SCHEMA:\n" + cachedSchema + "\n\nÁNH XẠ TIẾNG VIỆT SANG ENGLISH:\n" + mappingInfo +
+                    "\n\nVí dụ:\n" + examples +
+                    "\n\nCâu hỏi: " + question);
 
             Map<String, Object> content = new HashMap<>();
             content.put("role", "user");
@@ -155,46 +110,31 @@ public class ChatbotService {
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
 
-            logger.info("Gửi yêu cầu tạo SQL đến Gemini API");
             Map response = restTemplate.postForObject(geminiConfig.getApiUrl(), entity, Map.class);
-            logger.info("Nhận phản hồi từ Gemini API");
 
-            return extractTextFromResponse(response);
+            String extractedIntent = extractTextFromResponse(response);
+            return DatabaseMapping.translateQuery(extractedIntent);
         } catch (Exception e) {
-            logger.severe("Lỗi khi tạo truy vấn SQL: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Không thể tạo truy vấn SQL", e);
+            throw new RuntimeException("Không thể phân tích ý định câu hỏi", e);
         }
     }
 
-    private List<Map<String, Object>> executeQuery(String sqlQuery) {
-        try {
-            // Clean the SQL query by removing Markdown formatting
-            String cleanedQuery = sqlQuery
-                    .replaceAll("```sql\\s*", "")
-                    .replaceAll("```", "")
-                    .trim();
-
-            logger.info("Executing SQL query: " + cleanedQuery);
-            return jdbcTemplate.queryForList(cleanedQuery);
-        } catch (Exception e) {
-            logger.info("Lỗi khi thực thi SQL: " + e.getMessage());
-            return List.of(Map.of("error", "Lỗi khi thực thi truy vấn: " + e.getMessage()));
-        }
-    }
-    private String generateResponse(String question, List<Map<String, Object>> results) {
+    private String generateSqlQuery(String intent, String question) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("x-goog-api-key", geminiConfig.getApiKey());
 
+            if (cachedSchema == null) {
+                cachedSchema = schemaExtractor.getCompleteSchema();
+            }
+
+            List<Example> examplesList = loadExamples();
+            String sqlExamples = buildPromptFromExamples(examplesList);
+
             Map<String, Object> part = new HashMap<>();
-            part.put("text",
-                    "Bạn là trợ lý AI chuyên nghiệp. Hãy tạo một phản hồi bằng tiếng Việt dễ hiểu cho câu hỏi sau:\n\n" +
-                            "Câu hỏi: " + question + "\n\n" +
-                            "Dữ liệu kết quả: " + results.toString() + "\n\n" +
-                            "Hãy trình bày kết quả một cách rõ ràng, dễ hiểu và đầy đủ. Nếu có bảng dữ liệu, hãy định dạng nó cho dễ đọc. Trả lời bằng tiếng Việt, thân thiện và hữu ích."
-            );
+            part.put("text", "Strictly output pure valid SQL without explanations or Markdown.\n\nSCHEMA:\n" + cachedSchema +
+                    "\n\nCâu hỏi: " + question + "\n\nÝ định: " + intent + "\n\nVí dụ SQL:\n" + sqlExamples);
 
             Map<String, Object> content = new HashMap<>();
             content.put("role", "user");
@@ -203,7 +143,7 @@ public class ChatbotService {
             Map<String, Object> request = new HashMap<>();
             request.put("contents", List.of(content));
             request.put("generationConfig", Map.of(
-                    "temperature", 0.2,
+                    "temperature", 0.1,
                     "topK", 40,
                     "topP", 0.95,
                     "maxOutputTokens", 1024
@@ -211,53 +151,67 @@ public class ChatbotService {
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
 
-            logger.info("Gửi yêu cầu tạo phản hồi đến Gemini API");
             Map response = restTemplate.postForObject(geminiConfig.getApiUrl(), entity, Map.class);
-            logger.info("Nhận phản hồi từ Gemini API");
 
             return extractTextFromResponse(response);
         } catch (Exception e) {
-            logger.severe("Lỗi khi tạo phản hồi: " + e.getMessage());
-            e.printStackTrace();
-            return "Xin lỗi, tôi không thể tạo phản hồi cho câu hỏi của bạn. Lỗi: " + e.getMessage();
+            throw new RuntimeException("Không thể tạo truy vấn SQL", e);
         }
     }
 
-    private String extractTextFromResponse(Map response) {
+    private List<Map<String, Object>> executeQuery(String sqlQuery) {
         try {
-            if (response == null) {
-                logger.warning("Phản hồi null từ API");
-                return "Không nhận được phản hồi từ API.";
+            String cleanedQuery = sqlQuery.replaceAll("```sql\\s*", "").replaceAll("```", "").trim();
+            return jdbcTemplate.queryForList(cleanedQuery);
+        } catch (Exception e) {
+            return List.of(Map.of("error", "Lỗi SQL: " + e.getMessage()));
+        }
+    }
+
+    private String generateResponse(String question, List<Map<String, Object>> results) {
+        if (results == null || results.isEmpty()) {
+            return "Không có dữ liệu phù hợp với yêu cầu của bạn.";
+        }
+
+        StringBuilder table = new StringBuilder();
+        table.append("<table border='1' style='border-collapse:collapse;'>");
+
+        Map<String, Object> firstRow = results.get(0);
+        table.append("<thead><tr>");
+        for (String key : firstRow.keySet()) {
+            table.append("<th style='padding:8px;'>").append(key).append("</th>");
+        }
+        table.append("</tr></thead><tbody>");
+
+        for (Map<String, Object> row : results) {
+            table.append("<tr>");
+            for (Object value : row.values()) {
+                table.append("<td style='padding:8px;'>").append(value != null ? value.toString() : "").append("</td>");
             }
+            table.append("</tr>");
+        }
 
-            // Ghi log cấu trúc phản hồi cho mục đích debug
-            logger.fine("Cấu trúc phản hồi: " + response);
+        table.append("</tbody></table>");
 
+        return "Kết quả cho câu hỏi: <b>" + question + "</b><br/>" + table.toString();
+    }
+
+    private String extractTextFromResponse(Map response) {
+        if (response == null) return "Không nhận được phản hồi từ API.";
+        try {
             if (response.containsKey("candidates")) {
                 List<Map> candidates = (List<Map>) response.get("candidates");
-                if (candidates != null && !candidates.isEmpty()) {
+                if (!candidates.isEmpty()) {
                     Map candidate = candidates.get(0);
-                    if (candidate.containsKey("content")) {
-                        Map content = (Map) candidate.get("content");
-                        if (content != null && content.containsKey("parts")) {
-                            List<Map> parts = (List<Map>) content.get("parts");
-                            if (parts != null && !parts.isEmpty()) {
-                                Object textObj = parts.get(0).get("text");
-                                if (textObj != null) {
-                                    return textObj.toString();
-                                }
-                            }
-                        }
+                    Map content = (Map) candidate.get("content");
+                    List<Map> parts = (List<Map>) content.get("parts");
+                    if (!parts.isEmpty()) {
+                        return parts.get(0).get("text").toString();
                     }
                 }
             }
-
-            return "Không thể trích xuất văn bản từ phản hồi: " + response;
-        } catch (Exception e) {
-            logger.severe("Lỗi khi trích xuất văn bản từ phản hồi: " + e.getMessage());
-            e.printStackTrace();
-            return "Lỗi xử lý phản hồi: " + e.getMessage();
-        }
+        } catch (Exception ignored) {}
+        return "Không thể trích xuất văn bản từ phản hồi.";
     }
 
     // Helper methods
@@ -299,51 +253,30 @@ public class ChatbotService {
                         "- lớp -> class";
     }
 
-    private String buildExamples() {
-        return
-                "1. Câu hỏi: \"Có bao nhiêu học viên trong hệ thống?\"\n" +
-                        "   Phân tích: Câu hỏi đang hỏi về số lượng bản ghi trong bảng student.\n\n" +
-
-                        "2. Câu hỏi: \"Liệt kê tất cả khóa học có giá trên 1,000,000 đồng\"\n" +
-                        "   Phân tích: Câu hỏi đang hỏi về bảng courses, với điều kiện lọc trên cột price.\n\n" +
-
-                        "3. Câu hỏi: \"Thống kê số lượng học viên đã đăng ký theo từng khóa học\"\n" +
-                        "   Phân tích: Câu hỏi liên quan đến các bảng courses và course_enrollments, cần join 2 bảng này và đếm theo course_id.\n\n" +
-
-                        "4. Câu hỏi: \"Danh sách học viên có điểm trung bình cao nhất\"\n" +
-                        "   Phân tích: Câu hỏi liên quan đến các bảng student, course_enrollments, cần tính điểm trung bình (grade) theo từng học viên.";
+    private List<Example> loadExamples() {
+        ObjectMapper mapper = new ObjectMapper();
+        try (InputStream inputStream = getClass().getResourceAsStream("/examples.json")) {
+            return mapper.readValue(inputStream, new TypeReference<List<Example>>() {});
+        } catch (IOException e) {
+            throw new RuntimeException("Không thể đọc file examples.json", e);
+        }
     }
 
-    private String buildSqlExamples() {
-        return
-                "1. Câu hỏi: \"Có bao nhiêu học viên trong hệ thống?\"\n" +
-                        "   SQL: SELECT COUNT(*) AS total_students FROM student;\n\n" +
+    private String buildPromptFromExamples(List<Example> examples) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < examples.size(); i++) {
+            Example ex = examples.get(i);
+            sb.append(i + 1).append(". Câu hỏi: \"").append(ex.getQuestion()).append("\"\n");
+            sb.append("   Phân tích: ").append(ex.getAnalysis()).append("\n");
+            sb.append("   SQL: ").append(ex.getSql()).append("\n\n");
+        }
+        return sb.toString();
+    }
 
-                        "2. Câu hỏi: \"Liệt kê tất cả khóa học có giá trên 1,000,000 đồng\"\n" +
-                        "   SQL: SELECT * FROM courses WHERE price > 1000000;\n\n" +
-
-                        "3. Câu hỏi: \"Thống kê số lượng học viên đã đăng ký theo từng khóa học\"\n" +
-                        "   SQL: SELECT c.course_id, c.course_name, COUNT(ce.student_id) AS student_count \n" +
-                        "        FROM courses c \n" +
-                        "        LEFT JOIN course_enrollments ce ON c.course_id = ce.course_id \n" +
-                        "        GROUP BY c.course_id, c.course_name;\n\n" +
-
-                        "4. Câu hỏi: \"Danh sách học viên có điểm trung bình cao nhất\"\n" +
-                        "   SQL: SELECT s.student_id, a.full_name, AVG(ce.grade) AS average_grade \n" +
-                        "        FROM student s \n" +
-                        "        JOIN account a ON s.student_id = a.account_id \n" +
-                        "        JOIN course_enrollments ce ON s.student_id = ce.student_id \n" +
-                        "        WHERE ce.grade IS NOT NULL \n" +
-                        "        GROUP BY s.student_id, a.full_name \n" +
-                        "        ORDER BY average_grade DESC \n" +
-                        "        LIMIT 10;\n\n" +
-
-                        "5. Câu hỏi: \"Có bao nhiêu giáo viên đang dạy nhiều hơn 3 khóa học?\"\n" +
-                        "   SQL: SELECT COUNT(*) AS teacher_count \n" +
-                        "        FROM (SELECT t.teacher_id \n" +
-                        "              FROM teacher t \n" +
-                        "              JOIN courses c ON t.teacher_id = c.teacher_id \n" +
-                        "              GROUP BY t.teacher_id \n" +
-                        "              HAVING COUNT(c.course_id) > 3) AS subquery;";
+    private String fillPlaceholders(String text, Map<String, String> values) {
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            text = text.replace("{" + entry.getKey() + "}", entry.getValue());
+        }
+        return text;
     }
 }

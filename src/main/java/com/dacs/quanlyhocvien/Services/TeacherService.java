@@ -30,13 +30,6 @@ public class TeacherService {
     private final PasswordEncoder passwordEncoder;
 
 
-    @Autowired
-    public TeacherService(ITeacherRepository teacherRepository, IAccountRepository accountRepository, FileStorageService fileStorageService, PasswordEncoder passwordEncoder) {
-        this.teacherRepository = teacherRepository;
-        this.accountRepository = accountRepository;
-        this.fileStorageService = fileStorageService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
 
     public TeacherModel addTeacher(TeacherModel teacher, MultipartFile file) {
