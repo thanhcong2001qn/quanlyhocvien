@@ -3,13 +3,10 @@ package com.dacs.quanlyhocvien.Controllers.admin;
 import com.dacs.quanlyhocvien.Repository.IAdminRepository;
 import com.dacs.quanlyhocvien.Services.AdminService;
 import com.dacs.quanlyhocvien.models.AdminModel;
-import com.dacs.quanlyhocvien.models.AdminRequestDTO;
-import com.dacs.quanlyhocvien.models.TeacherModel;
+import com.dacs.quanlyhocvien.DTO.Request.AdminRequestDTO;
 import com.dacs.quanlyhocvien.models.dto.AdminResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

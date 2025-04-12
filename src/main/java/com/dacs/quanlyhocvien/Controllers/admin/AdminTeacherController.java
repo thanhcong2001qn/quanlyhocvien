@@ -8,7 +8,7 @@ import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
 import com.dacs.quanlyhocvien.models.TeacherModel;
 
-import com.dacs.quanlyhocvien.models.TeacherRequestDTO;
+import com.dacs.quanlyhocvien.DTO.Request.TeacherRequestDTO;
 import com.dacs.quanlyhocvien.models.dto.TeacherResponseDTO;
 
 import jakarta.servlet.http.HttpServletRequest;

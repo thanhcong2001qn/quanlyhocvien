@@ -288,15 +288,105 @@
     </div>
   </div>
 </div>
+<!-- Nút mở Chatbox -->
+<button id="openChatBtn" class="chat-open-btn">
+  <i class="fas fa-comments"></i>
+</button>
+
+<!-- Chatbox Messenger Style -->
+<div id="chatContainer" class="modern-chat-container" style="display: none;">
+  <!-- Header kèm animation và icon -->
+  <div id="chatHeader" class="chat-header">
+    <div class="header-content">
+      <div class="header-status">
+        <span class="status-dot"></span>
+      </div>
+      <div class="header-title">
+        <h3>Trợ lý học viên</h3>
+        <span class="status-text">Đang hoạt động</span>
+      </div>
+    </div>
+
+    <!-- Thêm 1 div bọc 2 nút control -->
+    <div class="header-controls">
+      <button id="toggleSizeBtn" class="control-button">
+        <i class="fas fa-expand"></i>
+      </button>
+      <button id="closeChatBtn" class="control-button">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages container với hiệu ứng cuộn mượt -->
+  <div id="chat-messages" class="chat-messages">
+    <div class="message bot-message">
+      <div class="message-content">
+        <div class="message-bubble">Xin chào! Tôi có thể giúp gì cho bạn?</div>
+        <div class="message-time">17:12</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input area với animation và modern design -->
+  <div id="chatInputArea" class="chat-input-area">
+    <form id="chat-form" class="input-form">
+      <div class="input-wrapper">
+        <input
+                type="text"
+                id="user-input"
+                placeholder="Nhập tin nhắn..."
+                autocomplete="off"
+        >
+        <button id="sendBtn" type="submit"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </form>
+  </div>
+</div>
 <!---->
 <script th:src="@{/js/admin/menu.js}"></script>
 <script th:src="@{/js/admin/header.js}"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:src="@{/js/chatbot/chatbot.js}"></script>
+<!-- Script mở/đóng chat -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const openBtn = document.getElementById('openChatBtn');
+  const chatContainer = document.getElementById('chatContainer');
+  const closeBtn = document.getElementById('closeChatBtn');
+  const toggleSizeBtn = document.getElementById('toggleSizeBtn');
 
+  // Ấn icon mở/ẩn chat
+  openBtn.addEventListener('click', () => {
+    if (chatContainer.style.display === 'none' || chatContainer.style.display === '') {
+      chatContainer.style.display = 'flex';
+    } else {
+      chatContainer.style.display = 'none';
+    }
+  });
 
-<!-- Theme JS -->
-<!--<script th:src="@{/js/admin/theme.js}"></script>-->
+  // Ấn nút X đóng chat
+  closeBtn.addEventListener('click', () => {
+    chatContainer.style.display = 'none';
+  });
+
+  // Ấn nút phóng to/thu nhỏ
+  toggleSizeBtn.addEventListener('click', () => {
+    chatContainer.classList.toggle('expanded');
+
+    // Đổi icon
+    const icon = toggleSizeBtn.querySelector('i');
+    if (chatContainer.classList.contains('expanded')) {
+      icon.classList.remove('fa-expand');
+      icon.classList.add('fa-compress');
+    } else {
+      icon.classList.remove('fa-compress');
+      icon.classList.add('fa-expand');
+    }
+  });
+});
+</script>
 </body>
 </html>

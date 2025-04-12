@@ -17,15 +17,15 @@ import com.dacs.quanlyhocvien.models.dto.StudentResponseDTO;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class StudentService {
     private final IStudentRepository studentRepository;
     private final FileStorageService fileStorageService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public StudentService(IStudentRepository studentRepository, PasswordEncoder passwordEncoder) {
+    public StudentService(IStudentRepository studentRepository, FileStorageService fileStorageService, PasswordEncoder passwordEncoder) {
         this.studentRepository = studentRepository;
+        this.fileStorageService = fileStorageService;
         this.passwordEncoder = passwordEncoder;
     }
 
