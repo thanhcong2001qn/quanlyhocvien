@@ -2,6 +2,7 @@ package com.dacs.quanlyhocvien.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DatabaseMapping {
     // Ánh xạ từ tiếng Việt sang tên bảng
@@ -12,48 +13,61 @@ public class DatabaseMapping {
     static {
         // Ánh xạ bảng
         vietnameseToTableMap.put("tài khoản", "account");
+        vietnameseToTableMap.put("quản trị viên", "admin");
+        vietnameseToTableMap.put("vai trò", "roles");
         vietnameseToTableMap.put("học viên", "student");
-        vietnameseToTableMap.put("sinh viên", "student");
         vietnameseToTableMap.put("giáo viên", "teacher");
-        vietnameseToTableMap.put("giảng viên", "teacher");
-        vietnameseToTableMap.put("khóa học", "courses");
-        vietnameseToTableMap.put("khoá học", "courses");
-        vietnameseToTableMap.put("lớp học", "courses");
-        vietnameseToTableMap.put("danh mục", "course_categories");
-        vietnameseToTableMap.put("đăng ký", "course_enrollments");
-        vietnameseToTableMap.put("ghi danh", "course_enrollments");
-        vietnameseToTableMap.put("module", "course_modules");
-        vietnameseToTableMap.put("bài học", "lessons");
-        vietnameseToTableMap.put("đánh giá", "course_reviews");
-        vietnameseToTableMap.put("bài tập", "assignments");
-        vietnameseToTableMap.put("nộp bài", "assignment_submissions");
-        vietnameseToTableMap.put("bài nộp", "assignment_submissions");
 
-        // Ánh xạ thuộc tính
-        vietnameseToColumnMap.put("tên đăng nhập", "username");
-        vietnameseToColumnMap.put("mật khẩu", "password");
-        vietnameseToColumnMap.put("email", "email");
-        vietnameseToColumnMap.put("họ tên", "full_name");
+        // Ánh xạ cột
         vietnameseToColumnMap.put("tên đầy đủ", "full_name");
+        vietnameseToColumnMap.put("email", "email");
+        vietnameseToColumnMap.put("mật khẩu", "password");
+        vietnameseToColumnMap.put("giới tính", "gender");
         vietnameseToColumnMap.put("ngày sinh", "date_of_birth");
         vietnameseToColumnMap.put("số điện thoại", "phone_number");
         vietnameseToColumnMap.put("địa chỉ", "address");
-        vietnameseToColumnMap.put("giới tính", "gender");
-        vietnameseToColumnMap.put("tên khóa học", "course_name");
-        vietnameseToColumnMap.put("mã khóa học", "course_code");
-        vietnameseToColumnMap.put("mô tả", "description");
-        vietnameseToColumnMap.put("giá", "price");
-        vietnameseToColumnMap.put("học phí", "price");
-        vietnameseToColumnMap.put("ngày bắt đầu", "start_date");
-        vietnameseToColumnMap.put("ngày kết thúc", "end_date");
-        vietnameseToColumnMap.put("trạng thái", "status");
-        vietnameseToColumnMap.put("điểm", "grade");
-        vietnameseToColumnMap.put("điểm số", "grade");
-        vietnameseToColumnMap.put("đánh giá", "rating");
-        vietnameseToColumnMap.put("ngày đăng ký", "enrollment_date");
-        vietnameseToColumnMap.put("lớp", "class");
+        vietnameseToColumnMap.put("tên tài khoản", "username");
+        vietnameseToColumnMap.put("tên giáo viên", "full_name");
+        vietnameseToColumnMap.put("môn chuyên ngành", "subject_specialization");
+        vietnameseToColumnMap.put("trình độ", "qualification");
     }
 
+
+    /**
+     * Trả về thông tin ánh xạ dưới dạng chuỗi có định dạng
+     * @return String chứa thông tin ánh xạ từ tiếng Việt sang tiếng Anh
+     */
+    public static String getMappingInfo() {
+        StringBuilder mappingInfo = new StringBuilder();
+
+        // Ánh xạ bảng
+        mappingInfo.append("Tiếng Việt -> Tên bảng:\n");
+        String tableMappings = vietnameseToTableMap.entrySet().stream()
+                .collect(Collectors.groupingBy(Map.Entry::getValue))
+                .entrySet().stream()
+                .map(e -> "- " + e.getValue().stream()
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.joining(", ")) +
+                        " -> " + e.getKey())
+                .collect(Collectors.joining("\n"));
+        mappingInfo.append(tableMappings).append("\n\n");
+
+        // Ánh xạ cột
+        mappingInfo.append("Tiếng Việt -> Tên cột:\n");
+        String columnMappings = vietnameseToColumnMap.entrySet().stream()
+                .collect(Collectors.groupingBy(Map.Entry::getValue))
+                .entrySet().stream()
+                .map(e -> "- " + e.getValue().stream()
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.joining(", ")) +
+                        " -> " + e.getKey())
+                .collect(Collectors.joining("\n"));
+        mappingInfo.append(columnMappings);
+
+        return mappingInfo.toString();
+    }
+
+    // Các phương thức hiện có giữ nguyên
     public static String getTableName(String vietnameseTerm) {
         return vietnameseToTableMap.getOrDefault(vietnameseTerm.toLowerCase(), vietnameseTerm);
     }
