@@ -32,10 +32,10 @@ public class ChatbotService {
     public String processQuery(String userQuestion) {
         try {
             // 1. Check câu hỏi tự nhiên trước
-            String generalAnswer = generalQuestionHandler.matchGeneralQuestion(userQuestion);
-            if (generalAnswer != null) {
-                return formatAnswer(generalAnswer);
-            }
+//            String generalAnswer = generalQuestionHandler.matchGeneralQuestion(userQuestion);
+//            if (generalAnswer != null) {
+//                return formatAnswer(generalAnswer);
+//            }
 
             // 2. Nếu không phải câu hỏi tự nhiên ➔ Sinh SQL
             String sql = sqlQueryGenerator.generateIntentBasedSql(userQuestion);

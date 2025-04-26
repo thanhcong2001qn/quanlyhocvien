@@ -1,24 +1,25 @@
-const searchBtn = document.getElementById('search-btn');
-const searchForm = document.getElementById('search-form');
+// const searchBtn = document.getElementById('search-btn');
+// const searchForm = document.getElementById('search-form');
 let isSearchActive = false;
 
-searchBtn.addEventListener('click', function (e) {
-    e.preventDefault(); // Ngăn chặn hành vi mặc định
-    e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài
-
-    if (!isSearchActive) {
-        // Mở thanh tìm kiếm
-        searchForm.classList.remove('not-active');
-        searchForm.classList.add('active');
-        isSearchActive = true;
-    } else {
-        // Đóng thanh tìm kiếm
-        searchForm.classList.add('not-active');
-        searchForm.classList.remove('active');
-        isSearchActive = false;
-    }
-});
+// searchBtn.addEventListener('click', function (e) {
+//     e.preventDefault(); // Ngăn chặn hành vi mặc định
+//     e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài
+//
+//     if (!isSearchActive) {
+//         // Mở thanh tìm kiếm
+//         searchForm.classList.remove('not-active');
+//         searchForm.classList.add('active');
+//         isSearchActive = true;
+//     } else {
+//         // Đóng thanh tìm kiếm
+//         searchForm.classList.add('not-active');
+//         searchForm.classList.remove('active');
+//         isSearchActive = false;
+//     }
+// });
 document.addEventListener('DOMContentLoaded', function () {
+    updateCartBadge();
     updateAuthUI();
     updateUtcTime();
     active();
@@ -132,4 +133,26 @@ function active(){
             link.classList.remove('active');
         }
     });
+}
+
+function updateCartBadge() {
+    fetchWithAuth('/api/cart/count')
+        .then(response => response.json())
+        .then(data => {
+            const cartBadge = document.getElementById('cartBadge');
+            if (cartBadge) {
+                // Cập nhật số lượng
+                cartBadge.textContent = data.count;
+
+                // Hiển thị hoặc ẩn badge dựa trên số lượng
+                if (data.count > 0) {
+                    cartBadge.style.display = 'inline-block';
+                } else {
+                    cartBadge.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi lấy số lượng giỏ hàng:', error);
+        });
 }

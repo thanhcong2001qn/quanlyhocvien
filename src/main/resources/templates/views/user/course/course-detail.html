@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết khoá học</title>
+    <title th:text="${course.title} + ' | Hệ thống học trực tuyến'">Chi tiết khoá học</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/user/header.css}">
@@ -15,31 +15,43 @@
 <div th:replace="~{/fragments/user/header :: header}"></div>
 <div th:replace="~{fragments/user/notification-select :: confirmation-dialog}"></div>
 <div th:replace="~{fragments/user/notification :: notification}"></div>
+
+
 <!-- Course Banner Section -->
-<div class="course-banner" th:style="'background-image: url(' + ${course.bannerUrl} + ');'">
+<div class="course-banner" th:style="'background-image: url(' + ${course.thumbnailPath} + ');'">
     <div class="container">
         <div class="course-banner-content">
             <h1 class="course-title" th:text="${course.title}">Tên khóa học</h1>
-            <p class="course-short-description" th:text="${course.shortDescription}">Mô tả ngắn về khóa học</p>
+            <p class="course-short-description" th:text="${course.description}">Mô tả ngắn về khóa học</p>
             <div class="course-meta">
-                    <span class="course-rating">
-                        <i class="fas fa-star"></i>
-                        <span th:text="${course.rating}">4.8</span>
-                        <span class="total-ratings" th:text="'(' + ${course.totalRatings} + ' đánh giá)'"></span>
-                    </span>
+                <span class="course-rating">
+                    <i class="fas fa-star"></i>
+                    <span th:text="${course.rating != null ? course.rating : '0.0'}">4.8</span>
+                    <span class="total-ratings" th:text="'(' + ${course.totalReviews != null ? course.totalReviews : '0'} + ' đánh giá)'"></span>
+                </span>
                 <span class="course-students">
-                        <i class="fas fa-user-graduate"></i>
-                        <span th:text="${course.totalStudents} + ' học viên'"></span>
-                    </span>
+                    <i class="fas fa-user-graduate"></i>
+                    <span th:text="${course.totalStudents != null ? course.totalStudents : '0'} + ' học viên'"></span>
+                </span>
                 <span class="course-updated">
-                        <i class="fas fa-clock"></i>
-                        <span th:text="'Cập nhật: ' + ${#dates.format(course.lastUpdated, 'dd/MM/yyyy')}"></span>
-                    </span>
+                    <i class="fas fa-clock"></i>
+                    <span th:text="'Cập nhật: ' + ${#temporals.format(course.updatedAt, 'dd/MM/yyyy')}"></span>
+                </span>
             </div>
-            <div class="course-author">
-                <img th:src="${course.author.avatarUrl}" alt="Giảng viên" class="author-avatar">
-                <span th:text="${course.author.name}">Tên giảng viên</span>
+            <div class="course-author" th:if="${course.instructor != null}">
+                <img th:src="${course.instructor.avatarUrl}" alt="Giảng viên" class="author-avatar">
+                <span th:text="${course.instructor.fullName}">Tên giảng viên</span>
             </div>
+        </div>
+    </div>
+</div>
+<!-- Back to all courses button -->
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-12">
+            <a href="/user/all-course" class="btn btn-outline-secondary mb-3">
+                <i class="fas fa-arrow-left"></i> Quay lại tất cả khóa học
+            </a>
         </div>
     </div>
 </div>
@@ -56,10 +68,10 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6" th:each="learningPoint : ${course.learningPoints}">
+                        <div class="col-md-6" th:each="objective : ${course.objectives}">
                             <div class="learning-point">
                                 <i class="fas fa-check"></i>
-                                <span th:text="${learningPoint}">Điểm học tập</span>
+                                <span th:text="${objective}">Điểm học tập</span>
                             </div>
                         </div>
                     </div>
@@ -73,41 +85,41 @@
                 </div>
                 <div class="card-body">
                     <div class="course-content-info mb-3">
-                        <span><i class="fas fa-list"></i> <span th:text="${course.totalSections} + ' chương'"></span></span>
-                        <span><i class="fas fa-file-video"></i> <span th:text="${course.totalLectures} + ' bài giảng'"></span></span>
-                        <span><i class="fas fa-clock"></i> <span th:text="${course.totalDuration} + ' giờ'"></span></span>
+                        <span><i class="fas fa-list"></i> <span th:text="${course.totalModules} + ' chương'"></span></span>
+                        <span><i class="fas fa-file-video"></i> <span th:text="${course.totalLessons} + ' bài giảng'"></span></span>
+                        <span><i class="fas fa-clock"></i> <span th:text="${course.getDurationFormatted()}"></span></span>
                     </div>
 
                     <div class="accordion" id="courseContentAccordion">
-                        <div class="accordion-item" th:each="section, sectionStat : ${course.sections}">
-                            <h2 class="accordion-header" th:id="'heading' + ${sectionStat.index}">
+                        <div class="accordion-item" th:each="module, moduleStat : ${course.modules}">
+                            <h2 class="accordion-header" th:id="'heading' + ${moduleStat.index}">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        th:data-bs-target="'#collapse' + ${sectionStat.index}"
-                                        th:aria-expanded="${sectionStat.first} ? 'true' : 'false'"
-                                        th:aria-controls="'collapse' + ${sectionStat.index}">
+                                        th:data-bs-target="'#collapse' + ${moduleStat.index}"
+                                        th:aria-expanded="${moduleStat.first} ? 'true' : 'false'"
+                                        th:aria-controls="'collapse' + ${moduleStat.index}">
                                     <div class="section-header-content">
-                                        <span class="section-title" th:text="${section.title}">Chương 1: Giới thiệu</span>
+                                        <span class="section-title" th:text="${module.title}">Chương 1: Giới thiệu</span>
                                         <span class="section-meta">
-                                                <span th:text="${section.lectures.size()} + ' bài giảng'"></span> •
-                                                <span th:text="${section.duration}"></span>
-                                            </span>
+                                            <span th:text="${module.lessons.size()} + ' bài giảng'"></span> •
+                                            <span th:text="${module.totalDuration != null ? module.totalDuration + ' phút' : '0 phút'}"></span>
+                                        </span>
                                     </div>
                                 </button>
                             </h2>
-                            <div th:id="'collapse' + ${sectionStat.index}" class="accordion-collapse collapse"
-                                 th:class="${sectionStat.first} ? 'accordion-collapse collapse show' : 'accordion-collapse collapse'"
-                                 th:aria-labelledby="'heading' + ${sectionStat.index}"
+                            <div th:id="'collapse' + ${moduleStat.index}" class="accordion-collapse collapse"
+                                 th:class="${moduleStat.first} ? 'accordion-collapse collapse show' : 'accordion-collapse collapse'"
+                                 th:aria-labelledby="'heading' + ${moduleStat.index}"
                                  data-bs-parent="#courseContentAccordion">
                                 <div class="accordion-body">
                                     <ul class="list-group list-group-flush">
-                                        <li class="list-group-item lecture-item" th:each="lecture : ${section.lectures}">
+                                        <li class="list-group-item lecture-item" th:each="lesson : ${module.lessons}">
                                             <div class="lecture-info">
                                                 <i class="fas fa-play-circle lecture-icon"></i>
-                                                <span class="lecture-title" th:text="${lecture.title}">Tên bài giảng</span>
+                                                <span class="lecture-title" th:text="${lesson.title}">Tên bài giảng</span>
                                             </div>
                                             <div class="lecture-meta">
-                                                <span th:if="${lecture.preview}" class="lecture-preview">Xem trước</span>
-                                                <span class="lecture-duration" th:text="${lecture.duration}">10:30</span>
+                                                <span th:if="${lesson.isFree}" class="lecture-preview">Xem trước</span>
+                                                <span class="lecture-duration" th:text="${lesson.duration != null ? lesson.duration + ' phút' : ''}">10:30</span>
                                             </div>
                                         </li>
                                     </ul>
@@ -143,34 +155,34 @@
             </div>
 
             <!-- Instructor Section -->
-            <div class="card mb-4">
+            <div class="card mb-4" th:if="${course.instructor != null}">
                 <div class="card-header bg-primary text-white">
                     <h4>Giảng viên</h4>
                 </div>
                 <div class="card-body">
                     <div class="instructor-profile">
                         <div class="instructor-header d-flex align-items-center mb-3">
-                            <img th:src="${course.author.avatarUrl}" alt="Instructor" class="instructor-avatar me-3">
+                            <img th:src="${course.instructor.avatarUrl}" alt="Instructor" class="instructor-avatar me-3">
                             <div>
-                                <h5 class="instructor-name" th:text="${course.author.name}">Tên giảng viên</h5>
-                                <p class="instructor-title" th:text="${course.author.title}">Chức danh giảng viên</p>
+                                <h5 class="instructor-name" th:text="${course.instructor.fullName}">Tên giảng viên</h5>
+                                <p class="instructor-title" th:text="${course.instructor.profession}">Chức danh giảng viên</p>
                             </div>
                         </div>
                         <div class="instructor-stats d-flex mb-3">
                             <div class="instructor-stat me-4">
                                 <i class="fas fa-star"></i>
-                                <span th:text="${course.author.rating} + ' Đánh giá'"></span>
+                                <span th:text="${course.instructor.averageRating != null ? course.instructor.averageRating : '0.0'} + ' Đánh giá'"></span>
                             </div>
                             <div class="instructor-stat me-4">
                                 <i class="fas fa-user-graduate"></i>
-                                <span th:text="${course.author.students} + ' Học viên'"></span>
+                                <span th:text="${course.instructor.totalStudents != null ? course.instructor.totalStudents : '0'} + ' Học viên'"></span>
                             </div>
                             <div class="instructor-stat">
                                 <i class="fas fa-book"></i>
-                                <span th:text="${course.author.courses} + ' Khóa học'"></span>
+                                <span th:text="${course.instructor.totalCourses != null ? course.instructor.totalCourses : '0'} + ' Khóa học'"></span>
                             </div>
                         </div>
-                        <div class="instructor-bio" th:utext="${course.author.bio}">
+                        <div class="instructor-bio" th:utext="${course.instructor.biography}">
                             <!-- Instructor bio HTML here -->
                         </div>
                     </div>
@@ -178,47 +190,53 @@
             </div>
 
             <!-- Student Reviews Section -->
-            <div class="card mb-4">
+            <div class="card mb-4" th:if="${reviews != null && !reviews.empty}">
                 <div class="card-header bg-primary text-white">
                     <h4>Đánh giá từ học viên</h4>
                 </div>
                 <div class="card-body">
                     <div class="course-ratings-summary d-flex mb-4">
                         <div class="overall-rating text-center me-4">
-                            <div class="rating-number" th:text="${course.rating}">4.8</div>
+                            <div class="rating-number" th:text="${course.rating != null ? course.rating : '0.0'}">4.8</div>
                             <div class="stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
+                                <!-- Dynamic star rendering based on rating -->
+                                <th:block th:with="fullStars=${#numbers.formatDecimal(course.rating, 0, 0)},
+                                                 hasHalfStar=${course.rating - fullStars >= 0.5}">
+                                    <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, fullStars)}"></i>
+                                    <i class="fas fa-star-half-alt" th:if="${hasHalfStar}"></i>
+                                    <i class="far fa-star"
+                                       th:each="i : ${#numbers.sequence(1, 5 - fullStars - (hasHalfStar ? 1 : 0))}"></i>
+                                </th:block>
                             </div>
                             <div class="total-ratings" th:text="'Đánh giá của khóa học'"></div>
                         </div>
+
+                        <!-- Rating distribution - simplified for now -->
                         <div class="rating-bars flex-grow-1">
                             <div class="rating-bar-row d-flex align-items-center mb-1" th:each="i : ${#numbers.sequence(5, 1)}">
                                 <div class="rating-label me-2" th:text="${i} + ' sao'">5 sao</div>
                                 <div class="progress flex-grow-1 me-2" style="height: 8px;">
-                                    <div class="progress-bar bg-warning" role="progressbar" th:style="'width: ' + ${course.ratingDistribution[i - 1]} + '%'"
-                                         th:aria-valuenow="${course.ratingDistribution[i - 1]}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 0%"
+                                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
-                                <div class="rating-percent" th:text="${course.ratingDistribution[i - 1]} + '%'">80%</div>
+                                <div class="rating-percent">0%</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Reviews List -->
                     <div class="reviews-list">
-                        <div class="review-item mb-4" th:each="review : ${course.reviews}">
+                        <div class="review-item mb-4" th:each="review : ${reviews.content}">
                             <div class="review-header d-flex">
-                                <img th:src="${review.userAvatar}" alt="User" class="review-avatar me-3">
+                                <img src="/img/default-avatar.png" alt="User" class="review-avatar me-3">
                                 <div>
                                     <h6 class="review-user-name" th:text="${review.userName}">Tên người dùng</h6>
                                     <div class="review-meta d-flex align-items-center">
                                         <div class="stars me-2">
                                             <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, review.rating)}"></i>
+                                            <i class="far fa-star" th:each="i : ${#numbers.sequence(1, 5 - review.rating)}"></i>
                                         </div>
-                                        <span class="review-date" th:text="${#dates.format(review.date, 'dd/MM/yyyy')}">01/01/2025</span>
+                                        <span class="review-date" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">01/01/2025</span>
                                     </div>
                                 </div>
                             </div>
@@ -229,8 +247,9 @@
                     </div>
 
                     <!-- Show More Reviews Button -->
-                    <div class="text-center">
-                        <button class="btn btn-outline-primary" id="loadMoreReviews">
+                    <div class="text-center" th:if="${reviews.totalPages > 1}">
+                        <button class="btn btn-outline-primary" id="loadMoreReviews" th:data-course-id="${course.courseId}"
+                                th:data-current-page="${reviews.number}" th:data-total-pages="${reviews.totalPages}">
                             Xem thêm đánh giá
                         </button>
                     </div>
@@ -243,24 +262,43 @@
             <!-- Course Purchase Card -->
             <div class="card course-purchase-card mb-4 sticky-top" style="top: 100px;">
                 <div class="course-preview">
-                    <img th:src="${course.thumbnailUrl}" alt="Course Preview" class="img-fluid">
-                    <div class="play-button">
+                    <img th:src="${course.thumbnailPath}" alt="Course Preview" class="img-fluid">
+                    <div class="play-button" th:if="${course.hasFreeContent}">
                         <i class="fas fa-play"></i>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="course-price mb-3">
-                        <span class="current-price" th:text="${course.discountPrice > 0 ? course.discountPrice + ' đ' : course.price + ' đ'}">499.000 đ</span>
-                        <span class="original-price" th:if="${course.discountPrice > 0}" th:text="${course.price + ' đ'}">999.000 đ</span>
-                        <span class="discount-percent" th:if="${course.discountPrice > 0}"
-                              th:text="'-' + ${#numbers.formatInteger(((course.price - course.discountPrice) / course.price) * 100, 0)} + '%'">-50%</span>
+                        <span class="current-price" th:text="${course.hasDiscount() ? #numbers.formatDecimal(course.discountPrice, 1, 'COMMA', 0, 'POINT') + ' đ' : #numbers.formatDecimal(course.price, 1, 'COMMA', 0, 'POINT') + ' đ'}">499.000 đ</span>
+                        <span class="original-price" th:if="${course.hasDiscount()}" th:text="${#numbers.formatDecimal(course.price, 1, 'COMMA', 0, 'POINT') + ' đ'}">999.000 đ</span>
+                        <span class="discount-percent" th:if="${course.hasDiscount()}"
+                              th:text="'-' + ${course.getDiscountPercentage()} + '%'">-50%</span>
                     </div>
-                    <div class="discount-expiry mb-3" th:if="${course.discountExpiry != null}">
-                        <i class="fas fa-clock"></i>
-                        <span>Khuyến mãi kết thúc sau <span th:text="${course.discountExpiryDays}">3</span> ngày</span>
+
+                    <div th:if="${!isEnrolled}">
+                        <button type="button" class="btn btn-primary btn-lg w-100 mb-3" id="enrollBtn"
+                                th:data-course-id="${course.courseId}"
+                                th:data-is-free="${course.price == 0}"
+                                th:data-price="${course.hasDiscount() ? course.discountPrice : course.price}">
+                            Đăng ký học
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-lg w-100 mb-3" id="addToCartBtn"
+                                th:data-course-id="${course.courseId}"
+                                th:if="${course.price != 0}">
+                            Thêm vào giỏ hàng
+                        </button>
                     </div>
-                    <button class="btn btn-primary btn-lg w-100 mb-3">Đăng ký học</button>
-                    <button class="btn btn-outline-primary btn-lg w-100 mb-3">Thêm vào giỏ hàng</button>
+
+                    <div th:if="${isEnrolled}">
+                        <a th:href="@{'/learning/' + ${course.courseId}}" class="btn btn-success btn-lg w-100 mb-3" id="startLearningBtn">
+                            Vào học ngay
+                        </a>
+                    </div>
+                    <div th:if="${isEnrolled}">
+                        <a th:href="@{'/learning/' + ${course.courseId}}" class="btn btn-success btn-lg w-100 mb-3">
+                            Tiếp tục học
+                        </a>
+                    </div>
 
                     <div class="course-guarantee text-center mb-3">
                         <i class="fas fa-shield-alt"></i>
@@ -270,8 +308,8 @@
                     <div class="course-includes">
                         <h6>Khóa học bao gồm:</h6>
                         <ul class="list-unstyled">
-                            <li><i class="fas fa-video"></i> <span th:text="${course.totalLectures} + ' bài giảng video'"></span></li>
-                            <li><i class="fas fa-file-download"></i> <span th:text="${course.downloadableResources} + ' tài liệu để tải về'"></span></li>
+                            <li><i class="fas fa-video"></i> <span th:text="${course.totalLessons} + ' bài giảng video'"></span></li>
+                            <li><i class="fas fa-file-download"></i> <span>Tài liệu để tải về</span></li>
                             <li><i class="fas fa-infinity"></i> Truy cập trọn đời</li>
                             <li><i class="fas fa-mobile-alt"></i> Truy cập trên di động và TV</li>
                             <li><i class="fas fa-certificate"></i> Chứng chỉ hoàn thành</li>
@@ -281,17 +319,17 @@
                     <div class="share-course text-center mt-3">
                         <h6>Chia sẻ khóa học này</h6>
                         <div class="social-icons">
-                            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                            <a href="#" class="social-icon"><i class="fas fa-envelope"></i></a>
+                            <a href="#" class="social-icon share-facebook" th:data-url="${course.courseUrl}"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-icon share-twitter" th:data-url="${course.courseUrl}" th:data-title="${course.title}"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-icon share-linkedin" th:data-url="${course.courseUrl}"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="social-icon share-email" th:data-url="${course.courseUrl}" th:data-title="${course.title}"><i class="fas fa-envelope"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Related Courses -->
-            <div class="card mb-4">
+            <div class="card mb-4" th:if="${relatedCourses != null && !relatedCourses.empty}">
                 <div class="card-header bg-primary text-white">
                     <h4>Khóa học liên quan</h4>
                 </div>
@@ -300,19 +338,27 @@
                         <div class="related-course-item mb-3" th:each="relatedCourse : ${relatedCourses}">
                             <div class="row g-0">
                                 <div class="col-4">
-                                    <img th:src="${relatedCourse.thumbnailUrl}" alt="Related Course" class="img-fluid rounded">
+                                    <a th:href="@{'/user/course-detail/' + ${relatedCourse.courseId}}">
+                                        <img th:src="${relatedCourse.thumbnailPath}" alt="Related Course" class="img-fluid rounded">
+                                    </a>
                                 </div>
                                 <div class="col-8 ps-2">
-                                    <h6 class="mb-1" th:text="${relatedCourse.title}">Tên khóa học liên quan</h6>
+                                    <h6 class="mb-1">
+                                        <a th:href="@{'/user/course-detail/' + ${relatedCourse.courseId}}" class="text-decoration-none text-dark"
+                                           th:text="${relatedCourse.title}">Tên khóa học liên quan</a>
+                                    </h6>
                                     <div class="course-rating small">
                                         <i class="fas fa-star"></i>
-                                        <span th:text="${relatedCourse.rating}">4.5</span>
-                                        <span class="text-muted" th:text="'(' + ${relatedCourse.totalRatings} + ')'"></span>
+                                        <span th:text="${relatedCourse.rating != null ? relatedCourse.rating : '0.0'}">4.5</span>
                                     </div>
                                     <div class="course-price">
-                                        <span th:text="${relatedCourse.discountPrice > 0 ? relatedCourse.discountPrice + ' đ' : relatedCourse.price + ' đ'}">399.000 đ</span>
-                                        <span class="text-decoration-line-through small text-muted" th:if="${relatedCourse.discountPrice > 0}"
-                                              th:text="${relatedCourse.price + ' đ'}">799.000 đ</span>
+                                        <span th:if="${relatedCourse.discountPrice != null && relatedCourse.discountPrice > 0}"
+                                              th:text="${#numbers.formatDecimal(relatedCourse.discountPrice, 1, 'COMMA', 0, 'POINT') + ' đ'}">399.000 đ</span>
+                                        <span th:if="${relatedCourse.discountPrice == null || relatedCourse.discountPrice <= 0}"
+                                              th:text="${#numbers.formatDecimal(relatedCourse.price, 1, 'COMMA', 0, 'POINT') + ' đ'}">399.000 đ</span>
+                                        <span class="text-decoration-line-through small text-muted"
+                                              th:if="${relatedCourse.discountPrice != null && relatedCourse.discountPrice > 0}"
+                                              th:text="${#numbers.formatDecimal(relatedCourse.price, 1, 'COMMA', 0, 'POINT') + ' đ'}">799.000 đ</span>
                                     </div>
                                 </div>
                             </div>
@@ -323,9 +369,6 @@
         </div>
     </div>
 </div>
-
-<!-- Footer -->
-<div th:replace="~{fragments/user/footer :: footer}"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/utils/api.js}"></script>
 <script th:src="@{/js/user/header.js}"></script>
