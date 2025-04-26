@@ -23,5 +23,10 @@
     "question": "Tổng doanh thu từ tất cả các khóa học",
     "analysis": "Câu hỏi yêu cầu tính tổng doanh thu từ bảng courses dựa trên cột price.",
     "sql": "SELECT SUM(price) AS total_revenue FROM courses;"
+  },
+  {
+    "question": "Tổng số giáo viên tính đến hiện tại",
+    "analysis": "Câu hỏi yêu cầu tính tổng số giáo viên từ bảng teacher.",
+    "sql": "SELECT COUNT(*) AS total_teacher FROM teacher;"
   }
 ]

@@ -1,0 +1,156 @@
+/**
+ * Cart Page Styles
+ * Created by: thanhcong2001qn
+ * Last Updated: 2025-04-25
+ */
+
+/* Main Cart Container */
+.cart-page {
+    padding: 20px 0;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 200px);
+}
+
+/* Card Styling */
+.card {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Cart Items */
+.cart-item {
+    position: relative;
+    padding: 15px 0;
+}
+
+.cart-item:last-child hr {
+    display: none;
+}
+
+.course-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.course-title {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.course-author {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.original-price {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.current-price {
+    font-size: 1.1rem;
+    color: #212529;
+}
+
+/* Empty Cart */
+#emptyCartMessage {
+    padding: 40px 0;
+}
+
+/* Quantity Controls */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    max-width: 100px;
+}
+
+.quantity-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.quantity-input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    border-left: 0;
+    border-right: 0;
+    height: 28px;
+}
+
+/* Checkout Button */
+#checkoutBtn {
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+#checkoutBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Promo Code Section */
+#promoMessage.valid {
+    color: #198754;
+}
+
+#promoMessage.invalid {
+    color: #dc3545;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 767.98px) {
+    .course-title {
+        font-size: 1rem;
+    }
+
+    .course-author,
+    .course-duration {
+        font-size: 0.8rem;
+    }
+
+    .course-level {
+        font-size: 0.7rem;
+    }
+
+    .current-price {
+        font-size: 1rem;
+    }
+}
+
+/* Loading Animation */
+.cart-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+/* Notification Styling */
+#notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

@@ -1,361 +1,402 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Constants & Variables
-    const courseId = new URLSearchParams(window.location.search).get('id');
-    let courseData = null;
-    let enrollmentStatus = false;
+/**
+ * Course Detail JavaScript File
+ * Created by: thanhcong2001qncode
+ * Last Updated: 2025-04-24
+ */
 
-    // DOM Elements
-    const courseContainer = document.getElementById('course-container');
-    const enrollButton = document.getElementById('enroll-button');
-    const lessonsList = document.getElementById('lessons-list');
-    const ratingContainer = document.getElementById('rating-container');
-    const reviewsContainer = document.getElementById('reviews-container');
+document.addEventListener('DOMContentLoaded', function () {
+    const courseId = document.getElementById('enrollBtn')?.dataset.courseId ||
+        document.getElementById('addToCartBtn')?.dataset.courseId;
 
-    // Initialize
-    init();
-
-    // Main initialization function
-    async function init() {
-        if (!courseId) {
-            showError('Không tìm thấy khóa học');
-            return;
-        }
-
-        try {
-            await loadCourseDetails();
-            await checkEnrollmentStatus();
-            setupEventListeners();
-        } catch (error) {
-            console.error('Error initializing course page:', error);
-            showError('Có lỗi xảy ra khi tải thông tin khóa học');
-        }
+    // Nếu không tìm thấy courseId, không cần thực hiện các chức năng liên quan đến khóa học
+    if (!courseId) {
+        console.warn('Course ID not found on page');
+        return;
     }
 
-    // Load course details from API
-    async function loadCourseDetails() {
-        try {
-            const response = await api.get(`/api/courses/${courseId}`);
-            courseData = response.data;
-            renderCourseDetails();
-            loadCourseLessons();
-            loadCourseReviews();
-        } catch (error) {
-            console.error('Error loading course details:', error);
-            throw error;
-        }
-    }
-
-    // Check if user is enrolled in this course
-    async function checkEnrollmentStatus() {
-        try {
-            const response = await api.get(`/api/enrollments/check/${courseId}`);
-            enrollmentStatus = response.data.enrolled;
-            updateEnrollButton();
-        } catch (error) {
-            console.error('Error checking enrollment status:', error);
-            // Continue without enrollment info
-        }
-    }
-
-    // Render course details to the page
-    function renderCourseDetails() {
-        if (!courseData) return;
-
-        // Course header section
-        document.getElementById('course-title').textContent = courseData.title;
-        document.getElementById('course-description').textContent = courseData.description;
-        document.getElementById('course-price').textContent = formatCurrency(courseData.price);
-        document.getElementById('course-instructor').textContent = courseData.instructor.name;
-        document.getElementById('course-category').textContent = courseData.category.name;
-        document.getElementById('course-duration').textContent = `${courseData.durationHours} giờ`;
-        document.getElementById('course-level').textContent = formatLevel(courseData.level);
-
-        // Course image
-        if (courseData.imageUrl) {
-            document.getElementById('course-image').src = courseData.imageUrl;
-            document.getElementById('course-image').alt = courseData.title;
-        }
-
-        // Course rating
-        const ratingValue = courseData.averageRating || 0;
-        renderStarRating(ratingContainer, ratingValue);
-        document.getElementById('rating-value').textContent = ratingValue.toFixed(1);
-        document.getElementById('rating-count').textContent = `(${courseData.reviewCount || 0} đánh giá)`;
-
-        // Show the course container after data is loaded
-        courseContainer.classList.remove('d-none');
-    }
-
-    // Load lessons of the course
-    async function loadCourseLessons() {
-        try {
-            const response = await api.get(`/api/courses/${courseId}/lessons`);
-            renderLessons(response.data);
-        } catch (error) {
-            console.error('Error loading course lessons:', error);
-            document.getElementById('lessons-error').classList.remove('d-none');
-        }
-    }
-
-    // Render lessons to the page
-    function renderLessons(lessons) {
-        if (!lessons || !lessons.length) {
-            document.getElementById('no-lessons').classList.remove('d-none');
-            return;
-        }
-
-        lessonsList.innerHTML = '';
-        lessons.forEach((lesson, index) => {
-            const lessonItem = document.createElement('div');
-            lessonItem.className = 'lesson-item p-3 border-bottom';
-
-            const isLocked = !enrollmentStatus && !lesson.isFree;
-
-            lessonItem.innerHTML = `
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="mb-1">
-                            <span class="lesson-number me-2">${index + 1}.</span>
-                            ${lesson.title}
-                            ${lesson.isFree ? '<span class="badge bg-success ms-2">Miễn phí</span>' : ''}
-                        </h5>
-                        <p class="text-muted mb-0"><i class="far fa-clock me-1"></i> ${lesson.durationMinutes} phút</p>
-                    </div>
-                    <div>
-                        ${isLocked ?
-                '<i class="fas fa-lock text-secondary"></i>' :
-                '<button class="btn btn-sm btn-outline-primary watch-lesson" data-id="' + lesson.id + '">Xem bài học</button>'}
-                    </div>
-                </div>
-            `;
-
-            lessonsList.appendChild(lessonItem);
-        });
-
-        // Add event listeners to watch buttons
-        document.querySelectorAll('.watch-lesson').forEach(button => {
-            button.addEventListener('click', function() {
-                const lessonId = this.getAttribute('data-id');
-                window.location.href = `/lessons/watch?id=${lessonId}&courseId=${courseId}`;
-            });
-        });
-
-        document.getElementById('lessons-section').classList.remove('d-none');
-    }
-
-    // Load course reviews
-    async function loadCourseReviews() {
-        try {
-            const response = await api.get(`/api/courses/${courseId}/reviews`);
-            renderReviews(response.data);
-        } catch (error) {
-            console.error('Error loading course reviews:', error);
-            document.getElementById('reviews-error').classList.remove('d-none');
-        }
-    }
-
-    // Render reviews to the page
-    function renderReviews(reviews) {
-        if (!reviews || !reviews.length) {
-            document.getElementById('no-reviews').classList.remove('d-none');
-            return;
-        }
-
-        reviewsContainer.innerHTML = '';
-        reviews.forEach(review => {
-            const reviewItem = document.createElement('div');
-            reviewItem.className = 'review-item p-3 border-bottom';
-
-            reviewItem.innerHTML = `
-                <div class="d-flex mb-2">
-                    <img src="${review.user.avatarUrl || '/images/default-avatar.png'}" 
-                         alt="${review.user.fullName}" 
-                         class="avatar-sm rounded-circle me-2">
-                    <div>
-                        <h6 class="mb-0">${review.user.fullName}</h6>
-                        <small class="text-muted">${formatDate(review.createdAt)}</small>
-                    </div>
-                </div>
-                <div class="mb-2 rating-stars">
-                    ${generateStarRating(review.rating)}
-                </div>
-                <p class="mb-0">${review.comment}</p>
-            `;
-
-            reviewsContainer.appendChild(reviewItem);
-        });
-
-        document.getElementById('reviews-section').classList.remove('d-none');
-    }
-
-    // Update enrollment button based on status
-    function updateEnrollButton() {
-        if (!enrollButton) return;
-
-        if (enrollmentStatus) {
-            enrollButton.textContent = 'Đã đăng ký';
-            enrollButton.classList.remove('btn-primary');
-            enrollButton.classList.add('btn-success');
-            enrollButton.disabled = true;
-        } else {
-            enrollButton.textContent = 'Đăng ký khóa học';
-            enrollButton.classList.remove('btn-success');
-            enrollButton.classList.add('btn-primary');
-            enrollButton.disabled = false;
-        }
-    }
-
-    // Setup event listeners
-    function setupEventListeners() {
-        // Enroll button click
-        if (enrollButton) {
-            enrollButton.addEventListener('click', handleEnrollment);
-        }
-
-        // Submit review form
-        const reviewForm = document.getElementById('review-form');
-        if (reviewForm) {
-            reviewForm.addEventListener('submit', submitReview);
-        }
-    }
-
-    // Handle course enrollment
-    async function handleEnrollment(event) {
-        event.preventDefault();
-
-        if (enrollmentStatus) return;
-
-        try {
-            enrollButton.disabled = true;
-            enrollButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...';
-
-            const response = await api.post(`/api/enrollments`, {
-                courseId: courseId
-            });
-
-            if (response.status === 200 || response.status === 201) {
-                enrollmentStatus = true;
-                updateEnrollButton();
-                showNotification('success', 'Đăng ký khóa học thành công!');
-
-                // Reload lessons to update access
-                loadCourseLessons();
-            }
-        } catch (error) {
-            console.error('Error enrolling in course:', error);
-
-            if (error.response && error.response.status === 402) {
-                showNotification('error', 'Vui lòng thanh toán để đăng ký khóa học này');
-                // Redirect to payment page
-                setTimeout(() => {
-                    window.location.href = `/payment?courseId=${courseId}`;
-                }, 1500);
-            } else {
-                showNotification('error', 'Có lỗi xảy ra khi đăng ký khóa học');
-                updateEnrollButton();
-            }
-        }
-    }
-
-    // Submit a course review
-    async function submitReview(event) {
-        event.preventDefault();
-
-        const form = event.target;
-        const ratingValue = form.querySelector('input[name="rating"]:checked').value;
-        const comment = form.querySelector('textarea[name="comment"]').value;
-
-        try {
-            const submitButton = form.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang gửi...';
-
-            const response = await api.post(`/api/courses/${courseId}/reviews`, {
-                rating: parseInt(ratingValue),
-                comment: comment
-            });
-
-            if (response.status === 200 || response.status === 201) {
-                showNotification('success', 'Cảm ơn bạn đã đánh giá khóa học!');
-                form.reset();
-
-                // Reload reviews and course data
-                loadCourseDetails();
-            }
-        } catch (error) {
-            console.error('Error submitting review:', error);
-            showNotification('error', 'Có lỗi xảy ra khi gửi đánh giá');
-        } finally {
-            const submitButton = form.querySelector('button[type="submit"]');
-            submitButton.disabled = false;
-            submitButton.textContent = 'Gửi đánh giá';
-        }
-    }
-
-    // Utility: Show error message
-    function showError(message) {
-        const errorContainer = document.getElementById('error-container');
-        if (errorContainer) {
-            errorContainer.textContent = message;
-            errorContainer.classList.remove('d-none');
-        }
-    }
-
-    // Utility: Format currency
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(amount);
-    }
-
-    // Utility: Format level
-    function formatLevel(level) {
-        const levels = {
-            'BEGINNER': 'Người mới bắt đầu',
-            'INTERMEDIATE': 'Trung cấp',
-            'ADVANCED': 'Nâng cao',
-            'ALL_LEVELS': 'Tất cả trình độ'
-        };
-        return levels[level] || level;
-    }
-
-    // Utility: Format date
-    function formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('vi-VN');
-    }
-
-    // Utility: Render star rating
-    function renderStarRating(container, rating) {
-        if (!container) return;
-
-        container.innerHTML = generateStarRating(rating);
-    }
-
-    // Utility: Generate star rating HTML
-    function generateStarRating(rating) {
-        const fullStars = Math.floor(rating);
-        const halfStar = rating % 1 >= 0.5;
-        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-        let starsHtml = '';
-
-        // Full stars
-        for (let i = 0; i < fullStars; i++) {
-            starsHtml += '<i class="fas fa-star text-warning"></i>';
-        }
-
-        // Half star
-        if (halfStar) {
-            starsHtml += '<i class="fas fa-star-half-alt text-warning"></i>';
-        }
-
-        // Empty stars
-        for (let i = 0; i < emptyStars; i++) {
-            starsHtml += '<i class="far fa-star text-warning"></i>';
-        }
-
-        return starsHtml;
-    }
+    initializePreviewVideo();
+    initializeCourseActions();
+    initializeReviewsLoader();
+    initializeSocialSharing();
 });
+
+/**
+ * Khởi tạo xem trước video cho các bài học miễn phí
+ */
+function initializePreviewVideo() {
+    const playButton = document.querySelector('.play-button');
+    if (playButton) {
+        playButton.addEventListener('click', function () {
+            // Lấy video preview đầu tiên
+            const firstFreeLesson = findFirstFreeLesson();
+            if (firstFreeLesson) {
+                showVideoPreviewModal(firstFreeLesson);
+            } else {
+                // Không tìm thấy bài học miễn phí
+                showNotification('Không có bài học xem trước trong khóa học này!', 'info');
+            }
+        });
+    }
+
+    // Cũng áp dụng cho các bài học có thể xem trước
+    document.querySelectorAll('.lecture-item').forEach(item => {
+        const previewBadge = item.querySelector('.lecture-preview');
+        if (previewBadge) {
+            item.addEventListener('click', function () {
+                const lessonTitle = item.querySelector('.lecture-title').textContent;
+                const lessonId = item.dataset.lessonId;
+                showVideoPreviewModal({id: lessonId, title: lessonTitle});
+            });
+            item.style.cursor = 'pointer';
+        }
+    });
+}
+
+/**
+ * Tìm bài học miễn phí đầu tiên
+ */
+function findFirstFreeLesson() {
+    // Tìm bài học có class 'lecture-preview'
+    const freePreview = document.querySelector('.lecture-preview');
+    if (!freePreview) return null;
+
+    // Lấy thông tin bài học
+    const lessonItem = freePreview.closest('.lecture-item');
+    const lessonTitle = lessonItem.querySelector('.lecture-title').textContent;
+    const lessonId = lessonItem.dataset.lessonId;
+
+    return {
+        id: lessonId,
+        title: lessonTitle
+    };
+}
+
+/**
+ * Hiển thị modal xem trước video
+ */
+function showVideoPreviewModal(lesson) {
+    // Kiểm tra xem modal đã tồn tại chưa, nếu chưa thì tạo mới
+    let videoModal = document.getElementById('videoPreviewModal');
+    if (!videoModal) {
+        // Tạo modal HTML
+        const modalHTML = `
+            <div class="modal fade" id="videoPreviewModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="videoPreviewTitle">Xem trước: ${lesson.title}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <div class="ratio ratio-16x9">
+                                <iframe id="videoPreviewFrame" src="/api/lessons/preview/${lesson.id}" 
+                                        allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        videoModal = document.getElementById('videoPreviewModal');
+    } else {
+        // Cập nhật thông tin modal
+        document.getElementById('videoPreviewTitle').textContent = `Xem trước: ${lesson.title}`;
+        document.getElementById('videoPreviewFrame').src = `/api/lessons/preview/${lesson.id}`;
+    }
+
+    // Hiển thị modal
+    const bsModal = new bootstrap.Modal(videoModal);
+    bsModal.show();
+
+    // Xử lý khi đóng modal
+    videoModal.addEventListener('hidden.bs.modal', function () {
+        document.getElementById('videoPreviewFrame').src = '';
+    });
+}
+
+/**
+ * Khởi tạo các chức năng đăng ký và thêm vào giỏ hàng
+ */
+function initializeCourseActions() {
+    // Xử lý nút đăng ký học
+    const enrollBtn = document.getElementById('enrollBtn');
+    if (enrollBtn) {
+        const courseId = enrollBtn.dataset.courseId;
+        const isFree = enrollBtn.dataset.isFree === 'true';
+        const coursePrice = parseFloat(enrollBtn.dataset.price || '0');
+
+        // Kiểm tra trạng thái đăng ký khóa học ngay khi trang load
+        checkEnrollmentStatus(courseId, enrollBtn);
+
+        enrollBtn.addEventListener('click', function () {
+            // Kiểm tra đăng nhập từ localStorage
+            const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+
+            if (!isAuthenticated) {
+                // Chuyển hướng đến trang đăng nhập
+                window.location.href = '/login?redirect=/course-detail/' + courseId;
+                return;
+            }
+
+            // Hiển thị thông báo đang xử lý
+            showNotification('Đang xử lý...', 'info');
+
+            // Kiểm tra xem học viên đã đăng ký khóa học chưa
+            fetchWithAuth(`/api/enrollments/check/${courseId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.enrolled) {
+                        // Đã đăng ký khóa học
+                        showNotification('Bạn đã đăng ký khóa học này rồi!', 'info');
+                        markAsEnrolled(enrollBtn);
+                        // setTimeout(() => {
+                        //     window.location.href = '/learning/' + courseId;
+                        // }, 1500);
+                    } else {
+                        // Chưa đăng ký, kiểm tra xem khóa học là miễn phí hay trả phí
+                        if (isFree) {
+                            // Khóa học miễn phí, thực hiện đăng ký ngay
+                            enrollFreeCourse(courseId, enrollBtn);
+                        } else {
+                            // Khóa học trả phí, chuyển đến trang thanh toán
+                            window.location.href = '/checkout?courseId=' + courseId;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking enrollment status:', error);
+                    showNotification('Có lỗi xảy ra khi kiểm tra trạng thái đăng ký', 'error');
+                });
+        });
+    }
+
+    // Xử lý nút thêm vào giỏ hàng
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', function () {
+            const courseId = this.dataset.courseId;
+            fetchWithAuth('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ courseId: courseId })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Đã thêm khóa học vào giỏ hàng!','success');
+                        updateCartBadge();
+                    } else {
+                        showNotification(data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
+                    }
+                })
+                .catch(error => {
+                    showNotification('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
+                    console.error('Error:', error);
+                });
+        });
+    }
+}
+
+/**
+ * Kiểm tra trạng thái đăng ký khóa học
+ * @param {string} courseId - ID khóa học
+ * @param {HTMLElement} enrollBtn - Nút đăng ký học
+ */
+function checkEnrollmentStatus(courseId, enrollBtn) {
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    if (!isAuthenticated) return;
+
+    // Gọi API kiểm tra đăng ký
+    fetchWithAuth(`/api/enrollments/check/${courseId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.enrolled) {
+                markAsEnrolled(enrollBtn);
+            }
+        })
+        .catch(error => {
+            console.error('Error checking enrollment status:', error);
+        });
+}
+
+/**
+ * Đánh dấu nút đã đăng ký và vô hiệu hóa
+ * @param {HTMLElement} enrollBtn - Nút đăng ký học
+ */
+function markAsEnrolled(enrollBtn) {
+    enrollBtn.textContent = 'Đã đăng ký';
+    enrollBtn.disabled = true;
+    enrollBtn.classList.remove('btn-primary');
+    enrollBtn.classList.add('btn-success');
+
+    // Ẩn nút thêm vào giỏ hàng nếu có
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    if (addToCartBtn) {
+        addToCartBtn.style.display = 'none';
+    }
+
+    // Hiển thị nút vào học
+    const courseId = enrollBtn.dataset.courseId;
+
+    // Tạo nút vào học nếu chưa có
+    if (!document.getElementById('startLearningBtn')) {
+        const startLearningBtn = document.createElement('a');
+        startLearningBtn.id = 'startLearningBtn';
+        startLearningBtn.href = `/learning/${courseId}`;
+        startLearningBtn.className = 'btn btn-primary btn-lg w-100 mb-3';
+        startLearningBtn.textContent = 'Vào học ngay';
+
+        // Thêm vào sau nút đăng ký
+        enrollBtn.parentNode.insertBefore(startLearningBtn, enrollBtn.nextSibling);
+    }
+}
+
+/**
+ * Đăng ký khóa học miễn phí
+ * @param {string} courseId - ID khóa học
+ * @param {HTMLElement} enrollBtn - Nút đăng ký học
+ */
+function enrollFreeCourse(courseId, enrollBtn) {
+    fetchWithAuth('/api/enrollments/enroll', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({courseId: courseId})
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Đăng ký khóa học thành công!', 'success');
+                markAsEnrolled(enrollBtn);
+                // setTimeout(() => {
+                //     window.location.href = '/learning/' + courseId;
+                // }, 1500);
+            } else {
+                showNotification(data.message || 'Có lỗi xảy ra khi đăng ký khóa học', 'error');
+            }
+        })
+        .catch(error => {
+            showNotification('Có lỗi xảy ra khi đăng ký khóa học', 'error');
+            console.error('Error:', error);
+        });
+}
+/**
+ * Khởi tạo tải thêm đánh giá
+ */
+function initializeReviewsLoader() {
+    const loadMoreReviewsBtn = document.getElementById('loadMoreReviews');
+    if (loadMoreReviewsBtn) {
+        loadMoreReviewsBtn.addEventListener('click', function () {
+            const currentPage = parseInt(this.getAttribute('data-current-page'));
+            const nextPage = currentPage + 1;
+            const totalPages = parseInt(this.getAttribute('data-total-pages'));
+            const courseId = this.getAttribute('data-course-id');
+
+            fetch(`/api/reviews/course/${courseId}?page=${nextPage}&size=5`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.content) {
+                        const reviewsList = document.querySelector('.reviews-list');
+                        data.content.forEach(review => {
+                            const reviewHtml = createReviewElement(review);
+                            reviewsList.insertAdjacentHTML('beforeend', reviewHtml);
+                        });
+
+                        // Cập nhật trạng thái nút
+                        this.setAttribute('data-current-page', nextPage);
+                        if (nextPage >= totalPages - 1) {
+                            this.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading more reviews:', error);
+                });
+        });
+    }
+}
+
+/**
+ * Tạo HTML cho đánh giá
+ */
+function createReviewElement(review) {
+    const stars = '<i class="fas fa-star"></i>'.repeat(review.rating) +
+        '<i class="far fa-star"></i>'.repeat(5 - review.rating);
+
+    return `
+        <div class="review-item mb-4">
+            <div class="review-header d-flex">
+                <img src="/img/default-avatar.png" alt="User" class="review-avatar me-3">
+                <div>
+                    <h6 class="review-user-name">${review.userName}</h6>
+                    <div class="review-meta d-flex align-items-center">
+                        <div class="stars me-2">
+                            ${stars}
+                        </div>
+                        <span class="review-date">${formatDate(review.createdAt)}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="review-content mt-2">
+                ${review.content}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Định dạng ngày tháng
+ */
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
+}
+
+/**
+ * Khởi tạo chức năng chia sẻ mạng xã hội
+ */
+function initializeSocialSharing() {
+    // Chia sẻ Facebook
+    document.querySelectorAll('.share-facebook').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, 'facebook-share', 'width=580,height=296');
+        });
+    });
+
+    // Chia sẻ Twitter
+    document.querySelectorAll('.share-twitter').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            const title = this.getAttribute('data-title');
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, 'twitter-share', 'width=580,height=296');
+        });
+    });
+
+    // Chia sẻ LinkedIn
+    document.querySelectorAll('.share-linkedin').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, 'linkedin-share', 'width=580,height=296');
+        });
+    });
+
+    // Chia sẻ Email
+    document.querySelectorAll('.share-email').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            const title = this.getAttribute('data-title');
+            window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('Tôi nghĩ bạn sẽ thích khóa học này: ' + url)}`;
+        });
+    });
+}
+
