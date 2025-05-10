@@ -1,4 +1,4 @@
-package com.dacs.quanlyhocvien.Services.Validators.TAMCHUADUNG;
+package com.dacs.quanlyhocvien.Services.Validators;
 
 import org.springframework.stereotype.Component;
 

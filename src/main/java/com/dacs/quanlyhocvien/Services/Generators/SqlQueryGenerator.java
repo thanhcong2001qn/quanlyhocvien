@@ -1,11 +1,16 @@
 package com.dacs.quanlyhocvien.Services.Generators;
 
+import com.dacs.quanlyhocvien.Exceptions.ChatbotException;
 import com.dacs.quanlyhocvien.Services.Clients.GeminiApiClient;
 import com.dacs.quanlyhocvien.Utils.DatabaseMapping;
 import com.dacs.quanlyhocvien.Utils.DatabaseSchemaExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.logging.Logger;
 
 @Component
@@ -20,12 +25,6 @@ public class SqlQueryGenerator {
 
     private String cachedSchema = null;
 
-    /**
-     * Sinh câu truy vấn SQL dựa trên ý định và câu hỏi
-     * @param intent Ý định đã được phân tích
-     * @param question Câu hỏi gốc của người dùng
-     * @return Câu truy vấn SQL
-     */
     public String generate(String intent, String question) {
         try {
             if (cachedSchema == null) {
@@ -36,26 +35,23 @@ public class SqlQueryGenerator {
             String prompt = buildSqlGenerationPrompt(intent, question);
             String generatedSql = geminiApiClient.getResponse(prompt);
 
-            // Làm sạch SQL được sinh ra
             String cleanedSql = cleanSqlQuery(generatedSql);
 
-            // Validate SQL cơ bản
             if (!isValidSql(cleanedSql)) {
-                throw new RuntimeException("SQL được sinh ra không hợp lệ: " + cleanedSql);
+                throw new ChatbotException("ERR_SQL_INVALID", "❌ Câu truy vấn được tạo không hợp lệ. Vui lòng kiểm tra lại câu hỏi.", "SQL không hợp lệ: " + cleanedSql);
             }
 
             logger.info("SQL được sinh ra: " + cleanedSql);
             return cleanedSql;
 
+        } catch (ChatbotException ce) {
+            throw ce; // Đã có thông tin đầy đủ
         } catch (Exception e) {
             logger.severe("Lỗi khi sinh SQL: " + e.getMessage());
-            throw new RuntimeException("Không thể tạo truy vấn SQL", e);
+            throw new ChatbotException("ERR_SQL_GENERATION", "⚠️ Mình gặp lỗi khi tạo câu truy vấn từ câu hỏi. Bạn thử lại sau nhé.", e.getMessage());
         }
     }
 
-    /**
-     * Xây dựng prompt cho việc sinh SQL
-     */
     private String buildSqlGenerationPrompt(String intent, String question) {
         return String.format("""
             You are a SQL expert. Generate a valid SQL query based on the following:
@@ -86,21 +82,15 @@ public class SqlQueryGenerator {
         );
     }
 
-    /**
-     * Làm sạch câu SQL được sinh ra
-     */
     private String cleanSqlQuery(String sql) {
         if (sql == null || sql.trim().isEmpty()) {
-            throw new RuntimeException("SQL được sinh ra trống hoặc null");
+            throw new ChatbotException("ERR_SQL_EMPTY", "⚠️ Không tạo được câu truy vấn nào từ câu hỏi của bạn.", "SQL được sinh ra là null hoặc rỗng");
         }
 
-        // Loại bỏ markdown nếu có
         sql = sql.replaceAll("```sql\\s*", "")
                 .replaceAll("```", "")
-                .trim();
-
-        // Chuẩn hóa khoảng trắng và xuống dòng
-        sql = sql.replaceAll("\\s+", " ")
+                .replaceAll("[\\r\\n]+", " ") // 👈 Thêm dòng này
+                .replaceAll("\\s+", " ")
                 .replaceAll("\\s*,\\s*", ", ")
                 .replaceAll("\\s*=\\s*", " = ")
                 .trim();
@@ -108,13 +98,10 @@ public class SqlQueryGenerator {
         return sql;
     }
 
-    /**
-     * Kiểm tra tính hợp lệ cơ bản của SQL
-     */
+
     private boolean isValidSql(String sql) {
         sql = sql.toLowerCase();
 
-        // Kiểm tra các thành phần cơ bản của câu SELECT
         if (!sql.contains("select")) {
             logger.warning("SQL thiếu mệnh đề SELECT");
             return false;
@@ -125,7 +112,6 @@ public class SqlQueryGenerator {
             return false;
         }
 
-        // Kiểm tra cân bằng dấu ngoặc
         long openParens = sql.chars().filter(ch -> ch == '(').count();
         long closeParens = sql.chars().filter(ch -> ch == ')').count();
         if (openParens != closeParens) {
@@ -133,9 +119,7 @@ public class SqlQueryGenerator {
             return false;
         }
 
-        // Kiểm tra các từ khóa cơ bản
         String[] basicKeywords = {"select", "from", "where", "group by", "having", "order by"};
-        String[] parts = sql.split("\\s+");
         boolean hasValidKeywords = false;
 
         for (String keyword : basicKeywords) {
@@ -162,46 +146,99 @@ public class SqlQueryGenerator {
             String prompt = buildAdvancedSqlPrompt(userQuestion);
             String generatedSql = geminiApiClient.getResponse(prompt);
 
-            // Làm sạch SQL
-            return cleanSqlQuery(generatedSql);
+            logger.info("🔥 SQL sinh ra từ Gemini: " + generatedSql);
 
+            // ✅ B1: Kiểm tra nếu Gemini trả về undefined/null/chuỗi rác
+            if (generatedSql == null || generatedSql.trim().isEmpty() || generatedSql.trim().equalsIgnoreCase("undefined")) {
+                throw new ChatbotException(
+                        "ERR_SQL_UNDEFINED",
+                        "⚠️ Không thể tạo câu truy vấn từ câu hỏi bạn vừa nhập.",
+                        "Gemini trả về SQL không hợp lệ: " + generatedSql
+                );
+            }
+
+            // ✅ B2: Làm sạch truy vấn
+            String cleanedSql = cleanSqlQuery(generatedSql);
+
+            // ✅ B3: Kiểm tra bảng có tồn tại không
+            if (!containsValidTable(cleanedSql, cachedSchema)) {
+                throw new ChatbotException(
+                        "ERR_INVALID_TABLE",
+                        "🧾 Có vẻ như bảng bạn yêu cầu không tồn tại trong hệ thống. Vui lòng kiểm tra lại tên bảng nhé!",
+                        "SQL truy cập bảng không có trong schema: " + cleanedSql
+                );
+            }
+
+            return cleanedSql;
+
+        } catch (ChatbotException ce) {
+            throw ce;
         } catch (Exception e) {
-            throw new RuntimeException("Không thể sinh SQL từ câu hỏi", e);
+            throw new ChatbotException(
+                    "ERR_SQL_GENERATION",
+                    "⚠️ Không thể tạo câu truy vấn từ câu hỏi bạn vừa nhập.",
+                    e.getMessage()
+            );
         }
+    }
+
+
+    private boolean containsValidTable(String sql, String schema) {
+        sql = sql.toLowerCase();
+
+        // Tìm tất cả tên bảng trong schema
+        List<String> tableNames = extractTableNamesFromSchema(schema);
+
+        // Lấy tên bảng sau FROM trong SQL
+        int fromIndex = sql.indexOf("from ");
+        if (fromIndex == -1) return false;
+
+        String[] tokens = sql.substring(fromIndex + 5).split(" ");
+        String possibleTable = tokens[0].replaceAll("[^a-zA-Z0-9_]", ""); // bỏ dấu câu
+
+        // So sánh với các bảng đã khai báo
+        return tableNames.contains(possibleTable);
+    }
+
+    private List<String> extractTableNamesFromSchema(String schema) {
+        List<String> tables = new ArrayList<>();
+        Pattern pattern = Pattern.compile("create table (\\w+)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(schema);
+        while (matcher.find()) {
+            tables.add(matcher.group(1).toLowerCase());
+        }
+        return tables;
     }
 
     private String buildAdvancedSqlPrompt(String question) {
         return String.format("""
         Bạn là chuyên gia SQL.
-        Dựa trên DATABASE SCHEMA dưới đây:
-                         ➔ Lưu ý:
-                            - Database sử dụng: **MySQL** (KHÔNG phải SQLite, PostgreSQL hoặc các hệ khác).
-                            - Các lệnh như PRAGMA, sqlite_master, information_schema bị cấm.
-                            - Chỉ được sử dụng các lệnh SELECT cơ bản trên các bảng đã cho trong Database Schema bên dưới.
-                            - Không sinh ra bất kỳ lệnh metadata inspection nào.
-                            - Nếu không tìm thấy dữ liệu trong schema, lịch sự từ chối trả lời rõ ràng!
+
+        Dựa trên DATABASE SCHEMA thực tế dưới đây (các lệnh CREATE TABLE chi tiết):
+   
         %s
 
         Ánh xạ Tiếng Việt sang bảng/cột:
-
+        
         %s
 
-        Người dùng hỏi:
+        Lưu ý nghiêm ngặt:
+        - Database: **MySQL** (KHÔNG phải SQLite, PostgreSQL...).
+        - KHÔNG được dùng PRAGMA, INFORMATION_SCHEMA, sqlite_master, system table.
+        - Chỉ sử dụng SELECT cơ bản, JOIN giữa các bảng đã cho nếu cần.
+        - Bắt buộc chọn đúng tên bảng và cột như trong SCHEMA. Tuyệt đối không bịa thêm cột hoặc bảng mới.
+        - Nếu bảng hoặc dữ liệu không có trả lời "Tôi không có dữ liệu này"
+        - Nếu câu hỏi cần đếm (COUNT) → chỉ cần SELECT COUNT(*).
+        - Nếu câu hỏi lấy danh sách → SELECT các cột cần thiết + LIMIT 100.
+        - KHÔNG sinh các lệnh INSERT, UPDATE, DELETE, ALTER, DROP.
+        - Nếu câu hỏi không phù hợp hoặc rủi ro, hãy từ chối lịch sự (ví dụ: "Xin lỗi, tôi không được phép thực hiện thao tác này để đảm bảo an toàn hệ thống.").
+        - Chỉ trả về đúng CÂU LỆNH SQL, KHÔNG giải thích, KHÔNG thêm markdown.
+
+        Câu hỏi từ người dùng:
 
         "%s"
 
-        Hướng dẫn:
-                        - Chỉ được sinh câu lệnh SELECT hợp lệ.
-                        - Tuyệt đối KHÔNG sinh DELETE, UPDATE, INSERT, DROP, ALTER hoặc bất kỳ câu lệnh nào làm thay đổi dữ liệu hay cấu trúc hệ thống.
-                        - Các truy vấn SELECT lấy thông tin như tên, danh sách, số lượng đều được phép và an toàn.
-                        - Nếu câu hỏi yêu cầu nhiều thông tin (ví dụ: tổng số + danh sách tên), hãy sinh SELECT đầy đủ các trường liên quan.
-                        - Lưu ý: Nếu truy vấn đếm số lượng (COUNT) thì không cần thêm LIMIT.
-                        - Nếu truy vấn lấy danh sách (SELECT cột), thì cần thêm LIMIT 1000 để giới hạn kết quả.
-                        - Nếu cần, sử dụng JOIN hợp lý giữa các bảng.
-                        - Nếu câu hỏi không thể xử lý chỉ bằng SELECT hoặc gây rủi ro bảo mật, từ chối lịch sự với lý do phù hợp (ví dụ: "Xin lỗi, tôi không được phép thực hiện thao tác này để đảm bảo an toàn hệ thống.").
-                        - Tuyệt đối KHÔNG thêm markdown, KHÔNG giải thích, chỉ trả về câu lệnh SQL.
-
-        Dựa trên câu hỏi sau, sinh SQL phù hợp:
+        👉 Dựa vào câu hỏi trên và schema, sinh ra câu lệnh SQL chuẩn xác nhất:
         """,
                 cachedSchema,
                 DatabaseMapping.getMappingInfo(),
@@ -209,13 +246,9 @@ public class SqlQueryGenerator {
         );
     }
 
-
-    /**
-     * Thêm điều kiện giới hạn kết quả nếu cần
-     */
     private String addLimitIfNeeded(String sql) {
         if (!sql.toLowerCase().contains("limit")) {
-            return sql + " LIMIT 1000"; // Giới hạn mặc định
+            return sql + " LIMIT 1000";
         }
         return sql;
     }

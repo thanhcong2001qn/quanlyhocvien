@@ -1,24 +1,35 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title layout:title-pattern="$CONTENT_TITLE - Hệ thống quản lý">Trang</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/chatbot/chatbot.css}">
+    <!-- các file css dùng chung -->
     <link rel="stylesheet" th:href="@{/css/admin/header.css}">
     <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
     <link rel="stylesheet" th:href="@{/css/admin/body.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
+<!-- Header, menu -->
 <div th:replace="~{fragments/admin/header :: header}"></div>
 <div th:replace="~{fragments/admin/menu :: menu}"></div>
-<!---->
-<div class="content-wrapper">
-    <h1>Content</h1>
-</div>
-<!---->
+
+<!-- Chatbot -->
+<div th:replace="~{fragments/chatbot/chatbot :: chatbot}"></div>
+
+<!-- Nội dung trang cụ thể -->
+<section layout:fragment="content"></section>
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:src="@{/js/admin/menu.js}"></script>
 <script th:src="@{/js/admin/header.js}"></script>
+<script th:src="@{/js/chatbot/chatbot.js}" defer></script>
 </body>
 </html>

@@ -10,38 +10,52 @@
     <link rel="stylesheet" th:href="@{/css/admin/addAdmin.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div th:replace="~{/fragments/admin/header :: header}"></div>
-<div th:replace="~{/fragments/admin/menu :: menu}"></div>
+<div th:replace="~{fragments/admin/header :: header}"></div>
+<div th:replace="~{fragments/admin/menu :: menu}"></div>
 
 <div class="content-wrapper">
     <div class="container">
         <div class="form-header">
-            <h1>Thêm Admin Mới</h1>
+            <h1><i class="fas fa-user-shield me-2"></i>Thêm Admin Mới</h1>
+            <p class="text-muted">Vui lòng điền đầy đủ thông tin bên dưới</p>
         </div>
 
         <form id="adminForm" enctype="multipart/form-data">
             <!-- Thông tin cơ bản -->
             <div class="form-section">
-                <h2 class="section-title">Thông tin cá nhân</h2>
+                <h2 class="section-title">
+                    <i class="fas fa-user me-2"></i>Thông tin cá nhân
+                </h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="required-field" for="fullName">Họ và tên</label>
+                        <label class="required-field" for="fullName">
+                            <i class="fas fa-user-tag me-1"></i>Họ và tên
+                        </label>
                         <input type="text" class="form-control" id="fullName" name="admin.account.fullName"
                                placeholder="Nhập họ và tên" required>
-                        <div class="error-message" id="fullNameError">Vui lòng nhập họ tên</div>
+                        <div class="error-message" id="fullNameError">
+                            <i class="fas fa-exclamation-circle me-1"></i>Vui lòng nhập họ tên
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="required-field" for="email">Email</label>
+                        <label class="required-field" for="email">
+                            <i class="fas fa-envelope me-1"></i>Email
+                        </label>
                         <input type="email" class="form-control" id="email" name="admin.account.email"
                                placeholder="example@domain.com" required>
-                        <div class="error-message" id="emailError">Vui lòng nhập email hợp lệ</div>
+                        <div class="error-message" id="emailError">
+                            <i class="fas fa-exclamation-circle me-1"></i>Vui lòng nhập email hợp lệ
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="gender">Giới tính</label>
+                        <label for="gender">
+                            <i class="fas fa-venus-mars me-1"></i>Giới tính
+                        </label>
                         <select class="form-control" name="admin.account.gender" id="gender">
                             <option value="Nam">Nam</option>
                             <option value="Nữ">Nữ</option>
@@ -49,61 +63,46 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="required-field" for="dateOfBirth">Ngày sinh</label>
+                        <label class="required-field" for="dateOfBirth">
+                            <i class="fas fa-calendar-alt me-1"></i>Ngày sinh
+                        </label>
                         <input type="date" class="form-control" id="dateOfBirth"
                                name="admin.account.dateOfBirth" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="phoneNumber">Số điện thoại</label>
+                        <label for="phoneNumber">
+                            <i class="fas fa-phone me-1"></i>Số điện thoại
+                        </label>
                         <input type="tel" class="form-control" id="phoneNumber"
                                name="admin.account.phoneNumber" placeholder="0123456789">
                     </div>
 
                     <div class="form-group">
-                        <label for="address">Địa chỉ</label>
+                        <label for="address">
+                            <i class="fas fa-map-marker-alt me-1"></i>Địa chỉ
+                        </label>
                         <input type="text" class="form-control" id="address"
                                name="admin.account.address" placeholder="Nhập địa chỉ">
                     </div>
                 </div>
             </div>
 
-            <!-- Thông tin quyền hạn -->
-<!--            <div class="form-section">-->
-<!--                <h2 class="section-title">Quyền hạn và vai trò</h2>-->
-<!--                <div class="form-grid">-->
-<!--                    <div class="form-group">-->
-<!--                        <label for="adminRole">Vai trò Admin</label>-->
-<!--                        <select class="form-control" name="admin.adminRole" id="adminRole">-->
-<!--                            <option value="SUPER_ADMIN">Super Admin</option>-->
-<!--                            <option value="COURSE_ADMIN">Course Admin</option>-->
-<!--                            <option value="USER_ADMIN">User Admin</option>-->
-<!--                            <option value="CONTENT_ADMIN">Content Admin</option>-->
-<!--                        </select>-->
-<!--                    </div>-->
-
-<!--                    <div class="form-group">-->
-<!--                        <label for="accessLevel">Cấp độ truy cập</label>-->
-<!--                        <select class="form-control" name="admin.accessLevel" id="accessLevel">-->
-<!--                            <option value="FULL_ACCESS">Full Access</option>-->
-<!--                            <option value="RESTRICTED_ACCESS">Restricted Access</option>-->
-<!--                            <option value="LIMITED_ACCESS">Limited Access</option>-->
-<!--                        </select>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
             <!-- Hình ảnh -->
             <div class="form-section">
-                <h2 class="section-title">Hình ảnh đại diện</h2>
+                <h2 class="section-title">
+                    <i class="fas fa-image me-2"></i>Hình ảnh đại diện
+                </h2>
                 <div class="form-group">
                     <div class="file-input-wrapper">
                         <label class="file-input-button" for="adminImage">
-                            <i class="fas fa-upload"></i> Chọn hình ảnh
+                            <i class="fas fa-upload me-2"></i>Chọn hình ảnh
                         </label>
                         <input type="file" id="adminImage" name="admin.account.avatar_path"
                                accept="image/*" style="display: none;">
-                        <div id="selectedFileName" class="mt-2"></div>
+                        <div id="selectedFileName" class="mt-2 text-muted">
+                            <i class="fas fa-file-image me-1"></i>Chưa chọn file
+                        </div>
                     </div>
                 </div>
             </div>
@@ -120,23 +119,25 @@
     <!-- Popup Notification -->
     <div id="popup" class="popup" style="display: none;">
         <div class="popup-content">
+            <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
             <p id="message-popup-notification"></p>
             <button class="submit-button" id="closePopupButton">Đóng</button>
         </div>
     </div>
 </div>
+
 <script>
     // Hiển thị tên file đã chọn
     document.getElementById('adminImage').addEventListener('change', function(e) {
         const fileName = e.target.files[0]?.name || 'Chưa chọn file';
-        document.getElementById('selectedFileName').textContent = fileName;
+        document.getElementById('selectedFileName').innerHTML = `
+            <i class="fas fa-file-image me-1"></i>${fileName}
+        `;
     });
 
     // Xử lý form submit
     document.getElementById('adminForm').addEventListener('submit', function(e) {
         e.preventDefault();
-
-        // Thêm class loading khi đang xử lý
         this.classList.add('loading');
 
         const adminForm = new FormData(this);
@@ -161,7 +162,9 @@
             if (response.ok) {
                 Alert.success("Thêm admin thành công");
                 this.reset();
-                document.getElementById('selectedFileName').textContent = '';
+                document.getElementById('selectedFileName').innerHTML = `
+                    <i class="fas fa-file-image me-1"></i>Chưa chọn file
+                `;
             } else {
                 const errorResponse = await response.json();
                 const message = errorResponse.message || 'Có lỗi xảy ra khi thêm Admin!';
@@ -175,37 +178,10 @@
             this.classList.remove('loading');
         });
     });
-
-    function showNotification(message, type) {
-        const popup = document.getElementById('popup');
-        const messageElement = document.getElementById('message-popup-notification');
-
-        messageElement.textContent = message;
-        popup.style.display = 'block';
-
-        if (type === 'error') {
-            popup.classList.add('error');
-        } else {
-            popup.classList.remove('error');
-        }
-
-        // Tự động đóng sau 3 giây
-        setTimeout(() => {
-            popup.style.display = 'none';
-        }, 3000);
-    }
-
-    // Đóng popup khi click nút đóng
-    document.getElementById('closePopupButton').addEventListener('click', function() {
-        document.getElementById('popup').style.display = 'none';
-    });
 </script>
 
-<!--Alert-->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script th:src="@{/js/common/Alert.js}"></script>
-
-<!--Js-->
 <script th:src="@{/js/admin/menu.js}"></script>
 <script th:src="@{/js/admin/header.js}"></script>
 <script th:src="@{/js/utils/api.js}"></script>
