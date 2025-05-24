@@ -31,4 +31,6 @@ public interface ICourseRepository extends JpaRepository<CourseModel, Long> {
             @Param("categoryId") Long categoryId,
             @Param("courseId") Long courseId,
             Pageable pageable);
+    @Query("SELECT c FROM CourseModel c WHERE c.isPublished = true ORDER BY c.totalStudents DESC")
+    List<CourseModel> findPopularCourses(Pageable pageable);
 }

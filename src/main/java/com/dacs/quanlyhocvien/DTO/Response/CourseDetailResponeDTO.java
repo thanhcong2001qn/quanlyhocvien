@@ -42,7 +42,7 @@ public class CourseDetailResponeDTO {
     private Boolean isFeatured;
 
     // Course statistics
-    private Float rating;
+    private Double rating;
     private Integer totalStudents;
     private Integer totalReviews;
     private Integer totalCompletions;

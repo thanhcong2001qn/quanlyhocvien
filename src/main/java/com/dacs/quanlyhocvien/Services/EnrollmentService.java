@@ -74,6 +74,7 @@ public class EnrollmentService {
             CourseModel course = courseOpt.get();
             StudentModel student = studentOpt.get();
 
+            course.setTotalStudents(course.getTotalStudents() + 1);
             // Tạo đăng ký mới
             EnrollmentModel enrollment = new EnrollmentModel();
             enrollment.setCourse(course);

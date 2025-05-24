@@ -22,10 +22,14 @@ public class CourseResponseDTO {
     private String level;
     private Boolean isFeatured;
     private LocalDateTime publishedAt;
-    private Float rating;
+    private Double rating;
     private Integer totalStudents;
     private Integer totalReviews;
     private CategoryResponeDTO category;
+    private Boolean isEnrolled = false;
+    private Integer enrollmentCount;
+    private Integer ratingCount;
+    private Boolean isNew;
 
     // Getters, Setters, Constructors...
 

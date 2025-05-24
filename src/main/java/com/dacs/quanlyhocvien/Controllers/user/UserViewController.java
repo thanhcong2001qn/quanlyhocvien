@@ -7,6 +7,7 @@ import com.dacs.quanlyhocvien.Services.AccountService;
 import com.dacs.quanlyhocvien.Services.CourseService;
 import com.dacs.quanlyhocvien.Services.LessonService;
 import com.dacs.quanlyhocvien.models.AccountModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -96,4 +97,5 @@ public class UserViewController {
     public String cart(){
         return "views/user/cart";
     }
+
 }

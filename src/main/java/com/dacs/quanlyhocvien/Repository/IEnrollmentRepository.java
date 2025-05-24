@@ -33,7 +33,7 @@ public interface IEnrollmentRepository extends JpaRepository<EnrollmentModel, Lo
      * Đếm số lượng học viên đã đăng ký một khóa học
      */
     @Query("SELECT COUNT(e) FROM EnrollmentModel e WHERE e.course.courseId = :courseId")
-    Long countByCourseId(@Param("courseId") Long courseId);
+    Integer countByCourseId(@Param("courseId") Long courseId);
 
     /**
      * Lấy danh sách đăng ký khóa học theo trạng thái thanh toán
@@ -47,4 +47,8 @@ public interface IEnrollmentRepository extends JpaRepository<EnrollmentModel, Lo
             "FROM EnrollmentModel e WHERE e.paymentStatus = 'completed' " +
             "GROUP BY e.course.courseId, e.course.title ORDER BY revenue DESC")
     List<Object[]> getRevenueStatsByCourseName();
+    @Query("SELECT e.course.courseId" +" FROM EnrollmentModel e WHERE e.student.studentId = :accountId")
+    List<Long> findCourseIdsByAccountId(@Param("accountId") Long accountId);
+    @Query("SELECT COUNT(e) FROM EnrollmentModel e WHERE e.student.studentId = :studentId")
+    int countByStudentId(@Param("studentId") Long studentId);
 }

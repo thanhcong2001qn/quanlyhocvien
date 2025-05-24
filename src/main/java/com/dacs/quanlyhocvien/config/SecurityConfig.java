@@ -1,9 +1,11 @@
 package com.dacs.quanlyhocvien.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,35 +20,35 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private RedirectAuthenticationEntryPoint authenticationEntryPoint;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint(authenticationEntryPoint)  // Sử dụng custom entry point
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         // URLs công khai
-                        .requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**","/api/login","/api/register","/forgot-password","/verify-account","/user/profile",
-                                "/api/resend-verification-email","/dashboard","/**").permitAll()
-//                        .requestMatchers("/home").authenticated()
-//                        .requestMatchers("/api/home-data", "/api/verify-token").authenticated()
+                        .requestMatchers(
+                                "/", "/home" ,"/register", "/login", "/css/**", "/js/**", "/images/**",
+                                "/api/login", "/api/register","api/verify-token", "/forgot-password", "/verify-account", "/api/resend-verification-email",
+                                "/dashboard","user/**","**"
+                        ).permitAll()
                         // URLs chỉ dành cho ADMIN
-                        .requestMatchers("/admin/**","/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         // URLs chỉ dành cho TEACHER
-                        .requestMatchers("/teacher/**").hasRole("TEACHER")
-                        // URLs dành cho STUDENT (có thể xóa /home ở đây nếu nó đã là URL công khai)
-                        .requestMatchers("/student/**").hasRole("STUDENT")
-                        // Tất cả các yêu cầu khác đều yêu cầu xác thực
+                        .requestMatchers("/teacher/**").hasAuthority("ROLE_TEACHER")
+                        // URLs chỉ dành cho STUDENT
+                        //.requestMatchers("/api/user/**").hasAuthority("ROLE_STUDENT")
                         .anyRequest().authenticated()
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/login")
-//                        .loginProcessingUrl("/api/login")
-//                        .defaultSuccessUrl("/home")
-//                        .permitAll()
-//                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")

@@ -2,6 +2,7 @@ package com.dacs.quanlyhocvien.Services;
 
 import com.dacs.quanlyhocvien.DTO.Response.*;
 import com.dacs.quanlyhocvien.Repository.ICourseRepository;
+import com.dacs.quanlyhocvien.Repository.IEnrollmentRepository;
 import com.dacs.quanlyhocvien.exceptions.ResourceNotFoundException;
 import com.dacs.quanlyhocvien.models.CourseModel;
 import com.dacs.quanlyhocvien.models.LessonModel;
@@ -13,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,9 +24,11 @@ import java.util.stream.Collectors;
 @Service
 public class CourseService {
     private final ICourseRepository courseRepository;
-
-    public CourseService(ICourseRepository courseRepository) {
+    private final IEnrollmentRepository enrollmentRepository;
+    public CourseService(ICourseRepository courseRepository,
+                         IEnrollmentRepository enrollmentRepository) {
         this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
     // Implement the methods for course management here
@@ -41,9 +45,11 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
-    // Trong CourseService
+    /**
+     * Lấy danh sách khóa học phân trang với các bộ lọc
+     */
     public Page<CourseResponseDTO> getCourses(Pageable pageable, String search, String categoryIds,
-                                              String levels, String priceTypes) {
+                                              String levels, String priceTypes, String enrollmentStatus, Long accountId) {
         // Xây dựng Specification dựa trên các tham số
         Specification<CourseModel> spec = Specification.where(null);
 
@@ -93,6 +99,31 @@ public class CourseService {
             }
         }
 
+        // Thêm điều kiện lọc theo trạng thái đăng ký
+        if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
+            List<String> statusList = Arrays.asList(enrollmentStatus.split(","));
+
+            // Lấy danh sách ID khóa học mà người dùng đã đăng ký
+            List<Long> enrolledCourseIds = enrollmentRepository.findCourseIdsByAccountId(accountId);
+
+            if (statusList.contains("enrolled") && !statusList.contains("not-enrolled")) {
+                // Chỉ hiển thị khóa học đã đăng ký
+                if (!enrolledCourseIds.isEmpty()) {
+                    spec = spec.and((root, query, cb) -> root.get("id").in(enrolledCourseIds));
+                } else {
+                    // Nếu chưa đăng ký khóa học nào và chỉ lọc "enrolled" thì không có kết quả
+                    spec = spec.and((root, query, cb) -> cb.equal(cb.literal(1), 0)); // always false
+                }
+            } else if (!statusList.contains("enrolled") && statusList.contains("not-enrolled")) {
+                // Chỉ hiển thị khóa học chưa đăng ký
+                if (!enrolledCourseIds.isEmpty()) {
+                    spec = spec.and((root, query, cb) -> cb.not(root.get("id").in(enrolledCourseIds)));
+                }
+                // Nếu chưa đăng ký khóa học nào thì hiển thị tất cả (vì tất cả đều chưa đăng ký)
+            }
+            // Nếu chọn cả hai hoặc không chọn gì, hiển thị tất cả khóa học
+        }
+
         // Nếu bạn chỉ muốn các khóa học đã xuất bản
         spec = spec.and((root, query, cb) ->
                 cb.isTrue(root.get("isPublished"))
@@ -101,8 +132,21 @@ public class CourseService {
         // Lấy dữ liệu từ database
         Page<CourseModel> coursePage = courseRepository.findAll(spec, pageable);
 
-        // Chuyển đổi từ Entity sang DTO để tránh vấn đề Lazy Loading
-        return coursePage.map(CourseResponseDTO::fromEntity);
+        // Chuyển đổi từ Entity sang DTO
+        if (accountId != null) {
+            // Lấy danh sách ID khóa học đã đăng ký để đánh dấu trạng thái
+            final List<Long> enrolledIds = enrollmentRepository.findCourseIdsByAccountId(accountId);
+
+            // Chuyển đổi và thêm thông tin đăng ký
+            return coursePage.map(course -> {
+                CourseResponseDTO dto = CourseResponseDTO.fromEntity(course);
+                dto.setIsEnrolled(enrolledIds.contains(course.getCourseId()));
+                return dto;
+            });
+        } else {
+            // Nếu không có accountId, chỉ chuyển đổi bình thường
+            return coursePage.map(CourseResponseDTO::fromEntity);
+        }
     }
     @Transactional(readOnly = true)
     public CourseDetailResponeDTO getCourseDetail(Long courseId) {
@@ -254,6 +298,30 @@ public class CourseService {
         // Chuyển đổi từ entity sang DTO
         return relatedCourses.stream()
                 .map(CourseResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+    public List<CourseResponseDTO> getPopularCourses(int limit) {
+        // Tìm khóa học có nhiều người đăng ký nhất
+        List<CourseModel> popularCourses = courseRepository.findPopularCourses(PageRequest.of(0, limit));
+
+        // Chuyển đổi sang DTO và trả về
+        return popularCourses.stream()
+                .map(course -> {
+                    CourseResponseDTO dto = CourseResponseDTO.fromEntity(course);
+
+                    // Thêm thông tin về số lượng người đăng ký
+                    dto.setEnrollmentCount(course.getTotalStudents());
+
+                    // Thêm thông tin đánh giá
+                    dto.setRating(4.5); // Giả định - thay thế bằng dữ liệu thực từ DB
+                    dto.setRatingCount(85); // Giả định - thay thế bằng dữ liệu thực từ DB
+
+                    // Kiểm tra xem khóa học có phải mới không (ví dụ: tạo trong 7 ngày qua)
+                    LocalDateTime oneWeekAgo = LocalDateTime.now().minusDays(7);
+                    dto.setIsNew(course.getCreatedAt().isAfter(oneWeekAgo));
+
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
