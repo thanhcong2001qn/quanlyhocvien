@@ -21,7 +21,9 @@ public class CourseResponseDTO {
     private BigDecimal discountPrice;
     private String level;
     private Boolean isFeatured;
+    private Boolean isPublished;
     private LocalDateTime publishedAt;
+    private Integer duration;
     private Double rating;
     private Integer totalStudents;
     private Integer totalReviews;
@@ -46,10 +48,12 @@ public class CourseResponseDTO {
         dto.setDiscountPrice(entity.getDiscountPrice());
         dto.setLevel(entity.getLevel());
         dto.setIsFeatured(entity.getIsFeatured());
+        dto.setIsPublished(entity.getIsPublished());
         dto.setPublishedAt(entity.getPublishedAt());
         dto.setRating(entity.getRating());
         dto.setTotalStudents(entity.getTotalStudents());
         dto.setTotalReviews(entity.getTotalReviews());
+        dto.setDuration(entity.getDuration());
 
         // Chỉ lấy thông tin cơ bản của danh mục để tránh vấn đề lazy loading
         if (entity.getCategory() != null) {

@@ -71,6 +71,11 @@ public class AdminViewController {
     public String addcourse(){
         return "views/admin/add-course";
     }
+    @GetMapping(value = "/all-courses")
+    public String allCourse(Model model){
+        model.addAttribute("dummy", "dummyValue"); // ✅ thêm dòng bảo vệ tránh lỗi Thymeleaf
+        return "views/admin/all-courses";
+    }
     @GetMapping(value = "/add-category")
     public String addCategory(){
         return "views/admin/add-category";
@@ -80,4 +85,5 @@ public class AdminViewController {
         model.addAttribute("dummy", "dummyValue"); // ✅ thêm dòng bảo vệ tránh lỗi Thymeleaf
         return "views/admin/all-categories";
     }
+
 }

@@ -1,9 +1,12 @@
 package com.dacs.quanlyhocvien.Services;
 
 import com.dacs.quanlyhocvien.DTO.Response.*;
+import com.dacs.quanlyhocvien.Repository.ICategoryRepository;
 import com.dacs.quanlyhocvien.Repository.ICourseRepository;
 import com.dacs.quanlyhocvien.Repository.IEnrollmentRepository;
+import com.dacs.quanlyhocvien.Repository.ILessonRepository;
 import com.dacs.quanlyhocvien.exceptions.ResourceNotFoundException;
+import com.dacs.quanlyhocvien.models.CourseCategoryModel;
 import com.dacs.quanlyhocvien.models.CourseModel;
 import com.dacs.quanlyhocvien.models.LessonModel;
 import com.dacs.quanlyhocvien.models.ModuleModel;
@@ -13,30 +16,32 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
     private final ICourseRepository courseRepository;
     private final IEnrollmentRepository enrollmentRepository;
+    private final CloudinaryService cloudinaryService;
+    private final ILessonRepository iLessonRepository;
+    private final ICategoryRepository iCategoryRepository;
+
     public CourseService(ICourseRepository courseRepository,
-                         IEnrollmentRepository enrollmentRepository) {
+                         IEnrollmentRepository enrollmentRepository, CloudinaryService cloudinaryService, ILessonRepository iLessonRepository, ICategoryRepository iCategoryRepository) {
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;
+        this.cloudinaryService = cloudinaryService;
+        this.iLessonRepository = iLessonRepository;
+        this.iCategoryRepository = iCategoryRepository;
     }
 
-    // Implement the methods for course management here
-    // For example, methods to add, update, delete, and retrieve courses
-
-    // Example method to add a course
-    public void addCourse(String courseName, String courseDescription) {
-        // Logic to add a course
+    public CourseModel saveCourse(CourseModel course) {
+        courseRepository.save(course);
+        return course;
     }
 
     // Example method to get all courses
@@ -49,7 +54,7 @@ public class CourseService {
      * Lấy danh sách khóa học phân trang với các bộ lọc
      */
     public Page<CourseResponseDTO> getCourses(Pageable pageable, String search, String categoryIds,
-                                              String levels, String priceTypes, String enrollmentStatus, Long accountId) {
+                                              String levels, String priceTypes, String isPublished, Long accountId) {
         // Xây dựng Specification dựa trên các tham số
         Specification<CourseModel> spec = Specification.where(null);
 
@@ -99,35 +104,14 @@ public class CourseService {
             }
         }
 
-        // Thêm điều kiện lọc theo trạng thái đăng ký
-        if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
-            List<String> statusList = Arrays.asList(enrollmentStatus.split(","));
-
-            // Lấy danh sách ID khóa học mà người dùng đã đăng ký
-            List<Long> enrolledCourseIds = enrollmentRepository.findCourseIdsByAccountId(accountId);
-
-            if (statusList.contains("enrolled") && !statusList.contains("not-enrolled")) {
-                // Chỉ hiển thị khóa học đã đăng ký
-                if (!enrolledCourseIds.isEmpty()) {
-                    spec = spec.and((root, query, cb) -> root.get("id").in(enrolledCourseIds));
-                } else {
-                    // Nếu chưa đăng ký khóa học nào và chỉ lọc "enrolled" thì không có kết quả
-                    spec = spec.and((root, query, cb) -> cb.equal(cb.literal(1), 0)); // always false
-                }
-            } else if (!statusList.contains("enrolled") && statusList.contains("not-enrolled")) {
-                // Chỉ hiển thị khóa học chưa đăng ký
-                if (!enrolledCourseIds.isEmpty()) {
-                    spec = spec.and((root, query, cb) -> cb.not(root.get("id").in(enrolledCourseIds)));
-                }
-                // Nếu chưa đăng ký khóa học nào thì hiển thị tất cả (vì tất cả đều chưa đăng ký)
+        if (isPublished != null && !isPublished.isEmpty()) {
+            if ("true".equalsIgnoreCase(isPublished)) {
+                spec = spec.and((root, query, cb) -> cb.isTrue(root.get("isPublished")));
+            } else if ("false".equalsIgnoreCase(isPublished)) {
+                spec = spec.and((root, query, cb) -> cb.isFalse(root.get("isPublished")));
             }
-            // Nếu chọn cả hai hoặc không chọn gì, hiển thị tất cả khóa học
+            // Nếu giá trị không phải true/false, không áp dụng bộ lọc
         }
-
-        // Nếu bạn chỉ muốn các khóa học đã xuất bản
-        spec = spec.and((root, query, cb) ->
-                cb.isTrue(root.get("isPublished"))
-        );
 
         // Lấy dữ liệu từ database
         Page<CourseModel> coursePage = courseRepository.findAll(spec, pageable);
@@ -324,6 +308,143 @@ public class CourseService {
                 })
                 .collect(Collectors.toList());
     }
+    public long countAllCourses() {
+        try {
+            long count = courseRepository.count();
+            return count;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 
 
+    public long countByStatus(boolean isPublished) {
+        try {
+            long count = courseRepository.countByIsPublished(isPublished);
+            return count;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public long countByFeatured(boolean isFeatured) {
+        try {
+            long count = courseRepository.countByIsFeatured(isFeatured);
+
+            return count;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+    @Transactional
+    public void deleteCourse(Long courseId) {
+        // Lấy thông tin khóa học
+        CourseModel course = getCourseById(courseId);
+        if (course == null) {
+            throw new RuntimeException("Không tìm thấy khóa học với ID: " + courseId);
+        }
+
+        try {
+            // 1. Xóa thumbnail trên Cloudinary (nếu có)
+            String thumbnailUrl = course.getThumbnailPath();
+            if (thumbnailUrl != null && thumbnailUrl.contains("cloudinary")) {
+                String publicId = cloudinaryService.extractPublicIdFromUrl(thumbnailUrl);
+                if (publicId != null) {
+                    cloudinaryService.deleteImage(publicId);
+                }
+            }
+
+
+
+            // 3. Xóa các lịch sử đăng ký khóa học (nếu có)
+            enrollmentRepository.deleteAllByCourseId(courseId);
+
+
+//            // 4. Xóa các đánh giá khóa học (nếu có)
+//            reviewRepository.deleteAllByCourseId(courseId);
+
+
+            // 5. Xóa khóa học
+            courseRepository.deleteById(courseId);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi xóa khóa học: " + e.getMessage(), e);
+        }
+    }
+    public CourseModel getCourseById(Long courseId) {
+        Optional<CourseModel> courseOptional = courseRepository.findById(courseId);
+        return courseOptional.orElse(null);
+    }
+    @Transactional
+    public CourseModel updateCourse(Long courseId, CourseUpdateDTO courseUpdateDTO, MultipartFile thumbnail) {
+        // Lấy thông tin khóa học hiện tại
+        CourseModel course = getCourseById(courseId);
+        if (course == null) {
+            throw new RuntimeException("Không tìm thấy khóa học với ID: " + courseId);
+        }
+
+        try {
+            // Cập nhật thông tin cơ bản
+            course.setTitle(courseUpdateDTO.getTitle());
+            course.setDescription(courseUpdateDTO.getDescription());
+            course.setPrice(courseUpdateDTO.getPrice());
+            course.setDiscountPrice(courseUpdateDTO.getDiscountPrice());
+            course.setDuration(courseUpdateDTO.getDuration());
+            course.setLevel(courseUpdateDTO.getLevel());
+
+            // Xử lý trạng thái xuất bản
+            boolean wasPublished = course.getIsPublished() != null && course.getIsPublished();
+            boolean willBePublished = courseUpdateDTO.getIsPublished() != null && courseUpdateDTO.getIsPublished();
+
+            course.setIsPublished(courseUpdateDTO.getIsPublished());
+
+            // Nếu khóa học được xuất bản lần đầu, cập nhật thời gian xuất bản
+            if (!wasPublished && willBePublished) {
+                course.setPublishedAt(LocalDateTime.now());
+            }
+
+            course.setIsFeatured(courseUpdateDTO.getIsFeatured());
+
+            // Cập nhật danh mục nếu có thay đổi
+            if (courseUpdateDTO.getCategoryId() != null) {
+                CourseCategoryModel category = iCategoryRepository.findById(courseUpdateDTO.getCategoryId())
+                        .orElseThrow(() -> {
+                            return new RuntimeException("Không tìm thấy danh mục với ID: " + courseUpdateDTO.getCategoryId());
+                        });
+
+                course.setCategory(category);;
+            }
+
+            // Xử lý thumbnail nếu có
+            if (thumbnail != null && !thumbnail.isEmpty()) {
+                // Xóa thumbnail cũ trên Cloudinary (nếu có)
+                String oldThumbnailUrl = course.getThumbnailPath();
+                if (oldThumbnailUrl != null && oldThumbnailUrl.contains("cloudinary")) {
+                    String publicId = cloudinaryService.extractPublicIdFromUrl(oldThumbnailUrl);
+                    if (publicId != null) {
+                        cloudinaryService.deleteImage(publicId);
+                    }
+                }
+
+                // Upload thumbnail mới lên Cloudinary
+                String folder = "course-thumbnails";
+                String filename = "course_" + courseId + "_" + System.currentTimeMillis();
+                String thumbnailUrl = cloudinaryService.uploadImage(thumbnail, filename);
+
+                // Cập nhật đường dẫn thumbnail mới
+                course.setThumbnailPath(thumbnailUrl);
+            }
+
+            // Cập nhật thời gian cập nhật
+            // Không cần thiết nếu có @UpdateTimestamp trên trường updatedAt
+            // course.setUpdatedAt(new Date());
+
+            // Lưu khóa học đã cập nhật
+            CourseModel updatedCourse = courseRepository.save(course);
+
+
+            return updatedCourse;
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi cập nhật khóa học: " + e.getMessage(), e);
+        }
+    }
 }
