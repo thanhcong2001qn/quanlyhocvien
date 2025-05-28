@@ -42,5 +42,5 @@ public interface ICourseRepository extends JpaRepository<CourseModel, Long> {
     long countByIsFeatured(@Param("isFeatured") boolean isFeatured);
 
 
-
+    CourseModel findByCourseId(Long courseId);
 }

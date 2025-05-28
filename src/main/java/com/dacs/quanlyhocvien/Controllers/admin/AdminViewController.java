@@ -85,5 +85,9 @@ public class AdminViewController {
         model.addAttribute("dummy", "dummyValue"); // ✅ thêm dòng bảo vệ tránh lỗi Thymeleaf
         return "views/admin/all-categories";
     }
-
+    @GetMapping(value = "/courseDetail/{courseId}")
+    public String courseDetail(@PathVariable Long courseId, Model model) {
+        model.addAttribute("courseId", courseId);
+        return "views/admin/course-detail";
+    }
 }

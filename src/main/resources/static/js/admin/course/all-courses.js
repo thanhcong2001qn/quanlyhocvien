@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${priceDisplay}</td>
                 <td>${statusBadge}</td>
                 <td class="action-buttons">
-                    <a href="/view-course/${course.courseId}" class="btn btn-sm btn-outline-info me-1" title="Xem chi tiết">
+                    <a href="/courseDetail/${course.courseId}" class="btn btn-sm btn-outline-info me-1" title="Xem chi tiết">
                         <i class="fas fa-eye"></i>
                     </a>
                     <button class="btn btn-sm btn-outline-primary me-1" title="Chỉnh sửa" 
