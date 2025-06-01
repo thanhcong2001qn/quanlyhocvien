@@ -42,10 +42,35 @@ public class LessonService {
         this.iVideoRepository = iVideoRepository;
     }
     public List<LessonResponseDTO> getLessonsByModule(Long moduleId) {
+        // Get lessons for the module
         List<LessonModel> lessons = lessonRepository.findByModule_ModuleIdOrderByPosition(moduleId);
 
+        // Create response DTOs with video data
         return lessons.stream()
-                .map(this::mapToDTO)
+                .map(lesson -> {
+                    LessonResponseDTO dto = this.mapToDTO(lesson);
+
+                    // Fetch associated video from video repository
+                    VideoModel video = iVideoRepository.findByLesson_LessonId(lesson.getLessonId());
+
+                    // Set video data if available
+                    if (video != null) {
+                        dto.setVideoUrl(video.getVideoUrl());
+
+                        // If duration is not set in lesson but available in video, use it
+                        if (lesson.getDuration() == null && video.getDuration() != null) {
+                            // Convert seconds to minutes for consistency
+                            dto.setDuration(Math.round(video.getDuration() / 60.0f));
+                        }
+
+                        // Other video properties if needed
+                        dto.setVideoTitle(video.getTitle());
+                        dto.setVideoThumbnailUrl(video.getThumbnailPath());
+                        dto.setIsVideoDownloadable(video.getIsDownloadable());
+                    }
+
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
     @Transactional(readOnly = true)
@@ -148,53 +173,38 @@ public class LessonService {
         iModuleRepository.save(module);
         return mapToDTO(savedLesson);
     }
-//
-//    /**
-//     * Update a lesson
-//     *
-//     * @param lessonDTO Lesson data with updates
-//     * @return Updated lesson
-//     * @throws ResourceNotFoundException if lesson not found
-//     */
-//    @Transactional
-//    public LessonDTO updateLesson(LessonDTO lessonDTO) {
-//        logger.info("Updating lesson with id: {}", lessonDTO.getLessonId());
-//
-//        LessonModel lesson = lessonRepository.findById(lessonDTO.getLessonId())
-//                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài học với ID: " + lessonDTO.getLessonId()));
-//
-//        lesson.setTitle(lessonDTO.getTitle());
-//        lesson.setDescription(lessonDTO.getDescription());
-//
-//        if (lessonDTO.getDuration() != null) {
-//            lesson.setDuration(lessonDTO.getDuration());
-//        }
-//
-//        if (lessonDTO.getPosition() != null) {
-//            lesson.setPosition(lessonDTO.getPosition());
-//        }
-//
-//        if (lessonDTO.getIsFree() != null) {
-//            lesson.setIsFree(lessonDTO.getIsFree());
-//        }
-//
-//        lesson.setUpdatedAt(LocalDateTime.now());
-//
-//        LessonModel updatedLesson = lessonRepository.save(lesson);
-//
-//        // Update module updatedAt
-//        ModuleModel module = moduleRepository.findById(lesson.getModuleId())
-//                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy module với ID: " + lesson.getModuleId()));
-//        module.setUpdatedAt(LocalDateTime.now());
-//        moduleRepository.save(module);
-//
-//        // Update course duration
-//        updateCourseDuration(module.getCourseId());
-//
-//        logger.info("Lesson updated successfully with id: {}", updatedLesson.getLessonId());
-//
-//        return mapToDTO(updatedLesson);
-//    }
+
+    @Transactional
+    public LessonResponseDTO updateLesson(LessonResponseDTO lessonDTO) {
+        LessonModel lesson = lessonRepository.findById(lessonDTO.getLessonId())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài học với ID: " + lessonDTO.getLessonId()));
+
+        lesson.setTitle(lessonDTO.getTitle());
+        lesson.setDescription(lessonDTO.getDescription());
+
+        if (lessonDTO.getDuration() != null) {
+            lesson.setDuration(lessonDTO.getDuration());
+        }
+
+        if (lessonDTO.getPosition() != null) {
+            lesson.setPosition(lessonDTO.getPosition());
+        }
+
+        if (lessonDTO.getIsFree() != null) {
+            lesson.setIsFree(lessonDTO.getIsFree());
+        }
+
+        lesson.setUpdatedAt(LocalDateTime.now());
+
+        LessonModel updatedLesson = lessonRepository.save(lesson);
+
+        // Update module updatedAt
+        ModuleModel module = iModuleRepository.findById(lesson.getModule().getModuleId())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy module với ID: " + lesson.getModule().getModuleId()));
+        module.setUpdatedAt(LocalDateTime.now());
+        iModuleRepository.save(module);
+        return mapToDTO(updatedLesson);
+    }
 
     /**
      * Delete a lesson

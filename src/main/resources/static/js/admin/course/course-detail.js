@@ -82,23 +82,23 @@ function setupEventListeners() {
     // Confirm Delete button
     document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
 
-    // Lesson Type change
-    document.getElementById('lessonType').addEventListener('change', handleLessonTypeChange);
+    // // Lesson Type change
+    // document.getElementById('lessonType').addEventListener('change', handleLessonTypeChange);
 
     // Edit Course button
-    document.getElementById('editCourseBtn').addEventListener('click', function() {
-        window.location.href = `/edit-course/${courseId}`;
-    });
+    // document.getElementById('editCourseBtn').addEventListener('click', function() {
+    //     window.location.href = `/edit-course/${courseId}`;
+    // });
 
     // Edit Description button
-    document.getElementById('editDescriptionBtn').addEventListener('click', function() {
-        window.location.href = `/edit-course/${courseId}?tab=description`;
-    });
+    // document.getElementById('editDescriptionBtn').addEventListener('click', function() {
+    //     window.location.href = `/edit-course/${courseId}?tab=description`;
+    // });
 
     // Preview Course button
-    document.getElementById('previewCourseBtn').addEventListener('click', function() {
-        window.open(`/courses/${courseId}`, '_blank');
-    });
+    // document.getElementById('previewCourseBtn').addEventListener('click', function() {
+    //     window.open(`/courses/${courseId}`, '_blank');
+    // });
 
     // Publish Course button
     document.getElementById('publishCourseBtn').addEventListener('click', function() {
@@ -213,8 +213,6 @@ function populateCourseData(course) {
     // Update module status
     updateModuleStatus(course.moduleCount > 0);
 
-    // Update completion percentage
-    updateCompletionPercentage();
 }
 
 /**
@@ -359,7 +357,7 @@ function renderLessons(lessons, moduleId) {
                 <div class="lesson-info">
                     <i class="fas fa-grip-vertical text-muted"></i>
                     <div class="lesson-icon">
-                        <i class="fas fa-book"></i>
+                        <i class="fas fa-play"></i>
                     </div>
                     <div>
                         <span class="lesson-title">
@@ -571,11 +569,6 @@ function openAddLessonModal(moduleId) {
     document.getElementById('lessonId').value = '';
     document.getElementById('moduleIdForLesson').value = moduleId;
 
-    // Hide all type-specific fields
-    document.querySelectorAll('.lesson-type-fields').forEach(field => {
-        field.style.display = 'none';
-    });
-
     // Calculate next order
     const module = modules.find(m => m.moduleId.toString() === moduleId.toString());
     if (module && module.lessons) {
@@ -587,9 +580,7 @@ function openAddLessonModal(moduleId) {
     // Update modal title
     document.getElementById('lessonModalLabel').textContent = 'Thêm Bài học mới';
 
-    // Clear current document container
-    document.getElementById('currentDocumentContainer').innerHTML = '';
-
+    // Show the modal
     lessonModal.show();
 }
 
@@ -617,52 +608,13 @@ function openEditLessonModal(moduleId, lessonId) {
     document.getElementById('lessonId').value = lesson.lessonId;
     document.getElementById('moduleIdForLesson').value = moduleId;
     document.getElementById('lessonTitle').value = lesson.title;
-    document.getElementById('lessonType').value = lesson.lessonType || '';
     document.getElementById('lessonDescription').value = lesson.description || '';
     document.getElementById('lessonOrder').value = lesson.orderIndex || 1;
     document.getElementById('isFreePreview').checked = lesson.isFreePreview || false;
 
-    // Hide all type-specific fields first
-    document.querySelectorAll('.lesson-type-fields').forEach(field => {
-        field.style.display = 'none';
-    });
-
-    // Show type-specific fields based on lesson type
-    if (lesson.lessonType) {
-        const typeField = document.getElementById(`${lesson.lessonType.toLowerCase()}Fields`);
-        if (typeField) {
-            typeField.style.display = 'block';
-
-            // Fill type-specific data
-            switch (lesson.lessonType) {
-                case 'VIDEO':
-                    document.getElementById('videoUrl').value = lesson.videoUrl || '';
-                    document.getElementById('videoDuration').value = lesson.duration || 0;
-                    break;
-
-                case 'DOCUMENT':
-                    // Show current document if available
-                    if (lesson.documentUrl) {
-                        document.getElementById('currentDocumentContainer').innerHTML = `
-                            <div class="mt-2">
-                                <p class="mb-1">Tài liệu hiện tại:</p>
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-file-alt me-2 text-primary"></i>
-                                    <a href="${lesson.documentUrl}" target="_blank">${lesson.documentName || 'Xem tài liệu'}</a>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        document.getElementById('currentDocumentContainer').innerHTML = '';
-                    }
-                    break;
-
-                case 'ASSIGNMENT':
-                    document.getElementById('assignmentInstructions').value = lesson.instructions || '';
-                    break;
-            }
-        }
-    }
+    // Fill video-specific data
+    document.getElementById('videoUrl').value = lesson.videoUrl || '';
+    document.getElementById('videoDuration').value = lesson.duration || 0;
 
     // Update modal title
     document.getElementById('lessonModalLabel').textContent = 'Chỉnh sửa Bài học';
@@ -767,13 +719,33 @@ function confirmDelete() {
                 text: `${deleteType === 'module' ? 'Module' : 'Bài học'} đã được xóa`,
                 confirmButtonText: 'OK'
             }).then(() => {
-                // Reload modules
-                loadModules();
                 if (deleteType === 'module') {
                     setTimeout(() => {
                         updateRemainingModulesOrder();
                     }, 500);
                 }
+                // If lesson was deleted, update lesson order
+                else if (deleteType === 'lesson') {
+                    // Need to find which module this lesson belonged to
+                    let parentModuleId = null;
+                    modules.forEach(module => {
+                        if (module.lessons) {
+                            const lessonExists = module.lessons.some(l => l.lessonId.toString() === deleteId.toString());
+                            if (lessonExists) {
+                                parentModuleId = module.moduleId;
+                            }
+                        }
+                    });
+
+                    if (parentModuleId) {
+                        setTimeout(() => {
+                            updateRemainingLessonsOrder(parentModuleId);
+                        }, 500);
+                    }
+                }
+
+                // Reload modules
+                loadModules();
                 // Update completion percentage
                 updateCompletionPercentage();
             });
@@ -866,7 +838,6 @@ function saveModule() {
 function saveLesson() {
     // Validate form
     const title = document.getElementById('lessonTitle').value.trim();
-    const lessonType = document.getElementById('lessonType').value;
 
     if (!title) {
         document.getElementById('lessonTitle').classList.add('is-invalid');
@@ -877,26 +848,15 @@ function saveLesson() {
         document.getElementById('lessonTitleError').style.display = 'none';
     }
 
-    if (!lessonType) {
-        document.getElementById('lessonType').classList.add('is-invalid');
-        document.getElementById('lessonTypeError').style.display = 'block';
+    // Video validation
+    const videoUrl = document.getElementById('videoUrl').value.trim();
+    if (!videoUrl) {
+        document.getElementById('videoUrl').classList.add('is-invalid');
+        document.getElementById('videoUrlError').style.display = 'block';
         return;
     } else {
-        document.getElementById('lessonType').classList.remove('is-invalid');
-        document.getElementById('lessonTypeError').style.display = 'none';
-    }
-
-    // Additional validation for type-specific fields
-    if (lessonType === 'VIDEO') {
-        const videoUrl = document.getElementById('videoUrl').value.trim();
-        if (!videoUrl) {
-            document.getElementById('videoUrl').classList.add('is-invalid');
-            document.getElementById('videoUrlError').style.display = 'block';
-            return;
-        } else {
-            document.getElementById('videoUrl').classList.remove('is-invalid');
-            document.getElementById('videoUrlError').style.display = 'none';
-        }
+        document.getElementById('videoUrl').classList.remove('is-invalid');
+        document.getElementById('videoUrlError').style.display = 'none';
     }
 
     // Get form data
@@ -906,23 +866,17 @@ function saveLesson() {
     const orderIndex = parseInt(document.getElementById('lessonOrder').value) || 1;
     const isFreePreview = document.getElementById('isFreePreview').checked;
 
-    // Create basic data object
+    // Create data object for video lesson
     const lessonData = {
         title: title,
         description: description,
-        lessonType: lessonType,
+        lessonType: 'VIDEO', // Always VIDEO
         orderIndex: orderIndex,
         moduleId: moduleId,
-        isFreePreview: isFreePreview
+        isFree: isFreePreview,
+        videoUrl: videoUrl,
+        duration: parseFloat(document.getElementById('videoDuration').value) || 0
     };
-
-    // Add type-specific data
-    if (lessonType === 'VIDEO') {
-        lessonData.videoUrl = document.getElementById('videoUrl').value.trim();
-        lessonData.duration = parseFloat(document.getElementById('videoDuration').value) || 0;
-    } else if (lessonType === 'ASSIGNMENT') {
-        lessonData.instructions = document.getElementById('assignmentInstructions').value.trim();
-    }
 
     // Determine if this is an update or create
     const isUpdate = lessonId && lessonId.trim() !== '';
@@ -931,39 +885,17 @@ function saveLesson() {
         `/api/lessons/${moduleId}`;
     const method = isUpdate ? 'PUT' : 'POST';
 
-    // For document type with file upload, we need FormData
-    if (lessonType === 'DOCUMENT' && document.getElementById('documentFile').files.length > 0) {
-        const formData = new FormData();
-
-        // Add basic lesson data
-        for (const key in lessonData) {
-            formData.append(key, lessonData[key]);
-        }
-
-        // Add file
-        formData.append('documentFile', document.getElementById('documentFile').files[0]);
-
-        // Make API call with FormData
-        fetchWithAuth(url, {
-            method: method,
-            body: formData
-        })
-            .then(handleLessonResponse(isUpdate))
-            .catch(handleLessonError);
-    } else {
-        // Regular JSON API call for other types
-        fetchWithAuth(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(lessonData)
-        })
-            .then(handleLessonResponse(isUpdate))
-            .catch(handleLessonError);
-    }
+    // Make API call
+    fetchWithAuth(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(lessonData)
+    })
+        .then(handleLessonResponse(isUpdate))
+        .catch(handleLessonError);
 }
-
 /**
  * Handle lesson response
  */
@@ -1007,9 +939,7 @@ function updateCourseStatus(isPublished) {
     fetchWithAuth(`/api/courses/${courseId}/publish`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'X-User': 'thanhcong2001qn',
-            'X-Timestamp': '2025-05-27 13:30:44'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({ isPublished: isPublished })
     })
@@ -1297,9 +1227,7 @@ function loadLessonsForModule(module) {
     return fetchWithAuth(`/api/lessons/${module.moduleId}`, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'X-User': 'thanhcong2001qn',
-            'X-Timestamp': '2025-05-28 13:21:12'
+            'Content-Type': 'application/json'
         }
     })
         .then(response => {
@@ -1319,4 +1247,53 @@ function loadLessonsForModule(module) {
             module.lessons = [];
             return module; // Trả về module với mảng bài học rỗng để tránh lỗi
         });
+}
+function updateRemainingLessonsOrder(moduleId) {
+    const moduleCard = document.querySelector(`.module-card[data-module-id="${moduleId}"]`);
+    if (!moduleCard) return;
+
+    const lessonItems = moduleCard.querySelectorAll('.lesson-item');
+    let orderUpdates = [];
+
+    lessonItems.forEach((item, index) => {
+        const lessonId = item.getAttribute('data-lesson-id');
+        const orderDisplay = item.querySelector('.lesson-order');
+        const newOrder = index + 1;
+
+        if (orderDisplay) {
+            orderDisplay.textContent = newOrder + '.';
+        }
+
+        orderUpdates.push({
+            lessonId: lessonId,
+            position: newOrder,
+            moduleId: moduleId
+        });
+    });
+
+    // Update the orders in the backend
+    if (orderUpdates.length > 0) {
+        fetchWithAuth(`/api/lessons/${moduleId}/order`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User': 'thanhcong2001qn',
+                'X-Timestamp': '2025-05-30 14:53:21'
+            },
+            body: JSON.stringify(orderUpdates)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Không thể cập nhật thứ tự bài học sau khi xóa');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(`[${getCurrentDateTime()}] Lesson order updated after deletion:`, data);
+            })
+            .catch(error => {
+                console.error(`[${getCurrentDateTime()}] Error updating lesson order after deletion:`, error);
+                showErrorMessage('Không thể cập nhật thứ tự bài học sau khi xóa');
+            });
+    }
 }

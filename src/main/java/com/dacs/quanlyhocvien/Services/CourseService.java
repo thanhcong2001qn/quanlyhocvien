@@ -175,19 +175,6 @@ public class CourseService {
             courseDetail.setCategory(categoryDTO);
         }
 
-//        // Ánh xạ thông tin giảng viên (nếu có)
-//        if (course.getInstructor() != null) {
-//            InstructorResponseDTO instructorDTO = new InstructorResponseDTO();
-//            instructorDTO.setAccountId(course.getInstructor().getAccountId());
-//            instructorDTO.setFullName(course.getInstructor().getFullName());
-//            instructorDTO.setBiography(course.getInstructor().getBiography());
-//            instructorDTO.setAvatarUrl(course.getInstructor().getAvatarUrl());
-//            instructorDTO.setProfession(course.getInstructor().getProfession());
-//
-//            // Các thông tin khác của giảng viên có thể cần gọi service khác để lấy
-//            courseDetail.setInstructor(instructorDTO);
-//        }
-
         // Xử lý danh sách modules và bài học
         List<ModuleResponseDTO> moduleList = new ArrayList<>();
         Integer totalDuration = 0;
@@ -207,10 +194,10 @@ public class CourseService {
             moduleDTO.setPosition(module.getPosition());
             moduleDTO.setIsFree(module.getIsFree());
 
-            // Nếu module là miễn phí, đánh dấu khóa học có nội dung miễn phí
-            if (module.getIsFree()) {
-                hasFreeContent = true;
-            }
+//            // Nếu module là miễn phí, đánh dấu khóa học có nội dung miễn phí
+//            if (module.getIsFree()) {
+//                hasFreeContent = true;
+//            }
 
             // Xử lý bài học trong module
             List<LessonResponseDTO> lessons = new ArrayList<>();
@@ -230,10 +217,10 @@ public class CourseService {
                 lessonDTO.setPosition(lesson.getPosition());
                 lessonDTO.setIsFree(lesson.getIsFree());
 
-                // Nếu bài học là miễn phí, đánh dấu khóa học có nội dung miễn phí
-                if (lesson.getIsFree()) {
-                    hasFreeContent = true;
-                }
+//                // Nếu bài học là miễn phí, đánh dấu khóa học có nội dung miễn phí
+//                if (lesson.getIsFree()) {
+//                    hasFreeContent = true;
+//                }
 
                 // Cập nhật tổng thời lượng của module và khóa học
                 if (lesson.getDuration() != null) {

@@ -217,9 +217,9 @@
                     </nav>
                 </div>
                 <div class="col-md-6 d-flex justify-content-md-end align-items-center">
-                    <button class="btn btn-outline-primary me-2" id="previewCourseBtn">
-                        <i class="fas fa-eye"></i> Xem trước
-                    </button>
+<!--                    <button class="btn btn-outline-primary me-2" id="previewCourseBtn">-->
+<!--                        <i class="fas fa-eye"></i> Xem trước-->
+<!--                    </button>-->
                     <div class="dropdown">
                         <button class="btn btn-success dropdown-toggle" id="publishDropdown" data-bs-toggle="dropdown">
                             <i class="fas fa-globe"></i> Xuất bản
@@ -290,11 +290,11 @@
                                             <span class="course-original-price ms-2" id="courseOriginalPrice"></span>
                                         </div>
                                     </div>
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                                        <button class="btn btn-outline-primary btn-sm" id="editCourseBtn">
-                                            <i class="fas fa-edit"></i> Chỉnh sửa thông tin
-                                        </button>
-                                    </div>
+<!--                                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">-->
+<!--                                        <button class="btn btn-outline-primary btn-sm" id="editCourseBtn">-->
+<!--                                            <i class="fas fa-edit"></i> Chỉnh sửa thông tin-->
+<!--                                        </button>-->
+<!--                                    </div>-->
                                 </div>
                             </div>
                         </div>
@@ -382,9 +382,9 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Mô tả khóa học</h5>
-                            <button class="btn btn-sm btn-outline-primary" id="editDescriptionBtn">
-                                <i class="fas fa-edit"></i> Chỉnh sửa
-                            </button>
+<!--                            <button class="btn btn-sm btn-outline-primary" id="editDescriptionBtn">-->
+<!--                                <i class="fas fa-edit"></i> Chỉnh sửa-->
+<!--                            </button>-->
                         </div>
                         <div class="card-body">
                             <div id="courseDescription" class="course-description">
@@ -492,30 +492,19 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="lessonType" class="form-label">Loại bài học <span class="text-danger">*</span></label>
-                        <select class="form-select" id="lessonType" name="lessonType" required>
-                            <option value="">-- Chọn loại bài học --</option>
-                            <option value="VIDEO">Video</option>
-                            <option value="DOCUMENT">Tài liệu</option>
-                            <option value="QUIZ">Bài kiểm tra</option>
-                            <option value="ASSIGNMENT">Bài tập</option>
-                        </select>
-                        <div class="invalid-feedback" id="lessonTypeError">
-                            Vui lòng chọn loại bài học
-                        </div>
-                    </div>
+                    <!-- Loại bài học: Chỉ Video -->
+                    <input type="hidden" id="lessonType" name="lessonType" value="VIDEO">
 
                     <div class="mb-3">
                         <label for="lessonDescription" class="form-label">Mô tả ngắn</label>
                         <textarea class="form-control" id="lessonDescription" name="description" rows="2"></textarea>
                     </div>
 
-                    <!-- Hiển thị tùy thuộc vào loại bài học -->
-                    <div id="videoFields" class="lesson-type-fields" style="display: none;">
+                    <!-- Chỉ hiển thị trường cho Video -->
+                    <div id="videoFields" class="lesson-type-fields">
                         <div class="mb-3">
                             <label for="videoUrl" class="form-label">URL Video <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="videoUrl" name="videoUrl">
+                            <input type="text" class="form-control" id="videoUrl" name="videoUrl" required>
                             <div class="invalid-feedback" id="videoUrlError">
                                 URL video không được để trống
                             </div>
@@ -525,28 +514,6 @@
                         <div class="mb-3">
                             <label for="videoDuration" class="form-label">Thời lượng (phút)</label>
                             <input type="number" class="form-control" id="videoDuration" name="duration" min="0" step="0.1">
-                        </div>
-                    </div>
-
-                    <div id="documentFields" class="lesson-type-fields" style="display: none;">
-                        <div class="mb-3">
-                            <label for="documentFile" class="form-label">File tài liệu</label>
-                            <input type="file" class="form-control" id="documentFile" name="documentFile">
-                            <div id="currentDocumentContainer"></div>
-                        </div>
-                    </div>
-
-                    <div id="quizFields" class="lesson-type-fields" style="display: none;">
-                        <div class="mb-3">
-                            <label class="form-label">Thiết lập bài kiểm tra</label>
-                            <p class="text-muted">Sau khi tạo bài học, bạn có thể thiết lập chi tiết bài kiểm tra.</p>
-                        </div>
-                    </div>
-
-                    <div id="assignmentFields" class="lesson-type-fields" style="display: none;">
-                        <div class="mb-3">
-                            <label for="assignmentInstructions" class="form-label">Hướng dẫn bài tập</label>
-                            <textarea class="form-control" id="assignmentInstructions" name="instructions" rows="3"></textarea>
                         </div>
                     </div>
 

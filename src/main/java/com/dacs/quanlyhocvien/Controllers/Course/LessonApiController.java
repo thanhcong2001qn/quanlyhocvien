@@ -43,39 +43,20 @@ public class LessonApiController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
-//
-//    /**
-//     * Cập nhật thông tin bài học
-//     *
-//     * @param lessonId ID của bài học
-//     * @param lessonDTO Thông tin cập nhật
-//     * @return Bài học đã cập nhật
-//     */
-//    @PutMapping("/lessons/{lessonId}")
-//    public ResponseEntity<?> updateLesson(
-//            @PathVariable Long lessonId,
-//            @RequestBody LessonDTO lessonDTO,
-//            @RequestHeader(value = "X-User", required = false) String username) {
-//
-//        logger.info("Update lesson request for lessonId: {} with title: {} by user: {} at {}",
-//                lessonId, lessonDTO.getTitle(), username, LocalDateTime.now());
-//
-//        try {
-//            lessonDTO.setLessonId(lessonId);
-//            LessonDTO updatedLesson = lessonService.updateLesson(lessonDTO);
-//            return ResponseEntity.ok(updatedLesson);
-//        } catch (Exception e) {
-//            logger.error("Error updating lesson for lessonId: {}: {}", lessonId, e.getMessage());
-//            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-//        }
-//    }
-//
-//    /**
-//     * Xóa bài học
-//     *
-//     * @param lessonId ID của bài học
-//     * @return Kết quả xóa
-//     */
+
+    @PutMapping("/{lessonId}")
+    public ResponseEntity<?> updateLesson(
+            @PathVariable Long lessonId,
+            @RequestBody LessonResponseDTO lessonDTO) {
+
+        try {
+            lessonDTO.setLessonId(lessonId);
+            LessonResponseDTO updatedLesson = lessonService.updateLesson(lessonDTO);
+            return ResponseEntity.ok(updatedLesson);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
     @DeleteMapping("/{lessonId}")
     public ResponseEntity<?> deleteLesson(
             @PathVariable Long lessonId) {

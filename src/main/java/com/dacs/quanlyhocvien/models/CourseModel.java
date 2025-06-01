@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "category")
+@ToString(exclude = {"category", "modules"})
 public class CourseModel {
 
     @Id
