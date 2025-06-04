@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Khóa Học Mới</title>
+    <link rel="stylesheet" th:href="@{/css/admin/header.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/body.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /*.content-container {*/
+        /*    margin-left: 250px;*/
+        /*    padding: 20px;*/
+        /*    transition: margin-left 0.3s;*/
+        /*}*/
+
+        .sidebar-collapsed .content-container {
+            margin-left: 70px;
+        }
+
+        .course-form {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-section-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .thumbnail-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .ck-editor__editable {
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{/fragments/admin/header :: header}"></div>
+<div th:replace="~{/fragments/admin/menu :: menu}"></div>
+<div class="content-wrapper">
+<div class="content-container">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <h2 class="mb-3">Thêm Khóa Học Mới</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Thêm khóa học</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="course-form">
+                    <form id="addCourseForm" enctype="multipart/form-data">
+                        <!-- Thông tin cơ bản -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">Thông tin cơ bản</h4>
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="title" class="form-label">Tên khóa học <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="title" name="title" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="category" class="form-label">Danh mục <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="category" name="categoryId" required>
+                                        <option value="" selected disabled>Chọn danh mục</option>
+                                        <option th:each="category : ${categories}" th:value="${category.categoryId}" th:text="${category.categoryName}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Mô tả khóa học</label>
+                                <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="thumbnail" class="form-label">Ảnh bìa khóa học</label>
+                                    <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/*">
+                                    <img id="thumbnailPreview" class="thumbnail-preview mt-2" src="#" alt="Thumbnail preview">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="level" class="form-label">Cấp độ</label>
+                                    <select class="form-select" id="level" name="level">
+                                        <option value="" selected disabled>Chọn cấp độ</option>
+                                        <option value="Cơ bản">Cơ bản</option>
+                                        <option value="Trung cấp">Trung cấp</option>
+                                        <option value="Nâng cao">Nâng cao</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin giá và thời lượng -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">Giá và thời lượng</h4>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="price" class="form-label">Giá gốc (VNĐ)</label>
+                                    <input type="number" class="form-control" id="price" name="price" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="discountPrice" class="form-label">Giá khuyến mãi (VNĐ)</label>
+                                    <input type="number" class="form-control" id="discountPrice" name="discountPrice" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="duration" class="form-label">Thời lượng (phút)</label>
+                                    <input type="number" class="form-control" id="duration" name="duration" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cài đặt khóa học -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">Cài đặt khóa học</h4>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="isPublished" name="isPublished">
+                                        <label class="form-check-label" for="isPublished">Xuất bản ngay</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="isFeatured" name="isFeatured">
+                                        <label class="form-check-label" for="isFeatured">Khóa học nổi bật</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-secondary me-2" onclick="window.location.href='/all-courses'">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu khóa học</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+<script th:src="@{/js/common/Alert.js}"></script>
+<script th:src="@{/js/admin/menu.js}"></script>
+<script th:src="@{/js/admin/header.js}"></script>
+<script th:src="@{/js/utils/api.js}"></script>
+<script th:src="@{/js/admin/course/add-course.js}"></script>
+</body>
+</html>

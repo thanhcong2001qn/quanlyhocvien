@@ -687,3 +687,139 @@
 2025-06-04T21:23:12.981+07:00  INFO 25608 --- [quanlyhocvien] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-06-04T21:23:12.981+07:00  INFO 25608 --- [quanlyhocvien] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-06-04T21:23:12.996+07:00  INFO 25608 --- [quanlyhocvien] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-04T23:04:21.264+07:00  WARN 30616 --- [quanlyhocvien] [main] ory$DuplicateJsonObjectContextCustomizer : 
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/C:/Users/HA/.m2/repository/org/json/json/20240303/json-20240303.jar!/org/json/JSONObject.class
+	jar:file:/C:/Users/HA/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+2025-06-04T23:04:21.280+07:00  INFO 30616 --- [quanlyhocvien] [main] c.d.q.QuanlyhocvienApplicationTests      : Starting QuanlyhocvienApplicationTests using Java 21.0.5 with PID 30616 (started by HA in C:\Users\HA\Downloads\HTQLHV\quanlyhocvien)
+2025-06-04T23:04:21.281+07:00 DEBUG 30616 --- [quanlyhocvien] [main] c.d.q.QuanlyhocvienApplicationTests      : Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-06-04T23:04:21.281+07:00  INFO 30616 --- [quanlyhocvien] [main] c.d.q.QuanlyhocvienApplicationTests      : No active profile set, falling back to 1 default profile: "default"
+2025-06-04T23:04:22.434+07:00  INFO 30616 --- [quanlyhocvien] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-04T23:04:22.520+07:00  INFO 30616 --- [quanlyhocvien] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 74 ms. Found 6 JPA repository interfaces.
+2025-06-04T23:04:23.140+07:00  INFO 30616 --- [quanlyhocvien] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-04T23:04:23.220+07:00  INFO 30616 --- [quanlyhocvien] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-06-04T23:04:23.261+07:00  INFO 30616 --- [quanlyhocvien] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-04T23:04:23.543+07:00  INFO 30616 --- [quanlyhocvien] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-04T23:04:23.570+07:00  INFO 30616 --- [quanlyhocvien] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-04T23:04:23.836+07:00  INFO 30616 --- [quanlyhocvien] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@43090195
+2025-06-04T23:04:23.838+07:00  INFO 30616 --- [quanlyhocvien] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-04T23:04:23.884+07:00  WARN 30616 --- [quanlyhocvien] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-04T23:04:23.885+07:00  WARN 30616 --- [quanlyhocvien] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-06-04T23:04:23.906+07:00  INFO 30616 --- [quanlyhocvien] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-06-04T23:04:24.875+07:00  INFO 30616 --- [quanlyhocvien] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-04T23:04:24.877+07:00  INFO 30616 --- [quanlyhocvien] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-04T23:04:25.243+07:00  INFO 30616 --- [quanlyhocvien] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-04T23:05:08.076+07:00  INFO 30616 --- [quanlyhocvien] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-06-04T23:05:08.226+07:00  WARN 30616 --- [quanlyhocvien] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-04T23:05:08.907+07:00  INFO 30616 --- [quanlyhocvien] [main] c.d.q.QuanlyhocvienApplicationTests      : Started QuanlyhocvienApplicationTests in 47.917 seconds (process running for 48.953)
+2025-06-04T23:05:09.573+07:00  INFO 30616 --- [quanlyhocvien] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-04T23:05:09.576+07:00  INFO 30616 --- [quanlyhocvien] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-04T23:05:09.586+07:00  INFO 30616 --- [quanlyhocvien] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-04T23:05:23.078+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] c.d.q.QuanlyhocvienApplication           : Starting QuanlyhocvienApplication using Java 21.0.5 with PID 22996 (C:\Users\HA\Downloads\HTQLHV\quanlyhocvien\target\classes started by HA in C:\Users\HA\Downloads\HTQLHV\quanlyhocvien)
+2025-06-04T23:05:23.079+07:00 DEBUG 22996 --- [quanlyhocvien] [restartedMain] c.d.q.QuanlyhocvienApplication           : Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-06-04T23:05:23.080+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] c.d.q.QuanlyhocvienApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-06-04T23:05:23.400+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-06-04T23:05:23.400+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-06-04T23:05:24.278+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-04T23:05:24.359+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 73 ms. Found 6 JPA repository interfaces.
+2025-06-04T23:05:25.077+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-04T23:05:25.091+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-04T23:05:25.091+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-06-04T23:05:25.151+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-04T23:05:25.152+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1752 ms
+2025-06-04T23:05:25.332+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-04T23:05:25.398+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-06-04T23:05:25.430+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-04T23:05:25.680+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-04T23:05:25.710+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-04T23:05:25.983+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4f043d1f
+2025-06-04T23:05:25.986+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-04T23:05:26.023+07:00  WARN 22996 --- [quanlyhocvien] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-04T23:05:26.024+07:00  WARN 22996 --- [quanlyhocvien] [restartedMain] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-06-04T23:05:26.039+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-06-04T23:05:26.981+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-04T23:05:26.983+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-04T23:05:27.277+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-04T23:05:27.935+07:00 DEBUG 22996 --- [quanlyhocvien] [restartedMain] c.d.q.config.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2025-06-04T23:06:12.126+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-06-04T23:06:12.280+07:00  WARN 22996 --- [quanlyhocvien] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-04T23:06:12.948+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-06-04T23:06:12.974+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-06-04T23:06:12.980+07:00  INFO 22996 --- [quanlyhocvien] [restartedMain] c.d.q.QuanlyhocvienApplication           : Started QuanlyhocvienApplication in 50.424 seconds (process running for 51.103)
+2025-06-04T23:06:22.469+07:00  INFO 22996 --- [quanlyhocvien] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-04T23:06:22.470+07:00  INFO 22996 --- [quanlyhocvien] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-04T23:06:22.471+07:00  INFO 22996 --- [quanlyhocvien] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-06-04T23:06:44.019+07:00  INFO 22996 --- [quanlyhocvien] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-06-04T23:06:44.026+07:00  INFO 22996 --- [quanlyhocvien] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-06-04T23:06:44.032+07:00  INFO 22996 --- [quanlyhocvien] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-04T23:06:44.035+07:00  INFO 22996 --- [quanlyhocvien] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-04T23:06:44.050+07:00  INFO 22996 --- [quanlyhocvien] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-04T23:10:41.996+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] c.d.q.QuanlyhocvienApplication           : Starting QuanlyhocvienApplication using Java 21.0.5 with PID 16844 (C:\Users\HA\Downloads\HTQLHV\quanlyhocvien\target\classes started by HA in C:\Users\HA\Downloads\HTQLHV\quanlyhocvien)
+2025-06-04T23:10:41.998+07:00 DEBUG 16844 --- [quanlyhocvien] [restartedMain] c.d.q.QuanlyhocvienApplication           : Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-06-04T23:10:41.999+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] c.d.q.QuanlyhocvienApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-06-04T23:10:42.319+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-06-04T23:10:42.320+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-06-04T23:10:43.176+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-04T23:10:43.255+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 69 ms. Found 6 JPA repository interfaces.
+2025-06-04T23:10:44.015+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-04T23:10:44.032+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-04T23:10:44.032+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-06-04T23:10:44.093+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-04T23:10:44.093+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1773 ms
+2025-06-04T23:10:44.278+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-04T23:10:44.343+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-06-04T23:10:44.387+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-04T23:10:44.699+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-04T23:10:44.736+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-04T23:10:44.986+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4f043d1f
+2025-06-04T23:10:44.988+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-04T23:10:45.031+07:00  WARN 16844 --- [quanlyhocvien] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-04T23:10:45.033+07:00  WARN 16844 --- [quanlyhocvien] [restartedMain] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-06-04T23:10:45.051+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-06-04T23:10:45.953+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-04T23:10:45.957+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-04T23:10:46.296+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-04T23:10:46.852+07:00 DEBUG 16844 --- [quanlyhocvien] [restartedMain] c.d.q.config.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2025-06-04T23:11:31.703+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-06-04T23:11:31.858+07:00  WARN 16844 --- [quanlyhocvien] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-04T23:11:32.464+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-06-04T23:11:32.484+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-06-04T23:11:32.492+07:00  INFO 16844 --- [quanlyhocvien] [restartedMain] c.d.q.QuanlyhocvienApplication           : Started QuanlyhocvienApplication in 50.926 seconds (process running for 51.566)
+2025-06-04T23:23:22.000+07:00  INFO 16844 --- [quanlyhocvien] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-04T23:23:22.000+07:00  INFO 16844 --- [quanlyhocvien] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-04T23:23:22.001+07:00  INFO 16844 --- [quanlyhocvien] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-06-04T23:23:23.645+07:00  WARN 16844 --- [quanlyhocvien] [http-nio-8080-exec-7] ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2025-06-04T23:23:48.618+07:00  INFO 16844 --- [quanlyhocvien] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-06-04T23:23:48.624+07:00  INFO 16844 --- [quanlyhocvien] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-06-04T23:23:48.629+07:00  INFO 16844 --- [quanlyhocvien] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-04T23:23:48.631+07:00  INFO 16844 --- [quanlyhocvien] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-04T23:23:48.636+07:00  INFO 16844 --- [quanlyhocvien] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

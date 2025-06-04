@@ -23,6 +23,7 @@ public class ResponseFormatter {
     }
 
     private static void initializeColumnNames() {
+        // Ánh xạ cột cơ bản
         COLUMN_NAMES.put("id", "Mã số");
         COLUMN_NAMES.put("name", "Tên");
         COLUMN_NAMES.put("email", "Email");
@@ -42,6 +43,116 @@ public class ResponseFormatter {
         COLUMN_NAMES.put("teacher_name", "Giáo viên phụ trách");
         COLUMN_NAMES.put("start_date", "Ngày bắt đầu");
         COLUMN_NAMES.put("end_date", "Ngày kết thúc");
+
+        // Ánh xạ cột người dùng và tài khoản
+        COLUMN_NAMES.put("username", "Tên tài khoản");
+        COLUMN_NAMES.put("password", "Mật khẩu");
+        COLUMN_NAMES.put("full_name", "Tên đầy đủ");
+        COLUMN_NAMES.put("gender", "Giới tính");
+        COLUMN_NAMES.put("date_of_birth", "Ngày sinh");
+        COLUMN_NAMES.put("phone_number", "Số điện thoại");
+        COLUMN_NAMES.put("avatar_path", "Ảnh đại diện");
+        COLUMN_NAMES.put("role_id", "Mã vai trò");
+        COLUMN_NAMES.put("is_active", "Trạng thái hoạt động");
+        COLUMN_NAMES.put("is_email_verified", "Xác thực email");
+
+        // Ánh xạ cột vai trò
+        COLUMN_NAMES.put("role_name", "Tên vai trò");
+        COLUMN_NAMES.put("description", "Mô tả");
+
+        // Ánh xạ cột giáo viên
+        COLUMN_NAMES.put("subject_specialization", "Môn chuyên ngành");
+        COLUMN_NAMES.put("qualification", "Trình độ");
+        COLUMN_NAMES.put("hire_date", "Ngày tuyển dụng");
+
+        // Ánh xạ cột học viên
+        COLUMN_NAMES.put("class", "Lớp");
+
+        // Ánh xạ cột token xác thực
+        COLUMN_NAMES.put("token", "Mã token");
+        COLUMN_NAMES.put("expiry_date", "Ngày hết hạn");
+
+        // Ánh xạ cột danh mục khóa học
+        COLUMN_NAMES.put("category_name", "Tên danh mục");
+        COLUMN_NAMES.put("icon_path", "Đường dẫn biểu tượng");
+
+        // Ánh xạ cột khóa học
+        COLUMN_NAMES.put("title", "Tiêu đề");
+        COLUMN_NAMES.put("category_id", "Mã danh mục");
+        COLUMN_NAMES.put("thumbnail_path", "Ảnh thu nhỏ");
+        COLUMN_NAMES.put("price", "Giá");
+        COLUMN_NAMES.put("discount_price", "Giá khuyến mãi");
+        COLUMN_NAMES.put("duration", "Thời lượng");
+        COLUMN_NAMES.put("level", "Cấp độ");
+        COLUMN_NAMES.put("is_published", "Đã xuất bản");
+        COLUMN_NAMES.put("published_at", "Ngày xuất bản");
+        COLUMN_NAMES.put("is_featured", "Nổi bật");
+        COLUMN_NAMES.put("rating", "Đánh giá");
+        COLUMN_NAMES.put("total_students", "Tổng số học viên");
+        COLUMN_NAMES.put("total_reviews", "Tổng số đánh giá");
+
+        // Ánh xạ cột module và bài học
+        COLUMN_NAMES.put("course_id", "Mã khóa học");
+        COLUMN_NAMES.put("module_id", "Mã chương học");
+        COLUMN_NAMES.put("position", "Vị trí");
+        COLUMN_NAMES.put("is_free", "Miễn phí");
+
+        // Ánh xạ cột video và tài liệu
+        COLUMN_NAMES.put("lesson_id", "Mã bài học");
+        COLUMN_NAMES.put("video_url", "Đường dẫn video");
+        COLUMN_NAMES.put("is_downloadable", "Cho phép tải xuống");
+        COLUMN_NAMES.put("file_path", "Đường dẫn tệp");
+        COLUMN_NAMES.put("file_type", "Loại tệp");
+        COLUMN_NAMES.put("file_size", "Kích thước tệp");
+
+        // Ánh xạ cột đăng ký khóa học
+        COLUMN_NAMES.put("enrollment_id", "Mã đăng ký");
+        COLUMN_NAMES.put("student_id", "Mã học viên");
+        COLUMN_NAMES.put("enrollment_date", "Ngày đăng ký");
+        COLUMN_NAMES.put("payment_status", "Trạng thái thanh toán");
+        COLUMN_NAMES.put("payment_amount", "Số tiền thanh toán");
+        COLUMN_NAMES.put("payment_method", "Phương thức thanh toán");
+        COLUMN_NAMES.put("transaction_id", "Mã giao dịch");
+        COLUMN_NAMES.put("payment_date", "Ngày thanh toán");
+
+        // Ánh xạ cột tiến độ học tập
+        COLUMN_NAMES.put("video_position", "Vị trí video");
+        COLUMN_NAMES.put("is_completed", "Hoàn thành");
+        COLUMN_NAMES.put("last_accessed_at", "Lần truy cập cuối");
+        COLUMN_NAMES.put("completion_date", "Ngày hoàn thành");
+
+        // Ánh xạ cột đánh giá
+        COLUMN_NAMES.put("comment", "Bình luận");
+
+        // Ánh xạ cột quiz và câu hỏi
+        COLUMN_NAMES.put("quiz_id", "Mã bài kiểm tra");
+        COLUMN_NAMES.put("time_limit", "Thời gian giới hạn");
+        COLUMN_NAMES.put("passing_score", "Điểm đạt");
+        COLUMN_NAMES.put("attempts_allowed", "Số lần làm bài cho phép");
+        COLUMN_NAMES.put("question_text", "Văn bản câu hỏi");
+        COLUMN_NAMES.put("question_type", "Loại câu hỏi");
+        COLUMN_NAMES.put("points", "Điểm");
+        COLUMN_NAMES.put("answer_text", "Văn bản đáp án");
+        COLUMN_NAMES.put("is_correct", "Đáp án đúng");
+        COLUMN_NAMES.put("points_earned", "Điểm đạt được");
+
+        // Ánh xạ cột làm bài kiểm tra
+        COLUMN_NAMES.put("score", "Điểm số");
+        COLUMN_NAMES.put("start_time", "Thời gian bắt đầu");
+        COLUMN_NAMES.put("submit_time", "Thời gian nộp bài");
+        COLUMN_NAMES.put("time_spent", "Thời gian làm bài");
+        COLUMN_NAMES.put("status", "Trạng thái");
+
+        // Ánh xạ cột chứng chỉ
+        COLUMN_NAMES.put("certificate_code", "Mã chứng chỉ");
+        COLUMN_NAMES.put("issue_date", "Ngày cấp");
+        COLUMN_NAMES.put("certificate_path", "Đường dẫn chứng chỉ");
+
+        // Ánh xạ cột thông báo
+        COLUMN_NAMES.put("account_id", "Mã tài khoản");
+        COLUMN_NAMES.put("is_read", "Đã đọc");
+        COLUMN_NAMES.put("notification_type", "Loại thông báo");
+        COLUMN_NAMES.put("reference_id", "Mã tham chiếu");
     }
 
     public String format(String question, List<Map<String, Object>> results, String table, List<String> keywords) {

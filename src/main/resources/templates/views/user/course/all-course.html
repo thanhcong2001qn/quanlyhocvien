@@ -6,13 +6,14 @@
     <title>Tất cả khóa học - My Learn</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/user/course/all-course.css}">
     <link rel="stylesheet" th:href="@{/css/user/header.css}">
+    <link rel="stylesheet" th:href="@{/css/user/course/all-course.css}">
 </head>
 <body>
 <!-- Main Header -->
 <div th:replace="~{/fragments/user/header :: header}"></div>
-
+<div th:replace="~{fragments/user/notification-select :: confirmation-dialog}"></div>
+<div th:replace="~{fragments/user/notification :: notification}"></div>
 <main class="container my-4">
     <!-- Page Header -->
     <div class="row mb-4">
@@ -27,17 +28,17 @@
         <div class="col-md-8">
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Tìm kiếm khóa học..." id="courseSearch">
-                <button class="btn btn-primary" type="button">
+                <button class="btn btn-primary" type="button" id="searchButton">
                     <i class="fas fa-search"></i> Tìm kiếm
                 </button>
             </div>
         </div>
         <div class="col-md-4 d-flex justify-content-end align-items-center">
             <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     Sắp xếp theo
                 </button>
-                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
                     <li><a class="dropdown-item" href="#" data-sort="popularity">Phổ biến nhất</a></li>
                     <li><a class="dropdown-item" href="#" data-sort="newest">Mới nhất</a></li>
                     <li><a class="dropdown-item" href="#" data-sort="price-asc">Giá: Thấp đến cao</a></li>
@@ -53,42 +54,43 @@
             <div class="filters">
                 <h3 class="h5 mb-3">Bộ lọc</h3>
 
+                <!-- Bộ lọc trạng thái đăng ký (phần mới thêm) -->
+                <div class="mb-3">
+                    <h4 class="h6">Trạng thái đăng ký</h4>
+                    <div class="form-check">
+                        <input class="form-check-input enrollment-filter" type="checkbox" value="enrolled" id="enrolledFilter" checked>
+                        <label class="form-check-label" for="enrolledFilter">Đã đăng ký</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input enrollment-filter" type="checkbox" value="not-enrolled" id="notEnrolledFilter" checked>
+                        <label class="form-check-label" for="notEnrolledFilter">Chưa đăng ký</label>
+                    </div>
+                </div>
+
+                <hr> <!-- Đường phân cách -->
+
                 <div class="mb-3">
                     <h4 class="h6">Danh mục</h4>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="java" id="java">
-                        <label class="form-check-label" for="java">Java</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="spring" id="spring">
-                        <label class="form-check-label" for="spring">Spring Framework</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="javascript" id="javascript">
-                        <label class="form-check-label" for="javascript">JavaScript</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="database" id="database">
-                        <label class="form-check-label" for="database">Database</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="devops" id="devops">
-                        <label class="form-check-label" for="devops">DevOps</label>
+                    <div id="categoryFilters">
+                        <!-- Danh mục sẽ được thêm vào đây từ JavaScript -->
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="visually-hidden">Đang tải...</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <h4 class="h6">Cấp độ</h4>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="beginner" id="beginner">
+                        <input class="form-check-input level-filter" type="checkbox" value="Cơ bản" id="beginner">
                         <label class="form-check-label" for="beginner">Người mới bắt đầu</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="intermediate" id="intermediate">
+                        <input class="form-check-input level-filter" type="checkbox" value="Trung cấp" id="intermediate">
                         <label class="form-check-label" for="intermediate">Trung cấp</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="advanced" id="advanced">
+                        <input class="form-check-input level-filter" type="checkbox" value="Nâng cao" id="advanced">
                         <label class="form-check-label" for="advanced">Nâng cao</label>
                     </div>
                 </div>
@@ -96,187 +98,35 @@
                 <div class="mb-3">
                     <h4 class="h6">Giá</h4>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="free" id="free">
+                        <input class="form-check-input price-filter" type="checkbox" value="free" id="free">
                         <label class="form-check-label" for="free">Miễn phí</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="paid" id="paid">
+                        <input class="form-check-input price-filter" type="checkbox" value="paid" id="paid">
                         <label class="form-check-label" for="paid">Trả phí</label>
                     </div>
                 </div>
 
-                <button class="btn btn-outline-primary w-100 mt-2">Áp dụng bộ lọc</button>
+                <button class="btn btn-outline-primary w-100 mt-2" id="applyFilters">Áp dụng bộ lọc</button>
             </div>
         </div>
 
         <!-- Course Listings -->
         <div class="col-md-9">
             <div class="row" id="courseContainer">
+                <!-- Loading indicator -->
+                <div id="loading" class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải khóa học...</span>
+                    </div>
+                </div>
                 <!-- Course cards will be dynamically added here -->
-                <!-- Sample Course Card -->
-                <div class="col-md-4 mb-4">
-                    <div class="card course-card">
-                        <div class="badge-container">
-                            <span class="badge bg-primary">Phổ biến</span>
-                        </div>
-                        <img src="https://via.placeholder.com/300x160?text=Java+Core" class="card-img-top course-image" alt="Java Core">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Java Core</h5>
-                            <p class="card-text text-muted small">Nền tảng vững chắc cho lập trình Java</p>
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="badge bg-light text-dark">Cơ bản</span>
-                                    <span class="text-primary fw-bold">Miễn phí</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="small text-muted">
-                                        <i class="fas fa-users me-1"></i> 2,345 học viên
-                                    </div>
-                                    <div class="small text-muted">
-                                        <i class="fas fa-star text-warning me-1"></i> 4.8
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-4">
-                    <div class="card course-card">
-                        <img src="https://via.placeholder.com/300x160?text=Spring+Boot" class="card-img-top course-image" alt="Spring Boot">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Spring Boot</h5>
-                            <p class="card-text text-muted small">Phát triển ứng dụng web nhanh chóng với Spring Boot</p>
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="badge bg-light text-dark">Trung cấp</span>
-                                    <span class="text-success fw-bold">499.000đ</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="small text-muted">
-                                        <i class="fas fa-users me-1"></i> 1,720 học viên
-                                    </div>
-                                    <div class="small text-muted">
-                                        <i class="fas fa-star text-warning me-1"></i> 4.9
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-4">
-                    <div class="card course-card">
-                        <div class="badge-container">
-                            <span class="badge bg-danger">Mới</span>
-                        </div>
-                        <img src="https://via.placeholder.com/300x160?text=Microservices" class="card-img-top course-image" alt="Microservices">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Microservices với Spring Cloud</h5>
-                            <p class="card-text text-muted small">Thiết kế và triển khai kiến trúc microservices</p>
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="badge bg-light text-dark">Nâng cao</span>
-                                    <span class="text-success fw-bold">699.000đ</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="small text-muted">
-                                        <i class="fas fa-users me-1"></i> 856 học viên
-                                    </div>
-                                    <div class="small text-muted">
-                                        <i class="fas fa-star text-warning me-1"></i> 4.7
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-4">
-                    <div class="card course-card">
-                        <img src="https://via.placeholder.com/300x160?text=JavaScript" class="card-img-top course-image" alt="JavaScript">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">JavaScript Hiện đại</h5>
-                            <p class="card-text text-muted small">ES6+, Promise, Async/Await và các tính năng mới</p>
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="badge bg-light text-dark">Trung cấp</span>
-                                    <span class="text-success fw-bold">399.000đ</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="small text-muted">
-                                        <i class="fas fa-users me-1"></i> 1,430 học viên
-                                    </div>
-                                    <div class="small text-muted">
-                                        <i class="fas fa-star text-warning me-1"></i> 4.6
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-4">
-                    <div class="card course-card">
-                        <img src="https://via.placeholder.com/300x160?text=SQL" class="card-img-top course-image" alt="SQL">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">SQL và Cơ sở dữ liệu</h5>
-                            <p class="card-text text-muted small">Thiết kế và truy vấn cơ sở dữ liệu hiệu quả</p>
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="badge bg-light text-dark">Cơ bản</span>
-                                    <span class="text-primary fw-bold">Miễn phí</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="small text-muted">
-                                        <i class="fas fa-users me-1"></i> 3,218 học viên
-                                    </div>
-                                    <div class="small text-muted">
-                                        <i class="fas fa-star text-warning me-1"></i> 4.5
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 mb-4">
-                    <div class="card course-card">
-                        <img src="https://via.placeholder.com/300x160?text=React" class="card-img-top course-image" alt="React">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">React.js Toàn tập</h5>
-                            <p class="card-text text-muted small">Xây dựng ứng dụng web hiện đại với React</p>
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="badge bg-light text-dark">Trung cấp</span>
-                                    <span class="text-success fw-bold">599.000đ</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="small text-muted">
-                                        <i class="fas fa-users me-1"></i> 2,105 học viên
-                                    </div>
-                                    <div class="small text-muted">
-                                        <i class="fas fa-star text-warning me-1"></i> 4.8
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Pagination -->
             <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trước</a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Sau</a>
-                    </li>
+                <ul class="pagination justify-content-center" id="pagination">
+                    <!-- Pagination will be dynamically generated -->
                 </ul>
             </nav>
         </div>
