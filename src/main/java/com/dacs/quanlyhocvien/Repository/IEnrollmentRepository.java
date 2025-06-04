@@ -2,10 +2,8 @@ package com.dacs.quanlyhocvien.Repository;
 
 import com.dacs.quanlyhocvien.models.EnrollmentModel;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +33,7 @@ public interface IEnrollmentRepository extends JpaRepository<EnrollmentModel, Lo
      * Đếm số lượng học viên đã đăng ký một khóa học
      */
     @Query("SELECT COUNT(e) FROM EnrollmentModel e WHERE e.course.courseId = :courseId")
-    Integer countByCourseId(@Param("courseId") Long courseId);
+    Long countByCourseId(@Param("courseId") Long courseId);
 
     /**
      * Lấy danh sách đăng ký khóa học theo trạng thái thanh toán
@@ -49,12 +47,4 @@ public interface IEnrollmentRepository extends JpaRepository<EnrollmentModel, Lo
             "FROM EnrollmentModel e WHERE e.paymentStatus = 'completed' " +
             "GROUP BY e.course.courseId, e.course.title ORDER BY revenue DESC")
     List<Object[]> getRevenueStatsByCourseName();
-    @Query("SELECT e.course.courseId" +" FROM EnrollmentModel e WHERE e.student.studentId = :accountId")
-    List<Long> findCourseIdsByAccountId(@Param("accountId") Long accountId);
-    @Query("SELECT COUNT(e) FROM EnrollmentModel e WHERE e.student.studentId = :studentId")
-    int countByStudentId(@Param("studentId") Long studentId);
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM EnrollmentModel e WHERE e.course.courseId = :courseId")
-    void deleteAllByCourseId(Long courseId);
 }

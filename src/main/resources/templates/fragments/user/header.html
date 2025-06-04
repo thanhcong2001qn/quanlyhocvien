@@ -1,3 +1,4 @@
+
 <header class="main-header shadow-sm">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
@@ -18,10 +19,14 @@
                             <a class="nav-link nav-link-header" href="/home" >Trang chủ</a>
                         </li>
                         <li class="nav-item dropdown hover-dropdown">
-                            <!-- Sử dụng JavaScript để thêm token vào request -->
-                            <a class="nav-link nav-link-header" href="/user/all-course">
+                            <a class="nav-link nav-link-header" href="/user/all-course" >
                                 Khoá học
                             </a>
+<!--                            <ul class="dropdown-menu">-->
+<!--                                <li><a class="dropdown-item" href="/user/all-source">Tất cả khoá học</a></li>-->
+<!--                                <li><a class="dropdown-item" href="#">Khoá học bán chạy</a></li>-->
+<!--                                <li><a class="dropdown-item" href="#">Khoá học giảm giá</a></li>-->
+<!--                            </ul>-->
                         </li>
                         <li class="nav-item">
                             <a class="nav-link nav-link-header" href="#">Cộng đồng</a>
@@ -33,7 +38,16 @@
                             <a class="nav-link nav-link-header" href="#">Tư vấn</a>
                         </li>
                     </ul>
+<!--                    <div id="search-modal" class="search-modal col-md-4">-->
+<!--                        <form class="search-form" id="search-form">-->
+<!--                            <input type="text" class="form-control" placeholder="Tìm kiếm...">-->
+<!--                        </form>-->
+<!--                    </div>-->
                     <div class="header-buttons col-md-2">
+<!--                        <button class="btn search-btn" id="search-btn" type="button" data-bs-toggle="modal"-->
+<!--                                data-bs-target="#searchModal">-->
+<!--                            <i class="fas fa-search"></i>-->
+<!--                        </button>-->
                         <a href="/user/cart" class="btn cart-btn">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="badge cart-badge" id="cartBadge">0</span>
@@ -65,11 +79,12 @@
                                             <span id="username-display">Username</span>
                                         </a>
                                     </li>
-<!--                                    <li class="auth-item logged-in">-->
-<!--                                        <a class="dropdown-item" href="/user/my-courses">-->
-<!--                                            <i class="fas fa-graduation-cap me-2"></i>Khóa học của tôi-->
-<!--                                        </a>-->
-<!--                                    </li>-->
+
+                                    <li class="auth-item logged-in">
+                                        <a class="dropdown-item" href="/user/courses">
+                                            <i class="fas fa-graduation-cap me-2"></i>Khóa học của tôi
+                                        </a>
+                                    </li>
 
                                     <li class="auth-item logged-in">
                                         <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="logout()">

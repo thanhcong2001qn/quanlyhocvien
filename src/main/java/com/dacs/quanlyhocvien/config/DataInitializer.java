@@ -12,20 +12,19 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private IRoleRepository roleRepository;
 
-    private void createRoleIfNotFound(String name) {
-        String roleName = name.startsWith("ROLE_") ? name : "ROLE_" + name;
-        if (roleRepository.findByRoleName(roleName) == null) {
-            RoleModel role = new RoleModel();
-            role.setRoleName(roleName);
-            roleRepository.save(role);
-        }
-    }
-
     @Override
     public void run(String... args) throws Exception {
         // Tạo các vai trò mặc định nếu chưa tồn tại
-        createRoleIfNotFound("ROLE_ADMIN");
-        createRoleIfNotFound("ROLE_TEACHER");
-        createRoleIfNotFound("ROLE_STUDENT");
+        createRoleIfNotFound("ADMIN");
+        createRoleIfNotFound("TEACHER");
+        createRoleIfNotFound("STUDENT");
+    }
+
+    private void createRoleIfNotFound(String name) {
+        if (roleRepository.findByRoleName(name) == null) {
+            RoleModel role = new RoleModel();
+            role.setRoleName(name);
+            roleRepository.save(role);
+        }
     }
 }

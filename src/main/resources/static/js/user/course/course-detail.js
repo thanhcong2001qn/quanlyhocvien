@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.warn('Course ID not found on page');
         return;
     }
-    updateBackButtonUrl();
+
     initializePreviewVideo();
     initializeCourseActions();
     initializeReviewsLoader();
@@ -399,46 +399,4 @@ function initializeSocialSharing() {
         });
     });
 }
-function updateBackButtonUrl() {
-    // Tìm nút quay lại hiện có
-    const backButton = document.querySelector('a.btn[href="/user/all-course"]');
-    if (!backButton) return;
 
-    // Xây dựng URL mới với thông tin phân trang
-    const newUrl = buildBackUrl();
-
-    // Cập nhật href của nút
-    backButton.href = newUrl;
-}
-
-/**
- * Xây dựng URL để quay lại danh sách khóa học với tất cả tham số phân trang
- */
-function buildBackUrl() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const newParams = new URLSearchParams();
-
-    // Ánh xạ tham số từ URL chi tiết sang URL danh sách
-    const paramMapping = {
-        'returnPage': 'page',
-        'returnSize': 'size',
-        'returnSort': 'sort',
-        'returnSearch': 'search',
-        'returnCategories': 'categories',
-        'returnLevels': 'levels',
-        'returnPriceTypes': 'priceTypes'
-    };
-
-    // Chuyển đổi các tham số
-    for (const [returnParam, listParam] of Object.entries(paramMapping)) {
-        const value = urlParams.get(returnParam);
-        if (value) {
-            newParams.set(listParam, value);
-        }
-    }
-
-    // Đường dẫn cơ sở đến trang danh sách khóa học
-    const baseUrl = '/user/all-course';
-
-    return newParams.toString() ? `${baseUrl}?${newParams.toString()}` : baseUrl;
-}

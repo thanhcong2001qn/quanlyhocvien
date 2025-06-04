@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         localStorage.setItem('isAdmin', data.isAdmin);
                         localStorage.setItem('isTeacher', data.isTeacher);
                         localStorage.setItem('isStudent', data.isStudent);
+
                         // Nếu API trả về JWT token thì lưu token
                         if (data.token) {
                             localStorage.setItem('token', data.token);

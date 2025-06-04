@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"category", "modules"})
+@ToString(exclude = "category")
 public class CourseModel {
 
     @Id
@@ -60,7 +60,7 @@ public class CourseModel {
     private Boolean isFeatured = false;
 
     @Column
-    private Double rating;
+    private Float rating = 0f;
 
     @Column(name = "total_students")
     private Integer totalStudents = 0;

@@ -1,6 +1,23 @@
-
+// const searchBtn = document.getElementById('search-btn');
+// const searchForm = document.getElementById('search-form');
 let isSearchActive = false;
 
+// searchBtn.addEventListener('click', function (e) {
+//     e.preventDefault(); // Ngăn chặn hành vi mặc định
+//     e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài
+//
+//     if (!isSearchActive) {
+//         // Mở thanh tìm kiếm
+//         searchForm.classList.remove('not-active');
+//         searchForm.classList.add('active');
+//         isSearchActive = true;
+//     } else {
+//         // Đóng thanh tìm kiếm
+//         searchForm.classList.add('not-active');
+//         searchForm.classList.remove('active');
+//         isSearchActive = false;
+//     }
+// });
 document.addEventListener('DOMContentLoaded', function () {
     updateCartBadge();
     updateAuthUI();
@@ -88,7 +105,10 @@ function getUserInfoFromToken(token) {
 function logout() {
     // Hiển thị xác nhận nếu cần
     showConfirmation("Bạn có chắc muốn đăng xuất?", function (){
-        localStorage.clear();
+        localStorage.removeItem('token');
+        // localStorage.removeItem('refresh_token');
+        localStorage.removeItem('username');
+
         // Cập nhật giao diện
         updateAuthUI();
 
@@ -135,68 +155,4 @@ function updateCartBadge() {
         .catch(error => {
             console.error('Lỗi khi lấy số lượng giỏ hàng:', error);
         });
-}
-
-function checkRoleBeforeNavigate(url) {
-    // Lấy token từ localStorage
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-        console.error('Không tìm thấy token!');
-        alert('Bạn chưa đăng nhập! Sẽ chuyển hướng đến trang đăng nhập.');
-        window.location.href = '/login';
-        return;
-    }
-
-    // Phân tích JWT token (không cần thư viện)
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-
-        const payload = JSON.parse(jsonPayload);
-        console.log('Token payload:', payload);
-
-        if (payload.roles) {
-            console.log('User roles:', payload.roles);
-            alert('Roles của bạn: ' + payload.roles + '\nUsername: ' + payload.sub);
-
-            // Kiểm tra role
-            if (payload.roles.includes('ROLE_STUDENT')) {
-                console.log('Bạn có quyền truy cập trang này!');
-                // Thay vì cách cũ
-                // window.location.href = url;
-
-                // Sử dụng fetch với token
-                fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                })
-                    .then(response => {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else if (response.ok) {
-                            // Xử lý HTML response và thay thế nội dung trang
-                            response.text().then(html => {
-                                document.open();
-                                document.write(html);
-                                document.close();
-                                history.pushState({}, '', url);
-                            });
-                        }
-                    });
-            } else {
-                alert('Bạn không có quyền truy cập trang này!');
-            }
-        } else {
-            console.error('Token không chứa thông tin role!');
-            alert('Token không chứa thông tin role!');
-        }
-    } catch (e) {
-        console.error('Lỗi khi phân tích token:', e);
-        alert('Token không hợp lệ!');
-    }
 }

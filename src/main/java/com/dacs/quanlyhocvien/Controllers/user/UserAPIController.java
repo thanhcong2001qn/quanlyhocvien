@@ -4,8 +4,10 @@ import com.dacs.quanlyhocvien.DTO.Request.ChangePasswordRequest;
 import com.dacs.quanlyhocvien.DTO.Request.UpdateStudentRequest;
 import com.dacs.quanlyhocvien.DTO.Response.CategoryResponeDTO;
 import com.dacs.quanlyhocvien.DTO.Response.CourseResponseDTO;
-import com.dacs.quanlyhocvien.DTO.Response.UserStatsDTO;
-import com.dacs.quanlyhocvien.Services.*;
+import com.dacs.quanlyhocvien.Services.AccountService;
+import com.dacs.quanlyhocvien.Services.CategoryService;
+import com.dacs.quanlyhocvien.Services.CourseService;
+import com.dacs.quanlyhocvien.Services.StudentService;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.CourseCategoryModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
@@ -21,7 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +39,6 @@ public class UserAPIController {
     private CourseService courseService;
     @Autowired
     private CategoryService categoryService;
-    @Autowired
-    private EnrollmentService enrollmentService;
-    @Autowired
-    private UserStatsService userStatsService;
 
     @GetMapping(value = "/profile")
     public ResponseEntity<?> profile() {
@@ -109,16 +106,14 @@ public class UserAPIController {
         }
     }
     @GetMapping("/all-courses")
-    public ResponseEntity<?> getAllCourse(@RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "6") int size,
-                                          @RequestParam(required = false) String sort,
-                                          @RequestParam(required = false) String search,
-                                          @RequestParam(required = false) String categories,
-                                          @RequestParam(required = false) String levels,
-                                          @RequestParam(required = false) String priceTypes,
-                                          @RequestParam(required = false) String enrollmentStatus) {
+    public ResponseEntity<?> getAllCourse( @RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "6") int size,
+                                           @RequestParam(required = false) String sort,
+                                           @RequestParam(required = false) String search,
+                                           @RequestParam(required = false) String categories,
+                                           @RequestParam(required = false) String levels,
+                                           @RequestParam(required = false) String priceTypes) {
         try {
-            // Lấy thông tin người dùng hiện tại
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String username = userDetails.getUsername();
@@ -126,13 +121,10 @@ public class UserAPIController {
             if (account == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
             }
-
-            // Tạo pageable từ các tham số phân trang và sắp xếp
             Pageable pageable = createPageable(page, size, sort);
 
-            // Gọi service với các tham số lọc bao gồm cả trạng thái đăng ký
-            Page<CourseResponseDTO> courses = courseService.getCourses(
-                    pageable, search, categories, levels, priceTypes, enrollmentStatus, account.getAccountId());
+            // Gọi service với các tham số lọc
+            Page<CourseResponseDTO> courses = courseService.getCourses(pageable, search, categories, levels, priceTypes);
 
             return ResponseEntity.ok(courses);
         } catch (Exception e) {
@@ -177,23 +169,5 @@ public class UserAPIController {
             }
         }
         return PageRequest.of(page, size);
-    }
-    @GetMapping("/popular")
-    public ResponseEntity<?> getPopularCourses(
-            @RequestParam(defaultValue = "3") int size) {
-        try {
-            // Gọi service để lấy các khóa học phổ biến nhất
-            List<CourseResponseDTO> popularCourses = courseService.getPopularCourses(size);
-            return ResponseEntity.ok(popularCourses);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error retrieving popular courses: " + e.getMessage());
-        }
-    }
-    @GetMapping("/stats")
-    public ResponseEntity<UserStatsDTO> getUserStats(Authentication authentication) {
-        String username = authentication.getName();
-        UserStatsDTO stats = userStatsService.getUserStats(username);
-        return ResponseEntity.ok(stats);
     }
 }
