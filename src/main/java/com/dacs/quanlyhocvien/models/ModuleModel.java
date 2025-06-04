@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"course", "lessons"})
 public class ModuleModel {
 
     @Id
@@ -57,15 +60,4 @@ public class ModuleModel {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Helper method để thêm bài học vào module
-    public void addLesson(LessonModel lesson) {
-        lessons.add(lesson);
-        lesson.setModule(this);
-    }
-
-    // Helper method để xóa bài học khỏi module
-    public void removeLesson(LessonModel lesson) {
-        lessons.remove(lesson);
-        lesson.setModule(null);
-    }
 }

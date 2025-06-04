@@ -54,6 +54,21 @@
             <div class="filters">
                 <h3 class="h5 mb-3">Bộ lọc</h3>
 
+                <!-- Bộ lọc trạng thái đăng ký (phần mới thêm) -->
+                <div class="mb-3">
+                    <h4 class="h6">Trạng thái đăng ký</h4>
+                    <div class="form-check">
+                        <input class="form-check-input enrollment-filter" type="checkbox" value="enrolled" id="enrolledFilter" checked>
+                        <label class="form-check-label" for="enrolledFilter">Đã đăng ký</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input enrollment-filter" type="checkbox" value="not-enrolled" id="notEnrolledFilter" checked>
+                        <label class="form-check-label" for="notEnrolledFilter">Chưa đăng ký</label>
+                    </div>
+                </div>
+
+                <hr> <!-- Đường phân cách -->
+
                 <div class="mb-3">
                     <h4 class="h6">Danh mục</h4>
                     <div id="categoryFilters">

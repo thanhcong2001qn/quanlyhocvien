@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    displayUserProfile();
+    logout();
     // Xử lý thông báo dropdown
     const notificationBtn = document.querySelector('.notification-btn');
     const notificationDropdown = document.querySelector('.header-notification');
@@ -127,3 +129,63 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+function displayUserProfile() {
+    const username = localStorage.getItem('username');
+
+    // Get the profile name element
+    const profileNameElement = document.querySelector('.profile-name');
+
+    // Update the profile name if username exists in localStorage
+    if (username) {
+        profileNameElement.textContent = username;
+    } else {
+        // If no username in localStorage, keep default or set a placeholder
+        profileNameElement.textContent = 'Guest User';
+
+        // Optionally, you could set a default username in localStorage
+        // localStorage.setItem('username', 'Guest User');
+    }
+
+    // Optional: Handle saving username to localStorage
+    // This would be used elsewhere in your app when setting the username
+    function saveUsername(name) {
+        localStorage.setItem('username', name);
+        profileNameElement.textContent = name;
+    }
+
+    // Make this function available globally if needed
+    window.saveUsername = saveUsername;
+}
+function logout() {
+    const logoutButton = document.querySelector('.logout-btn');
+
+    // Add click event listener to the logout button
+    logoutButton.addEventListener('click', function(event) {
+        // Prevent default behavior of the button
+        event.preventDefault();
+
+        // Clear user data from localStorage
+        localStorage.clear();
+
+
+        // Redirect to login page or home page
+        window.location.href = '/login'; // Change this to your login page URL
+    });
+
+    // Optional: Toggle dropdown visibility when profile button is clicked
+    const profileBtn = document.querySelector('.profile-btn');
+    const profileDropdown = document.querySelector('.profile-dropdown');
+
+    if (profileBtn && profileDropdown) {
+        profileBtn.addEventListener('click', function() {
+            profileDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.header-profile')) {
+                profileDropdown.classList.remove('show');
+            }
+        });
+    }
+}
