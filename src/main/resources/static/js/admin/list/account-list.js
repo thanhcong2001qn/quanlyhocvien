@@ -180,11 +180,15 @@ function formatDate(dateString) {
 }
 
 function showLoading() {
-    document.getElementById('loadingSpinner').style.display = 'block';
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) spinner.style.display = 'block';
 }
+
 function hideLoading() {
-    document.getElementById('loadingSpinner').style.display = 'none';
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) spinner.style.display = 'none';
 }
+
 
 function debounce(func, delay) {
     let timer;

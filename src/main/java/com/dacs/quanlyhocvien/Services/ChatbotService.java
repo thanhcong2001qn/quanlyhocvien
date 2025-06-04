@@ -5,125 +5,115 @@ import com.dacs.quanlyhocvien.Exceptions.ChatbotException;
 import com.dacs.quanlyhocvien.Services.Clients.GeminiApiClient;
 import com.dacs.quanlyhocvien.Services.Executors.SafeQueryExecutor;
 import com.dacs.quanlyhocvien.Services.Formatters.ResponseFormatter;
-import com.dacs.quanlyhocvien.Services.Generators.SqlQueryGenerator;
-import com.dacs.quanlyhocvien.Services.Handlers.GeneralQuestionHandler;
+import com.dacs.quanlyhocvien.Utils.DatabaseSchemaExtractor;
+import com.dacs.quanlyhocvien.Utils.SmartEntityExtractor;
+import com.dacs.quanlyhocvien.Utils.SmartUnsafeCommandDetector;
+import com.dacs.quanlyhocvien.models.ResolvedQuery;
+import com.dacs.quanlyhocvien.models.ResolvedAlias;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Logger;
 
 @Service
 public class ChatbotService {
 
-    @Autowired
-    private GeneralQuestionHandler generalQuestionHandler;
+    private static final Logger logger = Logger.getLogger(ChatbotService.class.getName());
 
-    @Autowired
-    private ChatbotRouterService chatbotRouterService;
-
-    @Autowired
-    private GeminiApiClient geminiApiClient;
-
-    @Autowired
-    private ResponseFormatter responseFormatter;
-
-    @Autowired
-    private SafeQueryExecutor safeQueryExecutor;
-
-    @Autowired
-    private SqlQueryGenerator sqlQueryGenerator;
+    @Autowired private ChatbotIntentDetector intentDetector;
+    @Autowired private GeminiApiClient geminiApiClient;
+    @Autowired private SafeQueryExecutor queryExecutor;
+    @Autowired private ResponseFormatter responseFormatter;
+    @Autowired private SmartEntityExtractor smartEntityExtractor;
+    @Autowired private SemanticAliasEngine semanticAliasEngine;
+    @Autowired private GeminiQueryResolver geminiQueryResolver;
+    @Autowired private DatabaseSchemaExtractor schemaExtractor;
 
     public String processQuery(String userQuestion) {
+        logger.info("📩 Nhận câu hỏi: " + userQuestion);
+
         try {
-            ChatbotIntent intent = chatbotRouterService.detectIntent(userQuestion);
+            ChatbotIntent intent = intentDetector.detect(userQuestion);
+            logger.info("🧠 Intent được phát hiện: " + intent);
 
             return switch (intent) {
-                case GENERAL_KNOWLEDGE -> {
-                    String answer = generalQuestionHandler.matchGeneralQuestion(userQuestion);
-                    yield formatAnswer(answer != null
-                            ? answer
-                            : "🤖 Xin lỗi, tôi không có câu trả lời cho câu hỏi này.");
-                }
-
                 case DATABASE_QUERY -> handleDatabaseQuery(userQuestion);
-
-                case UNSAFE_COMMAND -> throw new ChatbotException(
-                        "SQL_RESTRICTED_COMMAND",
-                        "🛑 Xin lỗi, mình không được phép thực hiện thao tác này để đảm bảo an toàn hệ thống.",
-                        "Phát hiện câu lệnh nguy hiểm từ người dùng: " + userQuestion
-                );
-
-                case ENGLISH -> throw new ChatbotException(
-                        "ERR_ENGLISH_NOT_SUPPORTED",
-                        "❗Hiện tại tôi chỉ hỗ trợ tiếng Việt, bạn vui lòng thử lại nhé!",
-                        "English input detected: " + userQuestion
-                );
-
-                case GIBBERISH -> throw new ChatbotException(
-                        "ERR_GIBBERISH",
-                        "🤖 Tôi không hiểu bạn nói gì! Bạn có thể hỏi rõ ràng hơn không?",
-                        "Không nhận diện được ý nghĩa câu hỏi: " + userQuestion
-                );
-
-                default -> formatAnswer("🤖 Xin lỗi, tôi không có câu trả lời cho câu hỏi này.");
+                case GENERAL_KNOWLEDGE -> handleGeneralKnowledge(userQuestion);
+                case UNSAFE_COMMAND -> throw new ChatbotException("UNSAFE", "⚠️ Câu hỏi có thể gây nguy hiểm hệ thống.", userQuestion);
+                case ENGLISH -> throw new ChatbotException("ENGLISH", "❌ Hiện tại chỉ hỗ trợ tiếng Việt.", userQuestion);
+                case GIBBERISH -> throw new ChatbotException("GIBBERISH", "🤖 Tôi không hiểu bạn nói gì.", userQuestion);
+                default -> throw new ChatbotException("UNKNOWN", "🤖 Tôi không hiểu câu hỏi của bạn.", userQuestion);
             };
 
-        } catch (ChatbotException ce) {
-            return formatErrorResponse(ce.getUserMessage(), ce.getErrorCode());
+        } catch (ChatbotException e) {
+            return "🚨 " + e.getUserMessage();
         } catch (Exception e) {
-            return formatErrorResponse("💥 Có lỗi không xác định xảy ra.", "ERR_UNKNOWN");
+            logger.severe("Lỗi không xác định: " + e.getMessage());
+            return "💥 Đã có lỗi xảy ra: " + e.getMessage();
         }
+    }
+
+    private String handleGeneralKnowledge(String question) {
+        logger.info("💬 Xử lý câu hỏi kiến thức hệ thống: " + question);
+
+        String schema = schemaExtractor.getCompleteSchema();
+
+        ResolvedQuery resolved = geminiQueryResolver.resolve(question, schema);
+
+
+        System.out.println("📄 SQL sinh ra: " + resolved.getSql());
+        System.out.println("📦 Alias mapping: " + resolved.getAlias_mapping());
+        System.out.println("🧠 Intent: " + resolved.getIntent());
+
+        String answer = resolved.getAnswer();
+        if (answer == null || answer.isBlank()) {
+            return "🤖 Xin lỗi, tôi không có câu trả lời phù hợp.";
+        }
+
+        return "📘 " + answer + "<br><br><code style='color:gray; font-size:90%'>" + resolved.getSummary() + "</code>";
     }
 
     private String handleDatabaseQuery(String question) {
-        String sql = sqlQueryGenerator.generateIntentBasedSql(question);
+        logger.info("🔍 Đang xử lý truy vấn DB cho: " + question);
 
-        if (sql == null || sql.trim().isEmpty() || sql.trim().equalsIgnoreCase("undefined")) {
-            throw new ChatbotException(
-                    "ERR_SQL_UNDEFINED",
-                    "⚠️ Mình không thể tạo truy vấn phù hợp với câu hỏi này.",
-                    "Gemini trả về SQL không hợp lệ: " + sql
-            );
+        String schema = schemaExtractor.getCompleteSchema();
+
+        // ✅ Dùng Gemini
+        ResolvedQuery resolved = geminiQueryResolver.resolve(question, schema);
+
+        if (resolved.getSql() == null || resolved.getSql().isBlank() || resolved.getSql().toLowerCase().contains("undefined")) {
+            throw new ChatbotException("SQL_INVALID", "⚠️ Mình không thể tạo truy vấn phù hợp với câu hỏi này.", resolved.getSql());
         }
 
-        List<Map<String, Object>> result = safeQueryExecutor.safeExecute(sql);
+        resolved.getAlias_mapping().forEach((alias, canonical) -> {
+            semanticAliasEngine.cache(alias, new ResolvedAlias(alias, canonical, ""));
+        });
 
-        if (result == null || result.isEmpty()) {
-            throw new ChatbotException(
-                    "ERR_NO_DATA",
-                    "📋 Không có dữ liệu phù hợp với câu hỏi.",
-                    "Kết quả truy vấn rỗng: " + sql
-            );
+        List<Map<String, Object>> result = queryExecutor.safeExecute(resolved.getSql());
+        if (result.isEmpty()) {
+            return "📭 Không có dữ liệu nào phù hợp với yêu cầu của bạn.";
         }
 
-        if (result.size() == 1 && result.get(0).size() == 1) {
-            Object value = result.get(0).values().iterator().next();
-            if (value instanceof Number && ((Number) value).intValue() == 0) {
-                throw new ChatbotException("ERR_NO_DATA", "📋 Không có dữ liệu phù hợp với câu hỏi.", "Kết quả COUNT(*) = 0");
-            }
-        }
-
-        boolean hasUndefined = result.stream()
-                .flatMap(map -> map.values().stream())
-                .anyMatch(val -> {
-                    if (val == null) return false;
-                    String str = val.toString().trim().toLowerCase();
-                    return str.equals("undefined") || str.equals("null");
-                });
-
-        if (hasUndefined) {
-            throw new ChatbotException("ERR_SQL_UNDEFINED", "⚠️ Mình không tạo được truy vấn hợp lệ cho câu hỏi này.", sql);
-        }
-
-        return responseFormatter.format(question, result);
+        return responseFormatter.buildHtmlTable(
+                question,
+                result,
+                resolved.getTables().isEmpty() ? "dữ liệu" : resolved.getTables().get(0),
+                new ArrayList<>(resolved.getAlias_mapping().keySet())
+        );
     }
 
-    private String formatAnswer(String answer) {
-        return answer;
-    }
+    private String extractSql(String rawJson) {
+        try {
+            int start = rawJson.indexOf("\"sql\"");
+            if (start == -1) return null;
 
-    private String formatErrorResponse(String message, String errorCode) {
-        return String.format("🚨%s", message);
+            int colon = rawJson.indexOf(":", start);
+            int quote1 = rawJson.indexOf("\"", colon + 1);
+            int quote2 = rawJson.indexOf("\"", quote1 + 1);
+            return rawJson.substring(quote1 + 1, quote2).trim();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

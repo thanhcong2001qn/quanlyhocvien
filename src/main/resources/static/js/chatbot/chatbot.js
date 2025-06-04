@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             chatContainer.style.display = chatContainer.style.display === 'flex' ? 'none' : 'flex';
         }
+        scrollToBottom();
     });
 
     closeBtn.addEventListener('click', () => {
@@ -49,12 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (confirmOk) {
         confirmOk.addEventListener('click', () => {
-            // Xóa lịch sử khỏi session storage
+            // Xóa lịch sử khỏi localStorage
             localStorage.removeItem('chat_history');
             // Xóa tất cả tin nhắn khỏi UI
             chatMessages.innerHTML = '';
-            // Thêm lại tin nhắn chào mừng
-            addMessageToChat('bot', 'Xin chào! Tôi là trợ lý học viên. Tôi có thể giúp gì cho bạn?', false);
+            // KHÔNG thêm lại tin nhắn chào mừng ở đây!
+            // Gọi lại hàm load lịch sử để tự động thêm chào mừng nếu rỗng
+            loadHistoryAndRender();
             hideConfirmModal();
         });
     }
@@ -81,6 +83,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirmModal) return;
         confirmModal.style.display = 'none';
         document.body.classList.remove('modal-open');
+    }
+
+    function loadHistoryAndRender() {
+        const history = loadChatFromSession();
+        if (history.length > 0) {
+            history.forEach(msg => addMessageToChat(msg.sender, msg.raw, false));
+        } else {
+            addMessageToChat('bot', 'Xin chào! Tôi là trợ lý học viên. Tôi có thể giúp gì cho bạn?', false);
+        }
     }
 
     // --- PHẦN 5: Suggestion Chips
@@ -159,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const textContainer = document.createElement('div');
         textContainer.classList.add('message-text');
-        
+
         if (sender === 'bot') {
             textContainer.innerHTML = message;
         } else {
@@ -248,4 +259,37 @@ document.addEventListener('DOMContentLoaded', () => {
             openBtn.click();
         }
     });
+
+    // --- PHẦN 10: Lưu và phục hồi trạng thái chatbot
+    const CHAT_STATE_KEY = 'chatbot_ui_state';
+
+    // Hàm lưu trạng thái vào localStorage
+    function saveChatState() {
+        const state = {
+            isOpen: chatContainer.style.display === 'flex',
+            isMinimized
+        };
+        localStorage.setItem(CHAT_STATE_KEY, JSON.stringify(state));
+    }
+
+    // Khi có thay đổi trạng thái thì lưu
+    openBtn.addEventListener('click', saveChatState);
+    closeBtn.addEventListener('click', saveChatState);
+    toggleSizeBtn.addEventListener('click', saveChatState);
+
+    // Khi reload hoặc load lại view
+    (function restoreChatState() {
+        const state = JSON.parse(localStorage.getItem(CHAT_STATE_KEY));
+        if (state) {
+            if (state.isOpen) {
+                chatContainer.style.display = 'flex';
+            }
+            if (state.isMinimized) {
+                isMinimized = true;
+                chatContainer.style.display = 'none';
+            }
+            scrollToBottom(); // sau khi khôi phục thì cuộn xuống
+        }
+    })();
+
 });

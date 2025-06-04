@@ -10,28 +10,29 @@ public class DatabaseMapping {
     private static final Map<String, String> vietnameseToColumnMap = new HashMap<>();
 
     static {
-        // Ánh xạ tên bảng
+        // Ánh xạ tên bảng (đầy đủ theo schema)
         vietnameseToTableMap.put("tài khoản", "account");
         vietnameseToTableMap.put("quản trị viên", "admin");
         vietnameseToTableMap.put("vai trò", "roles");
         vietnameseToTableMap.put("học viên", "student");
         vietnameseToTableMap.put("giáo viên", "teacher");
-        vietnameseToTableMap.put("khóa học", "course");
+        vietnameseToTableMap.put("token xác thực", "verification_token");
         vietnameseToTableMap.put("danh mục khóa học", "course_category");
+        vietnameseToTableMap.put("khóa học", "course");
         vietnameseToTableMap.put("module", "module");
         vietnameseToTableMap.put("bài học", "lesson");
         vietnameseToTableMap.put("video", "video");
         vietnameseToTableMap.put("tài liệu bài học", "lesson_attachment");
-        vietnameseToTableMap.put("đăng ký khóa học", "enrollment");
+        vietnameseToTableMap.put("đăng ký", "enrollment");
         vietnameseToTableMap.put("tiến độ học", "progress");
         vietnameseToTableMap.put("bài kiểm tra", "quiz");
         vietnameseToTableMap.put("câu hỏi kiểm tra", "quiz_question");
-        vietnameseToTableMap.put("đáp án câu hỏi", "quiz_answer");
-        vietnameseToTableMap.put("lần làm bài kiểm tra", "quiz_attempt");
+        vietnameseToTableMap.put("đáp án kiểm tra", "quiz_answer");
+        vietnameseToTableMap.put("lần làm bài", "quiz_attempt");
         vietnameseToTableMap.put("câu trả lời học viên", "student_answer");
         vietnameseToTableMap.put("chứng chỉ", "certificate");
         vietnameseToTableMap.put("thông báo", "notification");
-        vietnameseToTableMap.put("khóa học học viên mua", "student_course");
+        vietnameseToTableMap.put("khóa học đã mua", "student_course");
         vietnameseToTableMap.put("giỏ hàng", "cart_item");
 
         // Ánh xạ tên cột
@@ -52,13 +53,9 @@ public class DatabaseMapping {
         vietnameseToColumnMap.put("trạng thái đăng ký", "payment_status");
     }
 
-    /**
-     * Trả về thông tin ánh xạ tiếng Việt -> bảng/cột tiếng Anh dạng gộp đẹp
-     */
     public static String getMappingInfo() {
         StringBuilder mappingInfo = new StringBuilder();
 
-        // Bảng
         mappingInfo.append("Tiếng Việt -> Tên bảng:\n");
         String tableMappings = vietnameseToTableMap.entrySet().stream()
                 .collect(Collectors.groupingBy(Map.Entry::getValue))
@@ -69,7 +66,6 @@ public class DatabaseMapping {
                 .collect(Collectors.joining("\n"));
         mappingInfo.append(tableMappings).append("\n\n");
 
-        // Cột
         mappingInfo.append("Tiếng Việt -> Tên cột:\n");
         String columnMappings = vietnameseToColumnMap.entrySet().stream()
                 .collect(Collectors.groupingBy(Map.Entry::getValue))

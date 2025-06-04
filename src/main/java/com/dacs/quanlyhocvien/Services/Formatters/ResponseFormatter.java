@@ -44,7 +44,7 @@ public class ResponseFormatter {
         COLUMN_NAMES.put("end_date", "Ngày kết thúc");
     }
 
-    public String format(String question, List<Map<String, Object>> results) {
+    public String format(String question, List<Map<String, Object>> results, String table, List<String> keywords) {
         try {
             if (results == null || results.isEmpty()) {
                 return "<p>📋 Không có dữ liệu phù hợp với yêu cầu của bạn.</p>";
@@ -52,28 +52,32 @@ public class ResponseFormatter {
 
             if (results.size() == 1 && results.get(0).size() == 1) {
                 Map.Entry<String, Object> onlyEntry = results.get(0).entrySet().iterator().next();
-                String key = onlyEntry.getKey();
                 Object value = onlyEntry.getValue();
-
                 String safeValue = formatValue(value);
+
                 if (safeValue.equals("không xác định")) {
                     return "<p>📋 Không có dữ liệu phù hợp để hiển thị.</p>";
                 }
 
-                if ("error".equalsIgnoreCase(key)) {
-                    throw new ChatbotException(
-                            "RESPONSE_FORMAT_ERROR",
-                            "⚠️ Dữ liệu trả về gặp lỗi hiển thị. Bạn thử lại sau nhé!",
-                            String.valueOf(value)
-                    );
-                }
-
-                if (value instanceof String || value instanceof Number) {
-                    return buildFriendlyAnswer(question, value);
-                }
+                return buildFriendlyAnswer(question, value);
             }
 
-            return buildHtmlTable(question, results);
+            if (results.size() <= 10) {
+                return buildHtmlTable(question, results, table, keywords);
+            }
+
+            String htmlTable = buildHtmlTable(question, subListSafe(results, 10), table, keywords);
+            String excelLink = generateExcelLink(results);
+
+            return htmlTable + """
+        <p style='margin-top: 12px;'>📦 Bạn có thể tải toàn bộ kết quả tại đây:</p>
+        <p>
+            <a href='%s' target='_blank'
+               style='color: #007bff; text-decoration: underline; font-weight: 500;'>
+               Tải Excel kết quả
+            </a>
+        </p>
+        """.formatted(excelLink);
 
         } catch (ChatbotException e) {
             throw e;
@@ -87,11 +91,14 @@ public class ResponseFormatter {
         }
     }
 
+    private List<Map<String, Object>> subListSafe(List<Map<String, Object>> list, int limit) {
+        return list.size() <= limit ? list : list.subList(0, limit);
+    }
+
     private String buildFriendlyAnswer(String question, Object value) {
         try {
             String safeValue = formatValue(value);
 
-            // Tránh gọi Gemini nếu giá trị là không xác định
             if (safeValue.equals("không xác định") ||
                     safeValue.equals("undefined") ||
                     safeValue.equals("null")) {
@@ -101,10 +108,10 @@ public class ResponseFormatter {
             String prompt = String.format("""
             Bạn là trợ lý AI nghiêm túc.
             Hãy viết một câu trả lời ngắn gọn, chỉnh chu, nghiêm túc nhưng k quá trang trọng và tự nhiên cho:
-        
+
             Câu hỏi: "%s"
             Kết quả: "%s"
-        
+
             Yêu cầu:
             - Viết 1-2 câu ngắn gọn.
             - Thân thiện, có thể thêm emoji nhẹ.
@@ -117,7 +124,6 @@ public class ResponseFormatter {
                 friendlyAnswer = "Đây là kết quả bạn hỏi: " + safeValue;
             }
 
-
             return "<div style='font-family: Arial, sans-serif; color: white;'><p>" +
                     friendlyAnswer + "</p></div>";
 
@@ -128,13 +134,16 @@ public class ResponseFormatter {
         }
     }
 
-    private String buildHtmlTable(String question, List<Map<String, Object>> results) {
+    public String buildHtmlTable(String question, List<Map<String, Object>> results, String table, List<String> keywords) {
         StringBuilder response = new StringBuilder();
 
         response.append("<div style='font-family: Arial, sans-serif; color: white;'>");
-        response.append("<h3 style='color: white;'>").append(generateFriendlyLeadingText(question)).append("</h3>");
-        response.append("<div style='overflow-x:auto;'>");
-        response.append("<table style='border-collapse: collapse; width: 100%; min-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: black;'>");
+        response.append("<h3 style='color: white;'>").append(generateFriendlyLeadingText(question, table, keywords)).append("</h3>");
+
+        response.append("""
+        <div style="width: 100%; overflow-x: auto;">
+          <table style="border-collapse: collapse; min-width: 1200px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: black;">
+        """);
 
         response.append("<thead style='background-color: #4CAF50; color: white;'><tr>");
         results.get(0).keySet().stream()
@@ -154,27 +163,28 @@ public class ResponseFormatter {
             response.append("</tr>");
         }
 
-        response.append("</tbody></table></div>");
-        response.append("<p style='margin-top: 10px;'>📊 <i>Tổng số kết quả:</i> <strong>").append(results.size()).append("</strong></p>");
+        response.append("</tbody></table></div></div>");
+        response.append("<p style='margin-top: 10px;'>📊 <i>Tổng số kết quả:</i> <strong>")
+                .append(results.size())
+                .append("</strong></p>");
         response.append("</div>");
         return response.toString();
     }
 
-    private String generateFriendlyLeadingText(String userQuestion) {
+    private String generateExcelLink(List<Map<String, Object>> data) {
         try {
-            String prompt = String.format("""
-                Bạn là một trợ lý thân thiện.
-                Người dùng vừa hỏi: "%s"
-                Hãy viết một lời dẫn ngắn gọn, tự nhiên, trước khi hiển thị bảng dữ liệu.
-                """, userQuestion);
+            String backendUrl = "http://localhost:8080/download/excel";
 
-            String result = geminiApiClient.getResponse(prompt);
-            return result == null || result.isEmpty()
-                    ? "Dưới đây là kết quả bạn yêu cầu:"
-                    : result;
+            org.springframework.web.client.RestTemplate rest = new org.springframework.web.client.RestTemplate();
+            org.springframework.http.HttpEntity<List<Map<String, Object>>> request = new org.springframework.http.HttpEntity<>(data);
+
+            org.springframework.http.ResponseEntity<String> response =
+                    rest.postForEntity(backendUrl, request, String.class);
+
+            return response.getBody();
         } catch (Exception e) {
-            logger.warning("Không thể sinh lời dẫn: " + e.getMessage());
-            return "Dưới đây là kết quả bạn yêu cầu:";
+            logger.warning("Không thể tạo link tải Excel: " + e.getMessage());
+            return "#";
         }
     }
 
@@ -195,12 +205,39 @@ public class ResponseFormatter {
         return str;
     }
 
-
     private boolean shouldShowColumn(String columnName) {
         return !List.of("active", "password", "deleted_at").contains(columnName);
     }
 
     private String getColumnDisplayName(String columnName) {
         return COLUMN_NAMES.getOrDefault(columnName, columnName);
+    }
+
+    private String generateFriendlyLeadingText(String userQuestion, String table, List<String> keywords) {
+        try {
+            String keywordInfo = String.join(", ", keywords); // ví dụ: "học sinh, giáo viên"
+            String prompt = String.format("""
+            Bạn là một trợ lý AI nghiêm túc.
+
+            Người dùng vừa hỏi: "%s"
+            Ý định liên quan đến: %s
+            Câu truy vấn truy xuất từ bảng: "%s"
+
+            Hãy viết một lời dẫn ngắn gọn, tự nhiên, thân thiện trước khi hiển thị bảng dữ liệu.
+
+            Yêu cầu:
+            - Viết 1 câu dẫn cụ thể, không chung chung.
+            - Ưu tiên mô tả tên bảng hoặc từ khoá thành ngôn ngữ tự nhiên nếu có thể.
+            - Không viết lại nguyên câu hỏi, không chào hỏi.
+        """, userQuestion, keywordInfo, table);
+
+            String result = geminiApiClient.getResponse(prompt);
+            return result == null || result.isEmpty()
+                    ? "Dưới đây là kết quả bạn yêu cầu:"
+                    : result;
+        } catch (Exception e) {
+            logger.warning("Không thể sinh lời dẫn: " + e.getMessage());
+            return "Dưới đây là kết quả bạn yêu cầu:";
+        }
     }
 }

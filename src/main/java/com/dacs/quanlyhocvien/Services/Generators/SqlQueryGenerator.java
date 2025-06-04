@@ -1,20 +1,28 @@
 package com.dacs.quanlyhocvien.Services.Generators;
 
+import com.dacs.quanlyhocvien.Embedding.SemanticAliasResolver;
+import com.dacs.quanlyhocvien.Enums.PromptConstants;
 import com.dacs.quanlyhocvien.Exceptions.ChatbotException;
 import com.dacs.quanlyhocvien.Services.Clients.GeminiApiClient;
+import com.dacs.quanlyhocvien.Services.Extractors.AliasExtractionService;
 import com.dacs.quanlyhocvien.Utils.DatabaseMapping;
 import com.dacs.quanlyhocvien.Utils.DatabaseSchemaExtractor;
+import com.dacs.quanlyhocvien.Utils.PromptLoader;
+import com.dacs.quanlyhocvien.Utils.SmartEntityExtractor;
+import com.dacs.quanlyhocvien.models.AliasResolutionResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Component
 public class SqlQueryGenerator {
+
     private static final Logger logger = Logger.getLogger(SqlQueryGenerator.class.getName());
 
     @Autowired
@@ -23,63 +31,87 @@ public class SqlQueryGenerator {
     @Autowired
     private DatabaseSchemaExtractor schemaExtractor;
 
+    @Autowired
+    private SmartEntityExtractor smartEntityExtractor;
+
+    @Autowired
+    private AliasExtractionService aliasExtractionService;
+
+    @Autowired
+    private SemanticAliasResolver semanticAliasResolver;
+
+    private AliasResolutionResult lastAliasResolution;
     private String cachedSchema = null;
 
-    public String generate(String intent, String question) {
+    public String generateIntentBasedSql(String userQuestion) {
         try {
             if (cachedSchema == null) {
                 cachedSchema = schemaExtractor.getCompleteSchema();
-                logger.info("Đã cache schema database");
             }
 
-            String prompt = buildSqlGenerationPrompt(intent, question);
+            // ✅ Tách alias meaningful và mở rộng ngữ nghĩa
+            AliasResolutionResult aliasResolution = semanticAliasResolver.resolveAll(userQuestion);
+            this.lastAliasResolution = aliasResolution; // lưu lại nếu bạn dùng sau này
+
+            Map<String, String> aliasToCanonical = aliasResolution.getColumns().stream()
+                    .collect(Collectors.toMap(
+                            AliasResolutionResult.ColumnMapping::alias,
+                            AliasResolutionResult.ColumnMapping::canonical,
+                            (a, b) -> b, // merge conflict nếu có
+                            LinkedHashMap::new
+                    ));
+
+            List<String> keywords = new ArrayList<>(aliasToCanonical.values());
+
+            List<String> involvedTables = keywords.stream()
+                    .map(DatabaseMapping::getTableName)
+                    .distinct()
+                    .filter(table -> cachedSchema.toLowerCase().contains("create table " + table.toLowerCase()))
+                    .toList();
+
+            String prompt = buildAdvancedSqlPrompt(userQuestion, keywords, involvedTables);
+
             String generatedSql = geminiApiClient.getResponse(prompt);
+            logger.info("🔥 SQL sinh ra từ Gemini: " + generatedSql);
+
+            if (generatedSql == null || generatedSql.trim().isEmpty() || generatedSql.trim().equalsIgnoreCase("undefined")) {
+                throw new ChatbotException("ERR_SQL_UNDEFINED", "⚠️ Không thể tạo câu truy vấn từ câu hỏi bạn vừa nhập.", "Gemini trả về SQL không hợp lệ");
+            }
 
             String cleanedSql = cleanSqlQuery(generatedSql);
 
-            if (!isValidSql(cleanedSql)) {
-                throw new ChatbotException("ERR_SQL_INVALID", "❌ Câu truy vấn được tạo không hợp lệ. Vui lòng kiểm tra lại câu hỏi.", "SQL không hợp lệ: " + cleanedSql);
+            if (!containsValidTable(cleanedSql, cachedSchema)) {
+                throw new ChatbotException("ERR_INVALID_TABLE", "🧾 Có vẻ bảng bạn yêu cầu không tồn tại trong hệ thống.", "Bảng không hợp lệ trong SQL: " + cleanedSql);
             }
 
-            logger.info("SQL được sinh ra: " + cleanedSql);
             return cleanedSql;
 
         } catch (ChatbotException ce) {
-            throw ce; // Đã có thông tin đầy đủ
+            throw ce;
         } catch (Exception e) {
-            logger.severe("Lỗi khi sinh SQL: " + e.getMessage());
-            throw new ChatbotException("ERR_SQL_GENERATION", "⚠️ Mình gặp lỗi khi tạo câu truy vấn từ câu hỏi. Bạn thử lại sau nhé.", e.getMessage());
+            throw new ChatbotException("ERR_SQL_GENERATION", "⚠️ Không thể tạo câu truy vấn từ câu hỏi bạn vừa nhập.", e.getMessage());
         }
     }
 
-    private String buildSqlGenerationPrompt(String intent, String question) {
-        return String.format("""
-            You are a SQL expert. Generate a valid SQL query based on the following:
-            
-            DATABASE SCHEMA:
-            %s
-            
-            VIETNAMESE TO ENGLISH MAPPING:
-            %s
-            
-            QUESTION: %s
-            INTENT: %s
-            
-            Requirements:
-            1. Use only tables and columns from the schema
-            2. Return only the SQL query without any explanation or markdown
-            3. Use proper JOIN conditions and WHERE clauses
-            4. Consider performance and optimization
-            5. Use proper aggregation functions when needed
-            6. Handle null values appropriately
-            
-            Generate SQL query:
-            """,
-                cachedSchema,
-                DatabaseMapping.getMappingInfo(),
-                question,
-                intent
-        );
+    private String buildAdvancedSqlPrompt(String question, List<String> keywords, List<String> involvedTables) {
+        String currentYear = String.valueOf(LocalDate.now().getYear());
+        String promptTemplate = PromptLoader.loadPrompt(PromptConstants.SQL_GENERATION_PROMPT);
+        String fewshots = PromptLoader.loadPrompt("few_shot_examples.txt");
+
+        String keywordInfo = keywords.isEmpty()
+                ? ""
+                : "\nCác từ khóa bạn cần tập trung là: " + String.join(", ", keywords);
+
+        String tableInfo = involvedTables.isEmpty()
+                ? ""
+                : "\nCác bảng dữ liệu cần chú ý: " + String.join(", ", involvedTables);
+
+        return promptTemplate
+                .replace("{SCHEMA}", cachedSchema)
+                .replace("{MAPPING}", DatabaseMapping.getMappingInfo())
+                .replace("{CURRENT_YEAR}", currentYear)
+                .replace("{QUESTION}", question + tableInfo)
+                + "\n\n" + fewshots;
     }
 
     private String cleanSqlQuery(String sql) {
@@ -89,114 +121,28 @@ public class SqlQueryGenerator {
 
         sql = sql.replaceAll("```sql\\s*", "")
                 .replaceAll("```", "")
-                .replaceAll("[\\r\\n]+", " ") // 👈 Thêm dòng này
+                .replaceAll("[\\r\\n]+", " ")
                 .replaceAll("\\s+", " ")
                 .replaceAll("\\s*,\\s*", ", ")
+                .replaceAll("(?i)--.*", "")
                 .replaceAll("\\s*=\\s*", " = ")
+                .replaceAll(";", "")
                 .trim();
-
+        sql = sql.replaceAll("STRFTIME\\('%Y-%m',\\s*(\\w+)\"", "DATE_FORMAT($1, '%Y-%m')");
         return sql;
     }
-
-
-    private boolean isValidSql(String sql) {
-        sql = sql.toLowerCase();
-
-        if (!sql.contains("select")) {
-            logger.warning("SQL thiếu mệnh đề SELECT");
-            return false;
-        }
-
-        if (!sql.contains("from")) {
-            logger.warning("SQL thiếu mệnh đề FROM");
-            return false;
-        }
-
-        long openParens = sql.chars().filter(ch -> ch == '(').count();
-        long closeParens = sql.chars().filter(ch -> ch == ')').count();
-        if (openParens != closeParens) {
-            logger.warning("SQL có dấu ngoặc không cân bằng");
-            return false;
-        }
-
-        String[] basicKeywords = {"select", "from", "where", "group by", "having", "order by"};
-        boolean hasValidKeywords = false;
-
-        for (String keyword : basicKeywords) {
-            if (sql.contains(keyword)) {
-                hasValidKeywords = true;
-                break;
-            }
-        }
-
-        if (!hasValidKeywords) {
-            logger.warning("SQL không chứa các từ khóa cơ bản");
-            return false;
-        }
-
-        return true;
-    }
-
-    public String generateIntentBasedSql(String userQuestion) {
-        try {
-            if (cachedSchema == null) {
-                cachedSchema = schemaExtractor.getCompleteSchema();
-            }
-
-            String prompt = buildAdvancedSqlPrompt(userQuestion);
-            String generatedSql = geminiApiClient.getResponse(prompt);
-
-            logger.info("🔥 SQL sinh ra từ Gemini: " + generatedSql);
-
-            // ✅ B1: Kiểm tra nếu Gemini trả về undefined/null/chuỗi rác
-            if (generatedSql == null || generatedSql.trim().isEmpty() || generatedSql.trim().equalsIgnoreCase("undefined")) {
-                throw new ChatbotException(
-                        "ERR_SQL_UNDEFINED",
-                        "⚠️ Không thể tạo câu truy vấn từ câu hỏi bạn vừa nhập.",
-                        "Gemini trả về SQL không hợp lệ: " + generatedSql
-                );
-            }
-
-            // ✅ B2: Làm sạch truy vấn
-            String cleanedSql = cleanSqlQuery(generatedSql);
-
-            // ✅ B3: Kiểm tra bảng có tồn tại không
-            if (!containsValidTable(cleanedSql, cachedSchema)) {
-                throw new ChatbotException(
-                        "ERR_INVALID_TABLE",
-                        "🧾 Có vẻ như bảng bạn yêu cầu không tồn tại trong hệ thống. Vui lòng kiểm tra lại tên bảng nhé!",
-                        "SQL truy cập bảng không có trong schema: " + cleanedSql
-                );
-            }
-
-            return cleanedSql;
-
-        } catch (ChatbotException ce) {
-            throw ce;
-        } catch (Exception e) {
-            throw new ChatbotException(
-                    "ERR_SQL_GENERATION",
-                    "⚠️ Không thể tạo câu truy vấn từ câu hỏi bạn vừa nhập.",
-                    e.getMessage()
-            );
-        }
-    }
-
 
     private boolean containsValidTable(String sql, String schema) {
         sql = sql.toLowerCase();
 
-        // Tìm tất cả tên bảng trong schema
         List<String> tableNames = extractTableNamesFromSchema(schema);
 
-        // Lấy tên bảng sau FROM trong SQL
         int fromIndex = sql.indexOf("from ");
         if (fromIndex == -1) return false;
 
         String[] tokens = sql.substring(fromIndex + 5).split(" ");
-        String possibleTable = tokens[0].replaceAll("[^a-zA-Z0-9_]", ""); // bỏ dấu câu
+        String possibleTable = tokens[0].replaceAll("[^a-zA-Z0-9_]", "");
 
-        // So sánh với các bảng đã khai báo
         return tableNames.contains(possibleTable);
     }
 
@@ -210,46 +156,60 @@ public class SqlQueryGenerator {
         return tables;
     }
 
-    private String buildAdvancedSqlPrompt(String question) {
-        return String.format("""
-        Bạn là chuyên gia SQL.
+    public Set<String> extractRelevantColumnsFromSql(String sql) {
+        Set<String> columns = new LinkedHashSet<>();
+        if (sql == null || sql.isBlank()) return columns;
 
-        Dựa trên DATABASE SCHEMA thực tế dưới đây (các lệnh CREATE TABLE chi tiết):
-   
-        %s
+        sql = sql.replaceAll("\\s+", " ").trim();
 
-        Ánh xạ Tiếng Việt sang bảng/cột:
-        
-        %s
-
-        Lưu ý nghiêm ngặt:
-        - Database: **MySQL** (KHÔNG phải SQLite, PostgreSQL...).
-        - KHÔNG được dùng PRAGMA, INFORMATION_SCHEMA, sqlite_master, system table.
-        - Chỉ sử dụng SELECT cơ bản, JOIN giữa các bảng đã cho nếu cần.
-        - Bắt buộc chọn đúng tên bảng và cột như trong SCHEMA. Tuyệt đối không bịa thêm cột hoặc bảng mới.
-        - Nếu bảng hoặc dữ liệu không có trả lời "Tôi không có dữ liệu này"
-        - Nếu câu hỏi cần đếm (COUNT) → chỉ cần SELECT COUNT(*).
-        - Nếu câu hỏi lấy danh sách → SELECT các cột cần thiết + LIMIT 100.
-        - KHÔNG sinh các lệnh INSERT, UPDATE, DELETE, ALTER, DROP.
-        - Nếu câu hỏi không phù hợp hoặc rủi ro, hãy từ chối lịch sự (ví dụ: "Xin lỗi, tôi không được phép thực hiện thao tác này để đảm bảo an toàn hệ thống.").
-        - Chỉ trả về đúng CÂU LỆNH SQL, KHÔNG giải thích, KHÔNG thêm markdown.
-
-        Câu hỏi từ người dùng:
-
-        "%s"
-
-        👉 Dựa vào câu hỏi trên và schema, sinh ra câu lệnh SQL chuẩn xác nhất:
-        """,
-                cachedSchema,
-                DatabaseMapping.getMappingInfo(),
-                question
+        Pattern funcPattern = Pattern.compile(
+                "\\b[a-zA-Z_][a-zA-Z0-9_]*\\s*\\(\\s*([a-zA-Z_][a-zA-Z0-9_\\.]+)\\s*(,|\\))",
+                Pattern.CASE_INSENSITIVE
         );
+        Matcher matcherFunc = funcPattern.matcher(sql);
+        while (matcherFunc.find()) {
+            String col = stripAlias(matcherFunc.group(1));
+            if (isValidColumn(col)) columns.add(col);
+        }
+
+        Pattern directPattern = Pattern.compile(
+                "(where|and|or|having)\\s+([a-zA-Z_][a-zA-Z0-9_\\.]+)\\s*(=|!=|<|>|<=|>=|like|in|between)",
+                Pattern.CASE_INSENSITIVE
+        );
+        Matcher matcherDirect = directPattern.matcher(sql);
+        while (matcherDirect.find()) {
+            String col = stripAlias(matcherDirect.group(2));
+            if (isValidColumn(col)) columns.add(col);
+        }
+
+        Pattern betweenPattern = Pattern.compile(
+                "\\b([a-zA-Z_][a-zA-Z0-9_\\.]+)\\s+(between|is null|is not null)",
+                Pattern.CASE_INSENSITIVE
+        );
+        Matcher matcherBetween = betweenPattern.matcher(sql);
+        while (matcherBetween.find()) {
+            String col = stripAlias(matcherBetween.group(1));
+            if (isValidColumn(col)) columns.add(col);
+        }
+
+        return columns;
     }
 
-    private String addLimitIfNeeded(String sql) {
-        if (!sql.toLowerCase().contains("limit")) {
-            return sql + " LIMIT 1000";
-        }
-        return sql;
+    private String stripAlias(String col) {
+        col = col.trim();
+        int dot = col.lastIndexOf('.');
+        return dot >= 0 ? col.substring(dot + 1) : col;
+    }
+
+    private boolean isValidColumn(String col) {
+        if (col == null || col.isBlank()) return false;
+        String lower = col.toLowerCase();
+
+        return !(lower.matches("'[^']*'") || lower.matches("\\d+") ||
+                lower.equals("true") || lower.equals("false") || lower.startsWith("'%"));
+    }
+
+    public AliasResolutionResult getLastAliasResolution() {
+        return this.lastAliasResolution;
     }
 }

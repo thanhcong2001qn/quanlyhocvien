@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector(".search-form");
     const tableBody = document.querySelector(".table tbody");
     const nameInput = form.querySelector('input[name="name"]');
-    const classInput = form.querySelector('input[name="class"]');
+    const classInput = form.querySelector('input[name="className"]'); // ✅ Đã đổi
     const clearButton = form.querySelector(".clear-search");
 
     let timeout = null;
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
         doSearch();
     });
 
-    // Gõ input vào sẽ tự tìm kiếm sau 300ms
+    // Gõ input sẽ tự động tìm kiếm
     [nameInput, classInput].forEach(input => {
         input.addEventListener("input", () => {
             clearTimeout(timeout);
@@ -36,9 +36,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Click nút "Xóa bộ lọc" để reset form và tìm kiếm lại
+    // ✅ Xử lý nút Xóa bộ lọc
     clearButton.addEventListener("click", () => {
-        form.reset();
-        doSearch();
+        nameInput.value = "";
+        classInput.value = "";
+
+        // Xoá mọi query param tồn tại
+        const url = new URL(window.location.origin + "/student/search");
+
+        fetch(url.toString(), {
+            method: "GET",
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(res => res.text())
+        .then(html => {
+            tableBody.innerHTML = html;
+        })
+        .catch(err => console.error("❌ Search reset failed:", err));
     });
 });

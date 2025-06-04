@@ -8,6 +8,7 @@ import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.AdminModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
 import com.dacs.quanlyhocvien.models.TeacherModel;
+import com.dacs.quanlyhocvien.models.dto.StudentResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,8 +35,8 @@ public class AdminViewController {
     }
     @GetMapping(value = "/all-student")
     public String allStudent(Model model){
-//        List<StudentModel> students = studentService.getAllStudents();
-//        model.addAttribute("students", studentService.getAllStudents());
+        List<StudentResponseDTO> students = studentService.getAllStudentDTOs();
+        model.addAttribute("students", students);
         return "views/admin/AllStudent";
     }
     @GetMapping(value = "/studentDetail/{id}")
@@ -51,7 +52,8 @@ public class AdminViewController {
     }
     @GetMapping(value = "/all-admin")
     public String allAdmin(Model model){
-        model.addAttribute("dummy", "dummyValue"); // ✅ thêm dòng bảo vệ tránh lỗi Thymeleaf
+        List<AdminModel> admins = adminService.getAllAdmins();
+        model.addAttribute("admins",admins);
         return "views/admin/AllAdmin";
     }
     @GetMapping(value = "/adminDetail/{id}")
@@ -67,6 +69,5 @@ public class AdminViewController {
         model.addAttribute("accounts", accounts);
         return "views/admin/AllAccounts";
     }
-
 
 }

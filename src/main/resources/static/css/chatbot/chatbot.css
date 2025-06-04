@@ -131,6 +131,7 @@ body.modal-open #chatContainer {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
   background: #f8f9fa;
   display: flex;
   flex-direction: column;

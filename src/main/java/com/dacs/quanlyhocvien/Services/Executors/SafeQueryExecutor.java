@@ -47,10 +47,29 @@ public class SafeQueryExecutor {
         }
 
         sqlQuery = ensureLimit(sqlQuery);
-        logger.info("Thực thi câu SQL an toàn: " + sqlQuery);
+        logger.info("▶️ Thực thi câu SQL an toàn: " + sqlQuery);
 
         try {
-            return jdbcTemplate.queryForList(sqlQuery);
+            List<Map<String, Object>> results = jdbcTemplate.queryForList(sqlQuery);
+
+            // 💡 Logging chi tiết
+            if (results == null) {
+                logger.warning("❗️ Kết quả trả về NULL.");
+            } else if (results.isEmpty()) {
+                logger.warning("📭 Không có bản ghi nào được trả về (empty list).");
+            } else {
+                logger.info("✅ Có " + results.size() + " dòng dữ liệu được trả về.");
+                logger.info("📦 Dòng đầu tiên: " + results.get(0).toString());
+
+                // Nếu có 1 giá trị duy nhất (1 cột), in riêng:
+                if (results.get(0).size() == 1) {
+                    Object value = results.get(0).values().iterator().next();
+                    logger.info("🔎 Giá trị đầu tiên: " + value + " (class: " + (value != null ? value.getClass().getSimpleName() : "null") + ")");
+                }
+            }
+
+            return results;
+
         } catch (BadSqlGrammarException e) {
             throw new ChatbotException(
                     "SQL_TABLE_OR_COLUMN_ERROR",
@@ -58,7 +77,7 @@ public class SafeQueryExecutor {
                     "Chi tiết lỗi cú pháp SQL: " + e.getMessage()
             );
         } catch (Exception e) {
-            logger.severe("Lỗi khi thực thi SQL: " + e.getMessage());
+            logger.severe("💥 Lỗi khi thực thi SQL: " + e.getMessage());
             throw new ChatbotException(
                     "SQL_EXECUTION_ERROR",
                     "⚠️ Có lỗi xảy ra khi truy vấn dữ liệu. Mình sẽ khắc phục sớm nhất có thể!",
@@ -67,13 +86,12 @@ public class SafeQueryExecutor {
         }
     }
 
-
     private String ensureLimit(String sqlQuery) {
         String lowerSql = sqlQuery.trim().toLowerCase();
 
         // Nếu là câu SELECT bình thường, thêm LIMIT
         if (lowerSql.startsWith("select") && !lowerSql.contains("count(") && !lowerSql.contains("limit")) {
-            return sqlQuery + " LIMIT 1000";
+            return sqlQuery + " LIMIT 100";
         }
 
         return sqlQuery;
@@ -89,7 +107,7 @@ public class SafeQueryExecutor {
 
         // Bắt buộc có select + from
         boolean hasSelect = sql.startsWith("select");
-        boolean hasFrom = sql.contains(" from "); // có khoảng trắng tránh nhầm chữ khác
+        boolean hasFrom = sql.contains(" from ");
 
         boolean hasForbidden = sql.contains("insert")
                 || sql.contains("update")
@@ -98,8 +116,7 @@ public class SafeQueryExecutor {
                 || sql.contains("alter")
                 || sql.contains("truncate");
 
-        logger.info("🔎 SQL SELECT: " + hasSelect + ", FROM: " + hasFrom + ", Forbidden: " + hasForbidden);
+        logger.info("🔎 Kiểm tra SQL - SELECT: " + hasSelect + ", FROM: " + hasFrom + ", Forbidden: " + hasForbidden);
         return hasSelect && hasFrom && !hasForbidden;
     }
-
 }

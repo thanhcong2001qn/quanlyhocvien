@@ -19,65 +19,67 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    applySidebarState(); // Áp dụng trạng thái sidebar ngay khi load trang
+    applySidebarState();
 
-    // Thêm transition class khi cần thiết để tránh hiệu ứng giật
     function addTransitionClass() {
         sidebar.classList.add('with-transition');
         setTimeout(() => {
             sidebar.classList.remove('with-transition');
-        }, 300); // Thời gian bằng với transition
+        }, 300);
     }
 
     sidebarToggleBtn.addEventListener('click', function(event) {
         event.stopPropagation();
-
-        // Thêm class transition trước khi toggle
         addTransitionClass();
-
         sidebar.classList.toggle('collapsed');
         document.body.classList.toggle('sidebar-collapsed');
 
-        // Lưu trạng thái sidebar vào localStorage
+        localStorage.setItem(
+            'sidebarState',
+            sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded'
+        );
+
         if (sidebar.classList.contains('collapsed')) {
-            localStorage.setItem('sidebarState', 'collapsed');
             menuItems.forEach(item => item.classList.remove('show'));
-        } else {
-            localStorage.setItem('sidebarState', 'expanded');
         }
     });
 
-    // Xử lý mở/đóng menu con trong sidebar
     menuItems.forEach(item => {
         const link = item.querySelector('.menu-link');
-        if (link) {
-            link.addEventListener('click', function(e) {
-                const href = link.getAttribute('href');
+        if (!link) return;
 
-                // Nếu link là # hoặc không có href -> Chặn click để mở menu
-                if (href === '#' || href === null) {
-                    e.preventDefault();
+        link.addEventListener('click', function(e) {
+            const isAnchor = link.tagName.toLowerCase() === 'a';
+            const href = link.getAttribute('href');
+
+            // Ngăn reload nếu không có href hoặc chỉ là toggle
+           if (!isAnchor || !href || href === '#') {
+                   e.preventDefault();
+                   e.stopPropagation(); // ✅ giữ lại
+               } else {
+                   // Nếu là link thật thì không làm gì cả
+                   return;
+               }
+
+            // Nếu menu không bị collapsed
+            if (!sidebar.classList.contains('collapsed')) {
+                const submenu = item.querySelector('.submenu');
+                if (!submenu) return;
+
+                if (item.classList.contains('show')) {
+                    closeSubmenuSmoothly(item);
+                } else {
+                    menuItems.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('show')) {
+                            closeSubmenuSmoothly(otherItem);
+                        }
+                    });
+                    item.classList.add('show');
                 }
-
-                if (!sidebar.classList.contains('collapsed')) {
-                    if (item.classList.contains('show')) {
-                        closeSubmenuSmoothly(item);
-                    } else {
-                        menuItems.forEach(otherItem => {
-                            if (otherItem !== item && otherItem.classList.contains('show')) {
-                                closeSubmenuSmoothly(otherItem);
-                            }
-                        });
-
-                        item.classList.add('show');
-                    }
-                }
-            });
-
-        }
+            }
+        });
     });
 
-    // Đóng menu khi click ra ngoài
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.sidebar') && !e.target.closest('#toggle-sidebar')) {
             menuItems.forEach(item => {
@@ -88,8 +90,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-
-    // Hàm đóng submenu một cách mượt mà
     function closeSubmenuSmoothly(menuItem) {
         if (!menuItem) return;
 
@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             submenu.style.opacity = '0';
             submenu.style.transform = 'translateY(-10px)';
-
             setTimeout(() => {
                 menuItem.classList.remove('show');
                 menuItem.classList.remove('closing');

@@ -1,5 +1,3 @@
-// public/js/admin/searching/account-search.js
-
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("searchForm");
     const tableBody = document.querySelector(".table tbody");
@@ -18,11 +16,17 @@ document.addEventListener("DOMContentLoaded", function () {
             method: "GET",
             headers: { "X-Requested-With": "XMLHttpRequest" }
         })
-        .then(res => res.text())
-        .then(html => {
-            tableBody.innerHTML = html;
-        })
-        .catch(err => console.error("❌ Lỗi khi tìm kiếm tài khoản:", err));
+            .then(res => res.text())
+            .then(html => {
+                tableBody.innerHTML = html;
+
+                // Re-initialize Bootstrap tooltips after updating DOM
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.forEach(function (el) {
+                    new bootstrap.Tooltip(el);
+                });
+            })
+            .catch(err => console.error("❌ Lỗi khi tìm kiếm tài khoản:", err));
     }
 
     // Ngăn form submit mặc định
@@ -49,7 +53,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Nút Xóa bộ lọc
     clearButton.addEventListener("click", () => {
-        form.reset(); // Xóa hết dữ liệu trong form
+        searchInput.value = "";
+        roleFilter.selectedIndex = 0;
+        statusFilter.selectedIndex = 0;
         doSearch();
     });
 });

@@ -44,7 +44,7 @@ public class AdminStudentController {
     @GetMapping("/search")
     public String searchStudents(
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "class", required = false) String className,
+            @RequestParam(value = "className", required = false) String className,
             Model model,
             HttpServletRequest request) {
 
