@@ -174,21 +174,3 @@ const api = {
 // Export functions to global scope
 window.fetchWithAuth = fetchWithAuth;
 window.api = api;
-function navigateWithAuth(url) {
-    const token = localStorage.getItem('token');
-
-    // If using fetch API for navigation
-    fetch(url, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else {
-                window.location.href = url;
-            }
-        })
-        .catch(error => console.error('Navigation error:', error));
-}

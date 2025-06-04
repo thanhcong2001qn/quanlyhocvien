@@ -24,17 +24,17 @@
                 <li><a th:href="@{/add-admin}"><span>Add admin</span></a></li>
             </ul>
         </li>
-<!--        <li class="menu-item">-->
-<!--            <div class="menu-link">-->
-<!--                <i class="fas fa-chalkboard-teacher"></i> &lt;!&ndash; Đã xóa class "padding" &ndash;&gt;-->
-<!--                <span>Teachers</span>-->
-<!--                <i class="fas fa-chevron-down"></i>-->
-<!--            </div>-->
-<!--            <ul class="submenu">-->
-<!--                <li><a th:href="@{/all-teacher}"><span>All teacher</span></a></li>-->
-<!--                <li><a th:href="@{/add-teacher}"><span>Add teacher</span></a></li>-->
-<!--            </ul>-->
-<!--        </li>-->
+        <li class="menu-item">
+            <div class="menu-link">
+                <i class="fas fa-chalkboard-teacher"></i> <!-- Đã xóa class "padding" -->
+                <span>Teachers</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li><a th:href="@{/all-teacher}"><span>All teacher</span></a></li>
+                <li><a th:href="@{/add-teacher}"><span>Add teacher</span></a></li>
+            </ul>
+        </li>
         <li class="menu-item">
             <div class="menu-link">
                 <i class="fas fa-user-graduate"></i> <!-- Đã xóa class "padding" -->
@@ -45,42 +45,30 @@
                 <li><a th:href="@{/all-student}"><span>All Students</span></a></li>
             </ul>
         </li>
-<!--        <li class="menu-item">-->
+        <li class="menu-item">
+            <div class="menu-link">
+                <i class="fas fa-book-open"></i> <!-- Đã xóa class "padding" -->
+                <span>Class</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li><a href="#"><span>All Class</span></a></li>
+                <li><a href="#"><span>Class Details</span></a></li>
+            </ul>
+        </li>
+        <li class="menu-item">
 <!--            <div class="menu-link">-->
-<!--                <i class="fas fa-book-open"></i> &lt;!&ndash; Đã xóa class "padding" &ndash;&gt;-->
-<!--                <span>Class</span>-->
+<!--                <i class="fas fa-user-cog"></i> &lt;!&ndash; Đã xóa class "padding" &ndash;&gt;-->
+<!--                <span>Account</span>-->
 <!--                <i class="fas fa-chevron-down"></i>-->
 <!--            </div>-->
 <!--            <ul class="submenu">-->
-<!--                <li><a href="#"><span>All Class</span></a></li>-->
-<!--                <li><a href="#"><span>Class Details</span></a></li>-->
+<!--                <li><a href="#"><span>Admin Account</span></a></li>-->
+<!--                <li><a href="#"><span>Teacher Account</span></a></li>-->
+<!--                <li><a href="#"><span>Student Account</span></a></li>-->
 <!--            </ul>-->
-<!--        </li>-->
-        <li class="menu-item">
-            <div class="menu-link">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Category</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <ul class="submenu">
-                <li><a th:href="@{/all-categories}"><span>All Category</span></a></li>
-                <li><a th:href="@{/add-category}"><span>Add Category</span></a></li>
-            </ul>
-        </li>
-        <li class="menu-item">
-            <div class="menu-link">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Courses</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <ul class="submenu">
-                <li><a th:href="@{/all-courses}"><span>All Courses</span></a></li>
-                <li><a th:href="@{/add-course}"><span>Add Course</span></a></li>
-            </ul>
-        </li>
-        <li class="menu-item">
             <a th:href="@{/all-account}" class="menu-link">
-                <i class="fas fa-user-cog"></i>
+                <i class="fas fa-user-cog"></i> <!-- Đã xóa class "padding" -->
                 <span>Account</span>
             </a>
         </li>

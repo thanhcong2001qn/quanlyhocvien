@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
-import lombok.ToString;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,7 +12,6 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"module"})
 public class LessonModel {
 
     @Id

@@ -7,12 +7,13 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -74,23 +75,5 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             return false;
         }
-    }
-    // Phương thức trích xuất roles từ JWT
-    public Collection<? extends GrantedAuthority> getRolesFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        String rolesString = claims.get("roles", String.class);
-        if (rolesString != null && !rolesString.isEmpty()) {
-            return Arrays.stream(rolesString.split(","))
-                    .map(role -> new SimpleGrantedAuthority(
-                            role.startsWith("ROLE_") ? role : "ROLE_" + role))
-                    .collect(Collectors.toList());
-        }
-
-        return Collections.emptyList();
     }
 }
