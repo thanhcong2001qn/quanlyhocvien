@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,7 @@
 <div th:replace="~{/fragments/user/header :: header}"></div>
 <div th:replace="~{fragments/user/notification-select :: confirmation-dialog}"></div>
 
-<main id="not-authenticated">
+<main id="not-authenticated" sec:authorize="isAnonymous()">
     <!-- Hero Section -->
     <section class="hero-section py-5">
         <div class="container">
@@ -84,20 +84,17 @@
 </main>
 
 
-<main class="container py-4" id="authenticated" style="display: none">
+<main class="container py-4" id="authenticated"  sec:authorize="isAuthenticated()">
     <!-- Welcome Section -->
     <section class="welcome-section mb-4">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h1 class="display-5 fw-bold text-primary">Xin chào, <span id="username">Học viên</span>!</h1>
+                <h1 class="display-5 fw-bold text-primary">Xin chào, <span id="username" th:text="${#authentication.principal.username}">Học viên</span>!</h1>
                 <p class="lead mb-4">Hôm nay bạn muốn học gì? Tiếp tục hành trình học tập của bạn.</p>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                     <a href="#continue-learning" class="btn btn-primary btn-lg px-4 me-md-2">Tiếp tục học</a>
                     <a href="#explore-courses" class="btn btn-outline-primary btn-lg px-4">Khám phá khóa học</a>
                 </div>
-            </div>
-            <div class="col-lg-6 d-none d-lg-block">
-                <img th:src="@{/images/learning-illustration.svg}" alt="Learning" class="img-fluid">
             </div>
         </div>
     </section>

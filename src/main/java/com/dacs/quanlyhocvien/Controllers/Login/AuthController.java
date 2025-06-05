@@ -7,6 +7,7 @@ import com.dacs.quanlyhocvien.config.JwtTokenProvider;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.StudentModel;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +58,7 @@ public class AuthController {
         }
     }
     @PostMapping(value ="/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
         try {
             // Tạo đối tượng Authentication - quan trọng nhất!
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -90,7 +91,7 @@ public class AuthController {
             response.put("isAdmin", isAdmin);
             response.put("isTeacher", isTeacher);
             response.put("isStudent", isStudent);
-
+            session.setAttribute("username", userDetails.getUsername());
             // Trả về thông tin người dùng
             return ResponseEntity.ok(response);
 
@@ -150,5 +151,26 @@ public class AuthController {
             return new ResponseEntity<>("Error sending verification email: " + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    @GetMapping("/auth/status")
+    public Map<String, Object> getAuthStatus(Authentication authentication) {
+        Map<String, Object> status = new HashMap<>();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            status.put("authenticated", true);
+
+            // Lấy thông tin người dùng nếu là UserDetails
+            if (authentication.getPrincipal() instanceof UserDetails) {
+                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+                status.put("username", userDetails.getUsername());
+                status.put("authorities", userDetails.getAuthorities());
+            } else {
+                status.put("username", authentication.getName());
+            }
+        } else {
+            status.put("authenticated", false);
+        }
+
+        return status;
     }
 }

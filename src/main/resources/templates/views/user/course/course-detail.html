@@ -9,6 +9,7 @@
     <link rel="stylesheet" th:href="@{/css/user/header.css}">
     <link rel="stylesheet" th:href="@{/css/user/profile.css}">
     <link rel="stylesheet" th:href="@{/css/user/course/course-detail.css}">
+    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 <!-- Main Header -->
@@ -112,14 +113,17 @@
                                  data-bs-parent="#courseContentAccordion">
                                 <div class="accordion-body">
                                     <ul class="list-group list-group-flush">
-                                        <li class="list-group-item lecture-item" th:each="lesson : ${module.lessons}">
+                                        <li class="list-group-item lecture-item" th:each="lesson : ${lessons}" th:data-lesson-id="${lesson.lessonId}">
                                             <div class="lecture-info">
-                                                <i class="fas fa-play-circle lecture-icon"></i>
+<!--                                                <i class="fas fa-play-circle lecture-icon"></i>-->
                                                 <span class="lecture-title" th:text="${lesson.title}">Tên bài giảng</span>
                                             </div>
                                             <div class="lecture-meta">
                                                 <span th:if="${lesson.isFree}" class="lecture-preview">Xem trước</span>
                                                 <span class="lecture-duration" th:text="${lesson.duration != null ? lesson.duration + ' phút' : ''}">10:30</span>
+                                                <!-- Lưu video URL vào data attribute -->
+                                                <span th:data-video-url="${lesson.videoUrl}" style="display: none;"></span>
+                                                <span th:data-video-thumbnail="${lesson.videoThumbnailUrl}" style="display: none;"></span>
                                             </div>
                                         </li>
                                     </ul>
@@ -277,27 +281,17 @@
 
                     <div th:if="${!isEnrolled}">
                         <button type="button" class="btn btn-primary btn-lg w-100 mb-3" id="enrollBtn"
+                                th:if="${course.price == 0}"
                                 th:data-course-id="${course.courseId}"
                                 th:data-is-free="${course.price == 0}"
                                 th:data-price="${course.hasDiscount() ? course.discountPrice : course.price}">
                             Đăng ký học
                         </button>
                         <button type="button" class="btn btn-outline-primary btn-lg w-100 mb-3" id="addToCartBtn"
-                                th:data-course-id="${course.courseId}"
-                                th:if="${course.price != 0}">
+                                th:if="${course.price != 0}"
+                                th:data-course-id="${course.courseId}">
                             Thêm vào giỏ hàng
                         </button>
-                    </div>
-
-                    <div th:if="${isEnrolled}">
-                        <a th:href="@{'/learning/' + ${course.courseId}}" class="btn btn-success btn-lg w-100 mb-3" id="startLearningBtn">
-                            Vào học ngay
-                        </a>
-                    </div>
-                    <div th:if="${isEnrolled}">
-                        <a th:href="@{'/learning/' + ${course.courseId}}" class="btn btn-success btn-lg w-100 mb-3">
-                            Tiếp tục học
-                        </a>
                     </div>
 
                     <div class="course-guarantee text-center mb-3">

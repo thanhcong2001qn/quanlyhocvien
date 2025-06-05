@@ -11,6 +11,7 @@ import com.dacs.quanlyhocvien.models.CourseModel;
 import com.dacs.quanlyhocvien.models.LessonModel;
 import com.dacs.quanlyhocvien.models.ModuleModel;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -54,7 +55,7 @@ public class CourseService {
      * Lấy danh sách khóa học phân trang với các bộ lọc
      */
     public Page<CourseResponseDTO> getCourses(Pageable pageable, String search, String categoryIds,
-                                              String levels, String priceTypes, String isPublished, Long accountId) {
+                                              String levels, String priceTypes, String isPublished,String enrollmentStatus, Long accountId) {
         // Xây dựng Specification dựa trên các tham số
         Specification<CourseModel> spec = Specification.where(null);
 
@@ -112,7 +113,26 @@ public class CourseService {
             }
             // Nếu giá trị không phải true/false, không áp dụng bộ lọc
         }
+        if (accountId != null && enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
+            List<Long> enrolledCourseIds = enrollmentRepository.findCourseIdsByAccountId(accountId);
 
+            if ("enrolled".equalsIgnoreCase(enrollmentStatus)) {
+                // Chỉ lấy các khóa học đã đăng ký
+                if (!enrolledCourseIds.isEmpty()) {
+                    spec = spec.and((root, query, cb) -> root.get("courseId").in(enrolledCourseIds));
+                } else {
+                    // Nếu không có khóa học nào được đăng ký, trả về trang trống
+                    return new PageImpl<>(Collections.emptyList(), pageable, 0);
+                }
+            } else if ("not-enrolled".equalsIgnoreCase(enrollmentStatus)) {
+                // Chỉ lấy các khóa học chưa đăng ký
+                if (!enrolledCourseIds.isEmpty()) {
+                    spec = spec.and((root, query, cb) -> cb.not(root.get("courseId").in(enrolledCourseIds)));
+                }
+                // Nếu không có khóa học nào được đăng ký, lấy tất cả
+            }
+            // Nếu là "all" hoặc giá trị khác, không áp dụng bộ lọc đăng ký
+        }
         // Lấy dữ liệu từ database
         Page<CourseModel> coursePage = courseRepository.findAll(spec, pageable);
 

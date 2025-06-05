@@ -87,17 +87,22 @@
                 <div class="header-profile">
                     <button class="profile-btn">
                         <div class="profile-info">
-                            <div class="profile-name">Nguyễn Văn A</div>
+                            <div class="profile-name" th:text="${#authentication.principal.username}">Nguyễn Văn A</div>
                             <div class="profile-role">Administrator</div>
                         </div>
                     </button>
 
                     <div class="profile-dropdown">
                         <div class="profile-dropdown-footer">
-                            <button class="logout-btn">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Đăng xuất</span>
-                            </button>
+                            <form action="/logout" method="post">
+                                <!-- CSRF token nếu bạn không tắt CSRF protection -->
+                                <!-- <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> -->
+
+                                <button type="submit" class="logout-btn">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Đăng xuất</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

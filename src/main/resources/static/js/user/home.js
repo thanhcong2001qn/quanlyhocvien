@@ -1,79 +1,80 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const authenticatedPage = document.getElementById('authenticated');
-    const unauthenticatedPage = document.getElementById('not-authenticated');
-    authenticatedPage.style.display = "none";
-    unauthenticatedPage.style.display = "none";
-    // Fetch user data and update UI
-    fetchWithAuth('/api/verify-token')
-        .then(response => {
-            if (!response.ok) {
-                localStorage.clear();
-                unauthenticatedPage.style.display = "block";
-                //return Promise.reject('Authentication failed');
-                document.addEventListener('click', function(event) {
-                    // Lấy phần tử được click
-                    const target = event.target;
-
-                    // Tìm thẻ a gần nhất (nếu click vào con của thẻ a)
-                    const linkElement = target.closest('a');
-
-                    if (linkElement) {
-                        const href = linkElement.getAttribute('href');
-
-                        // Cho phép truy cập các liên kết đăng nhập và đăng ký
-                        if (href === '/login' || href === '/register' ||
-                            href.startsWith('/css') || href.startsWith('/js') ||
-                            href.startsWith('/images') || href === '#') {
-                            return; // Cho phép truy cập các liên kết này
-                        }
-
-                        // Ngăn chặn hành vi mặc định của liên kết
-                        event.preventDefault();
-
-                        // Lưu URL người dùng đang cố truy cập (để chuyển hướng sau khi đăng nhập)
-                        if (href && href !== '#' && !href.startsWith('javascript:')) {
-                            localStorage.setItem('redirectAfterLogin', href);
-                        }
-
-                        // Chuyển hướng đến trang đăng nhập
-                        window.location.href = '/login';
-                    }
-                });
-
-            }
-            else if (response.ok){
-                loadDashboardStats();
-                loadPopularCourses();
-                authenticatedPage.style.display = "block";
-            }
-            return response.json();
-        })
-        .then(data => {
-            localStorage.setItem('username', data.username);
-            localStorage.setItem('isAuthenticated', 'true');
-
-            // Update username in the welcome section
-            const usernameElement = document.getElementById('username');
-            if (usernameElement && data.username) {
-                usernameElement.textContent = data.username;
-            }
-
-            // Load user dashboard data
-            return fetchWithAuth('/api/user/dashboard');
-        })
-        .then(response => {
-            if (!response.ok) return Promise.reject('Failed to load dashboard data');
-            return response.json();
-        })
-        .then(dashboard => {
-            // Update dashboard with real data
-            console.log('Dashboard data loaded:', dashboard);
-            // TODO: Update UI with actual data
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-
+    // const authenticatedPage = document.getElementById('authenticated');
+    // const unauthenticatedPage = document.getElementById('not-authenticated');
+    // authenticatedPage.style.display = "none";
+    // unauthenticatedPage.style.display = "none";
+    // // Fetch user data and update UI
+    // fetchWithAuth('/api/verify-token')
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             localStorage.clear();
+    //             unauthenticatedPage.style.display = "block";
+    //             //return Promise.reject('Authentication failed');
+    //             document.addEventListener('click', function(event) {
+    //                 // Lấy phần tử được click
+    //                 const target = event.target;
+    //
+    //                 // Tìm thẻ a gần nhất (nếu click vào con của thẻ a)
+    //                 const linkElement = target.closest('a');
+    //
+    //                 if (linkElement) {
+    //                     const href = linkElement.getAttribute('href');
+    //
+    //                     // Cho phép truy cập các liên kết đăng nhập và đăng ký
+    //                     if (href === '/login' || href === '/register' ||
+    //                         href.startsWith('/css') || href.startsWith('/js') ||
+    //                         href.startsWith('/images') || href === '#') {
+    //                         return; // Cho phép truy cập các liên kết này
+    //                     }
+    //
+    //                     // Ngăn chặn hành vi mặc định của liên kết
+    //                     event.preventDefault();
+    //
+    //                     // Lưu URL người dùng đang cố truy cập (để chuyển hướng sau khi đăng nhập)
+    //                     if (href && href !== '#' && !href.startsWith('javascript:')) {
+    //                         localStorage.setItem('redirectAfterLogin', href);
+    //                     }
+    //
+    //                     // Chuyển hướng đến trang đăng nhập
+    //                     window.location.href = '/login';
+    //                 }
+    //             });
+    //
+    //         }
+    //         else if (response.ok){
+    //             loadDashboardStats();
+    //             loadPopularCourses();
+    //             authenticatedPage.style.display = "block";
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         localStorage.setItem('username', data.username);
+    //         localStorage.setItem('isAuthenticated', 'true');
+    //
+    //         // Update username in the welcome section
+    //         const usernameElement = document.getElementById('username');
+    //         if (usernameElement && data.username) {
+    //             usernameElement.textContent = data.username;
+    //         }
+    //
+    //         // Load user dashboard data
+    //         return fetchWithAuth('/api/user/dashboard');
+    //     })
+    //     .then(response => {
+    //         if (!response.ok) return Promise.reject('Failed to load dashboard data');
+    //         return response.json();
+    //     })
+    //     .then(dashboard => {
+    //         // Update dashboard with real data
+    //         console.log('Dashboard data loaded:', dashboard);
+    //         // TODO: Update UI with actual data
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //     });
+    loadDashboardStats();
+    loadPopularCourses();
     // Animation for learning path
     const pathItems = document.querySelectorAll('.path-item');
     pathItems.forEach((item, index) => {

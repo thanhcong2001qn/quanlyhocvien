@@ -4,6 +4,7 @@ import com.dacs.quanlyhocvien.Services.CategoryService;
 import com.dacs.quanlyhocvien.models.CourseCategoryModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_STUDENT')" + " or hasRole('ROLE_ADMIN')")
 @RequestMapping(value = "/api/category")
 public class CategoryApiController {
 

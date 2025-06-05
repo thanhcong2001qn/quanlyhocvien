@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_STUDENT')")
 @RequestMapping (value = "/api/user")
 public class UserAPIController {
 
@@ -116,7 +118,8 @@ public class UserAPIController {
                                           @RequestParam(required = false) String categories,
                                           @RequestParam(required = false) String levels,
                                           @RequestParam(required = false) String priceTypes,
-                                          @RequestParam(required = false) String enrollmentStatus) {
+                                          @RequestParam(required = false) String enrollmentStatus,
+                                          @RequestParam(required = false) String isPublished) {
         try {
             // Lấy thông tin người dùng hiện tại
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -132,7 +135,7 @@ public class UserAPIController {
 
             // Gọi service với các tham số lọc bao gồm cả trạng thái đăng ký
             Page<CourseResponseDTO> courses = courseService.getCourses(
-                    pageable, search, categories, levels, priceTypes, enrollmentStatus, account.getAccountId());
+                    pageable, search, categories, levels, priceTypes,isPublished, enrollmentStatus, account.getAccountId());
 
             return ResponseEntity.ok(courses);
         } catch (Exception e) {
