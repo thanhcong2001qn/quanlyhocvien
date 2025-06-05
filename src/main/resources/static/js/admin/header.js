@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+
     // Xử lý thông báo dropdown
     const notificationBtn = document.querySelector('.notification-btn');
     const notificationDropdown = document.querySelector('.header-notification');
@@ -126,4 +127,25 @@ document.addEventListener('DOMContentLoaded', function() {
             event.stopPropagation();
         });
     }
+    logout();
 });
+
+function logout() {
+    const logoutButton = document.querySelector('.logout-btn');
+    // Optional: Toggle dropdown visibility when profile button is clicked
+    const profileBtn = document.querySelector('.profile-btn');
+    const profileDropdown = document.querySelector('.profile-dropdown');
+
+    if (profileBtn && profileDropdown) {
+        profileBtn.addEventListener('click', function() {
+            profileDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.header-profile')) {
+                profileDropdown.classList.remove('show');
+            }
+        });
+    }
+}

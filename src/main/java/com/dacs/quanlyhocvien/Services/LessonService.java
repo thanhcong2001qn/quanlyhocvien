@@ -53,11 +53,24 @@ public class LessonService {
             for (LessonModel lesson : lessons) {
                 LessonResponseDTO dto = new LessonResponseDTO();
                 dto.setLessonId(lesson.getLessonId());
+                dto.setModuleId(module.getModuleId());
                 dto.setTitle(lesson.getTitle());
                 dto.setDescription(lesson.getDescription());
                 dto.setDuration(lesson.getDuration());
                 dto.setPosition(lesson.getPosition());
                 dto.setIsFree(lesson.getIsFree());
+                dto.setCreatedAt(lesson.getCreatedAt());
+                dto.setUpdatedAt(lesson.getUpdatedAt());
+
+                // Lấy thông tin video cho bài học
+                VideoModel video = iVideoRepository.findByLesson_LessonId(lesson.getLessonId());
+                if (video != null) {
+                    dto.setVideoUrl(video.getVideoUrl());
+                    dto.setVideoTitle(video.getTitle());
+                    dto.setVideoDuration(video.getDuration());
+                    dto.setVideoThumbnailUrl(video.getThumbnailPath());
+                    dto.setIsVideoDownloadable(video.getIsDownloadable());
+                }
 
                 result.add(dto);
             }

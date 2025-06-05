@@ -52,7 +52,7 @@ public class RegistrationService {
         account.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         account.setEmail(registerRequest.getEmail());
         account.setIsEmailVerified(false);
-        account.setRole(roleRepository.findByRoleName("STUDENT"));
+        account.setRole(roleRepository.findByRoleName("ROLE_STUDENT"));
         accountService.save(account);
 
 //        AdminModel admin = new AdminModel();

@@ -169,7 +169,7 @@ function updateCartSummary(data) {
     let subtotal = 0;
     items.forEach(item => {
         // Sử dụng currentPrice hoặc discountPrice nếu có, nếu không thì dùng price
-        const itemPrice = item.currentPrice || item.discountPrice || item.price || 0;
+        const itemPrice = item.price || 0;
         subtotal += itemPrice * (item.quantity || 1);
     });
 
@@ -212,6 +212,7 @@ function removeCartItem(courseId) {
                 updateCartBadge();
                 // Update cart summary
                 updateCartSummary(response);
+                loadCartItems();
 
                 // Update total items count
                 const totalItems = parseInt(document.getElementById('totalItems').textContent) - 1;
@@ -327,8 +328,71 @@ function applyPromoCode() {
 /**
  * Proceed to checkout
  */
+/**
+ * Proceed to checkout
+ */
 function proceedToCheckout() {
-    window.location.href = '/checkout';
+    // First, get the cart data to ensure we have the latest course IDs
+    fetchWithAuth('/api/cart')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Không thể tải giỏ hàng');
+            }
+            return response.json();
+        })
+        .then(response => {
+            const { items } = response;
+
+            // Check if cart is empty
+            if (!items || items.length === 0) {
+                showNotification('Không có khóa học nào trong giỏ hàng', 'warning');
+                return;
+            }
+
+            // Extract course IDs from cart items
+            const courseIds = items.map(item => item.courseId);
+
+            // Proceed with checkout
+            fetchWithAuth('/api/enrollments/checkout-multiple', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ courseIds: courseIds })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Thanh Toán Thành Công', 'success');
+                        fetchWithAuth('/api/cart/clear', {
+                            method: 'DELETE'
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Không thể xóa giỏ hàng');
+                                }
+                                return response.json();
+                            })
+                            .then(response => {
+                                if (response.success) {
+                                    // Update header cart badge
+                                    if (window.cart && window.cart.updateBadge) {
+                                        window.cart.updateBadge();
+                                    }
+
+                                    // Show empty cart
+                                    showEmptyCart();
+                                }
+                            })
+                    } else {
+                        showNotification(data.message || 'Có lỗi xảy ra khi thanh toán khóa học', 'error');
+                    }
+                });
+        })
+        .catch(error => {
+            console.error('Error during checkout:', error);
+            showNotification('Có lỗi xảy ra khi thanh toán khóa học', 'error');
+        });
 }
 
 // Đảm bảo có thể gọi từ bên ngoài

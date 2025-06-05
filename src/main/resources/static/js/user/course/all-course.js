@@ -1,59 +1,139 @@
-// Các biến toàn cục để theo dõi trạng thái
-let currentPage = 0;
-let pageSize = 6;
-let totalPages = 0;
-let currentSort = "newest"; // Mặc định sắp xếp theo ngày xuất bản mới nhất
-let currentSearch = "";
-let currentFilters = {
-    categories: [],
-    levels: [],
-    priceTypes: [] // "free" hoặc "paid"
-};
+/**
+ * Quản lý danh sách khóa học với URL Parameters
+ * Tác giả: thanhcong2001qn
+ * Cập nhật: 2025-05-13
+ */
 
 // Hàm khởi tạo khi trang được load
 document.addEventListener('DOMContentLoaded', function() {
     // Tải danh sách danh mục
     loadCategories();
 
-    // Tải các khóa học ban đầu
-    loadCourses();
+    // Khởi tạo giá trị từ URL hoặc giá trị mặc định
+    initializeFromUrl();
 
     // Thiết lập các event listeners
     setupEventListeners();
+
+    // Khởi tạo dropdown Bootstrap
     var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
     var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
         return new bootstrap.Dropdown(dropdownToggleEl)
     });
-    document.querySelectorAll('.dropdown-item[data-sort]').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const sortBy = this.getAttribute('data-sort');
-            currentSort = sortBy;
-
-            // Cập nhật nội dung của nút dropdown để hiển thị lựa chọn hiện tại
-            const dropdownButton = document.getElementById('sortDropdown');
-            dropdownButton.textContent = this.textContent;
-
-            // Tải lại danh sách khóa học với sắp xếp mới
-            currentPage = 0; // Reset về trang đầu tiên
-            loadCourses();
-        });
-    });
 });
+
+/**
+ * Khởi tạo các giá trị từ URL hoặc sử dụng giá trị mặc định
+ */
+function initializeFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Cập nhật UI dựa trên URL params
+    updateUIFromUrlParams(urlParams);
+
+    // Tải khóa học dựa trên tham số URL
+    loadCourses();
+}
+
+/**
+ * Cập nhật UI dựa trên các tham số URL
+ */
+function updateUIFromUrlParams(urlParams) {
+    // Cập nhật thanh tìm kiếm
+    const search = urlParams.get('search') || '';
+    document.getElementById('courseSearch').value = search;
+
+    // Cập nhật dropdown sắp xếp
+    const sort = urlParams.get('sort') || 'newest';
+    document.querySelectorAll('.dropdown-item[data-sort]').forEach(item => {
+        if (item.getAttribute('data-sort') === sort) {
+            document.getElementById('sortDropdown').textContent = item.textContent;
+        }
+    });
+
+    // Cập nhật các checkbox category
+    const categories = (urlParams.get('categories') || '').split(',').filter(Boolean);
+    setTimeout(() => {
+        categories.forEach(categoryId => {
+            const checkbox = document.getElementById(`category-${categoryId}`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }, 500); // Timeout để đảm bảo categories đã được render
+
+    // Cập nhật các checkbox level
+    const levels = (urlParams.get('levels') || '').split(',').filter(Boolean);
+    levels.forEach(level => {
+        const checkbox = document.getElementById(`level-${level}`);
+        if (checkbox) checkbox.checked = true;
+    });
+
+    // Cập nhật các checkbox giá
+    const priceTypes = (urlParams.get('priceTypes') || '').split(',').filter(Boolean);
+    priceTypes.forEach(priceType => {
+        const checkbox = document.getElementById(`price-${priceType}`);
+        if (checkbox) checkbox.checked = true;
+    });
+
+    // Cập nhật các checkbox trạng thái đăng ký
+    const enrollmentStatus = (urlParams.get('enrollmentStatus') || '').split(',').filter(Boolean);
+    if (enrollmentStatus.length > 0) {
+        document.querySelectorAll('.enrollment-filter').forEach(checkbox => {
+            checkbox.checked = enrollmentStatus.includes(checkbox.value);
+        });
+    } else {
+        // Mặc định chọn tất cả
+        document.querySelectorAll('.enrollment-filter').forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    }
+}
+
+/**
+ * Lấy các tham số từ URL hiện tại
+ */
+function getUrlParams() {
+    return new URLSearchParams(window.location.search);
+}
+
+/**
+ * Cập nhật URL với các tham số mới (thay đổi URL nhưng không reload trang)
+ */
+function updateUrlParams(params = {}) {
+    const urlParams = getUrlParams();
+
+    // Cập nhật từng tham số
+    Object.entries(params).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === '') {
+            urlParams.delete(key);
+        } else {
+            urlParams.set(key, value);
+        }
+    });
+
+    // Cập nhật URL mà không reload trang
+    const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+    history.pushState({ path: newUrl }, '', newUrl);
+}
 
 // Thiết lập các sự kiện
 function setupEventListeners() {
     // Xử lý tìm kiếm
     document.getElementById('searchButton').addEventListener('click', function() {
-        currentSearch = document.getElementById('courseSearch').value.trim();
-        currentPage = 0;
+        const searchValue = document.getElementById('courseSearch').value.trim();
+        updateUrlParams({
+            search: searchValue,
+            page: 0 // Reset về trang đầu tiên
+        });
         loadCourses();
     });
 
     document.getElementById('courseSearch').addEventListener('keyup', function(event) {
         if (event.key === 'Enter') {
-            currentSearch = document.getElementById('courseSearch').value.trim();
-            currentPage = 0;
+            const searchValue = this.value.trim();
+            updateUrlParams({
+                search: searchValue,
+                page: 0 // Reset về trang đầu tiên
+            });
             loadCourses();
         }
     });
@@ -62,9 +142,13 @@ function setupEventListeners() {
     document.querySelectorAll('.dropdown-item[data-sort]').forEach(item => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
-            currentSort = this.dataset.sort;
+            const sortBy = this.getAttribute('data-sort');
             document.getElementById('sortDropdown').textContent = this.textContent;
-            currentPage = 0;
+
+            updateUrlParams({
+                sort: sortBy,
+                page: 0 // Reset về trang đầu tiên
+            });
             loadCourses();
         });
     });
@@ -72,17 +156,36 @@ function setupEventListeners() {
     // Xử lý áp dụng bộ lọc
     document.getElementById('applyFilters').addEventListener('click', function() {
         // Lấy danh mục đã chọn
-        currentFilters.categories = Array.from(document.querySelectorAll('.category-filter:checked')).map(el => el.value);
+        const categories = Array.from(document.querySelectorAll('.category-filter:checked'))
+            .map(el => el.value)
+            .join(',');
 
         // Lấy cấp độ đã chọn
-        currentFilters.levels = Array.from(document.querySelectorAll('.level-filter:checked')).map(el => el.value);
+        const levels = Array.from(document.querySelectorAll('.level-filter:checked'))
+            .map(el => el.value)
+            .join(',');
 
         // Lấy loại giá đã chọn
-        currentFilters.priceTypes = Array.from(document.querySelectorAll('.price-filter:checked')).map(el => el.value);
+        const priceTypes = Array.from(document.querySelectorAll('.price-filter:checked'))
+            .map(el => el.value)
+            .join(',');
 
-        currentPage = 0;
+        // Lấy trạng thái đăng ký đã chọn
+        const enrollmentStatus = Array.from(document.querySelectorAll('.enrollment-filter:checked'))
+            .map(el => el.value)
+            .join(',');
+
+        updateUrlParams({
+            categories: categories,
+            levels: levels,
+            priceTypes: priceTypes,
+            enrollmentStatus: enrollmentStatus,
+            page: 0 // Reset về trang đầu tiên
+        });
         loadCourses();
     });
+
+
 }
 
 // Hàm tải danh mục từ API
@@ -95,6 +198,9 @@ async function loadCategories() {
 
         const categories = await response.json();
         renderCategories(categories);
+
+        // Sau khi render categories, cập nhật lại UI từ URL params
+        updateUIFromUrlParams(new URLSearchParams(window.location.search));
     } catch (error) {
         console.error('Lỗi khi tải danh mục:', error);
         document.getElementById('categoryFilters').innerHTML = '<p class="text-danger">Không thể tải danh mục</p>';
@@ -126,38 +232,55 @@ function renderCategories(categories) {
         container.appendChild(checkboxDiv);
     });
 }
+
 // Hàm tải khóa học từ API
 async function loadCourses() {
     try {
         // Hiển thị loading
         document.getElementById('loading').style.display = 'block';
 
+        // Lấy tham số từ URL
+        const urlParams = getUrlParams();
+        const page = parseInt(urlParams.get('page')) || 0;
+        const size = parseInt(urlParams.get('size')) || 6;
+        const sort = urlParams.get('sort') || 'newest';
+        const search = urlParams.get('search') || '';
+        const categories = urlParams.get('categories') || '';
+        const levels = urlParams.get('levels') || '';
+        const priceTypes = urlParams.get('priceTypes') || '';
+        const enrollmentStatus = urlParams.get('enrollmentStatus') || '';
+
         // Xây dựng URL với các tham số
-        let url = `/api/user/all-courses?page=${currentPage}&size=${pageSize}`;
+        let url = `/api/user/all-courses?page=${page}&size=${size}`;
 
         // Thêm tham số sắp xếp
-        if (currentSort) {
-            url += `&sort=${currentSort}`;
+        if (sort) {
+            url += `&sort=${sort}`;
         }
 
         // Thêm tham số tìm kiếm
-        if (currentSearch) {
-            url += `&search=${encodeURIComponent(currentSearch)}`;
+        if (search) {
+            url += `&search=${encodeURIComponent(search)}`;
         }
 
         // Thêm bộ lọc danh mục
-        if (currentFilters.categories && currentFilters.categories.length) {
-            url += `&categories=${currentFilters.categories.join(',')}`;
+        if (categories) {
+            url += `&categories=${categories}`;
         }
 
         // Thêm bộ lọc cấp độ
-        if (currentFilters.levels && currentFilters.levels.length) {
-            url += `&levels=${currentFilters.levels.join(',')}`;
+        if (levels) {
+            url += `&levels=${levels}`;
         }
 
         // Thêm bộ lọc giá
-        if (currentFilters.priceTypes && currentFilters.priceTypes.length) {
-            url += `&priceTypes=${currentFilters.priceTypes.join(',')}`;
+        if (priceTypes) {
+            url += `&priceTypes=${priceTypes}`;
+        }
+
+        // Thêm bộ lọc trạng thái đăng ký
+        if (enrollmentStatus && enrollmentStatus !== 'enrolled,not-enrolled') {
+            url += `&enrollmentStatus=${enrollmentStatus}`;
         }
 
         // Gọi API với xác thực
@@ -169,12 +292,9 @@ async function loadCourses() {
         // Phân tích dữ liệu
         const data = await response.json();
 
-        // Cập nhật biến toàn cục
-        totalPages = data.totalPages;
-
         // Hiển thị khóa học và phân trang
         renderCourses(data.content);
-        renderPagination(data.totalPages);
+        renderPagination(data.totalPages, page);
     } catch (error) {
         console.error('Lỗi khi tải khóa học:', error);
         document.getElementById('courseContainer').innerHTML =
@@ -232,6 +352,13 @@ function createCourseCard(course) {
                     </div>`;
     }
 
+    // Hiển thị badge đã đăng ký nếu có
+    if (course.isEnrolled) {
+        badgeHtml += `<div class="badge-container position-absolute" style="top: 10px; right: 10px;">
+                        <span class="badge bg-success">Đã đăng ký</span>
+                      </div>`;
+    }
+
     // Định dạng giá
     let priceHtml = '';
     let priceClass = 'text-primary';
@@ -247,8 +374,17 @@ function createCourseCard(course) {
         }
     }
 
-    // Tạo đường dẫn chi tiết khóa học
-    const courseDetailUrl = `course-detail/${course.courseId}`;
+    // Tạo đường dẫn chi tiết khóa học với thông tin phân trang
+    const urlParams = getUrlParams();
+    let courseDetailUrl = `course-detail/${course.courseId}?returnPage=${urlParams.get('page') || '0'}`;
+
+    // Thêm các tham số khác vào URL
+    ['size', 'sort', 'search', 'categories', 'levels', 'priceTypes', 'enrollmentStatus'].forEach(param => {
+        const value = urlParams.get(param);
+        if (value) {
+            courseDetailUrl += `&return${param.charAt(0).toUpperCase() + param.slice(1)}=${encodeURIComponent(value)}`;
+        }
+    });
 
     columnDiv.innerHTML = `
     <div class="card course-card position-relative" style="cursor: pointer;" onclick="window.location.href='${courseDetailUrl}'">
@@ -283,7 +419,7 @@ function createCourseCard(course) {
 }
 
 // Hàm hiển thị phân trang
-function renderPagination(totalPages) {
+function renderPagination(totalPages, currentPage) {
     const pagination = document.getElementById('pagination');
     pagination.innerHTML = '';
 
@@ -299,7 +435,7 @@ function renderPagination(totalPages) {
     if (currentPage > 0) {
         prevLi.querySelector('a').addEventListener('click', function(e) {
             e.preventDefault();
-            currentPage--;
+            updateUrlParams({ page: currentPage - 1 });
             loadCourses();
         });
     }
@@ -318,7 +454,7 @@ function renderPagination(totalPages) {
 
         pageLi.querySelector('a').addEventListener('click', function(e) {
             e.preventDefault();
-            currentPage = i;
+            updateUrlParams({ page: i });
             loadCourses();
         });
 
@@ -333,7 +469,7 @@ function renderPagination(totalPages) {
     if (currentPage < totalPages - 1) {
         nextLi.querySelector('a').addEventListener('click', function(e) {
             e.preventDefault();
-            currentPage++;
+            updateUrlParams({ page: currentPage + 1 });
             loadCourses();
         });
     }

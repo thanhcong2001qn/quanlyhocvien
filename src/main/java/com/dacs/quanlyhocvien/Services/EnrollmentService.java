@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -137,4 +138,108 @@ public class EnrollmentService {
 //
 //        return false;
 //    }
+
+    /**
+     * Thanh toán nhiều khóa học cùng lúc
+     */
+    @Transactional
+    public boolean checkoutMultipleCourses(List<Long> courseIds, String username) {
+        try {
+            Long studentId = studentService.getStudentByUserName(username).getStudentId();
+            Optional<StudentModel> studentOpt = studentRepository.findById(studentId);
+
+            if (!studentOpt.isPresent()) {
+                return false;
+            }
+
+            StudentModel student = studentOpt.get();
+            List<CourseModel> coursesToEnroll = new ArrayList<>();
+            BigDecimal totalAmount = BigDecimal.ZERO;
+
+            // Validate all courses and calculate total amount
+            for (Long courseId : courseIds) {
+                // Skip if already enrolled
+                if (enrollmentRepository.existsByCourse_CourseIdAndStudent_StudentId(courseId, studentId)) {
+                    continue;
+                }
+
+                Optional<CourseModel> courseOpt = courseRepository.findById(courseId);
+                if (!courseOpt.isPresent()) {
+                    // If any course is invalid, roll back transaction
+                    return false;
+                }
+
+                CourseModel course = courseOpt.get();
+                coursesToEnroll.add(course);
+
+                // Calculate price (considering discounts if applicable)
+                BigDecimal coursePrice;
+                if (course.getDiscountPrice() != null && course.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0) {
+                    coursePrice = course.getDiscountPrice();
+                } else {
+                    coursePrice = course.getPrice();
+                }
+
+                totalAmount = totalAmount.add(coursePrice);
+            }
+
+            // If no valid courses to enroll (all already enrolled or invalid), return true
+            if (coursesToEnroll.isEmpty()) {
+                return true;
+            }
+
+            // Create enrollment records for each course
+            for (CourseModel course : coursesToEnroll) {
+                EnrollmentModel enrollment = new EnrollmentModel();
+                enrollment.setCourse(course);
+                enrollment.setStudent(student);
+                enrollment.setEnrollmentDate(LocalDateTime.now());
+
+                // Determine the course price
+                BigDecimal coursePrice;
+                if (course.getDiscountPrice() != null && course.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0) {
+                    coursePrice = course.getDiscountPrice();
+                } else {
+                    coursePrice = course.getPrice();
+                }
+
+                // For paid courses, set payment status to 'pending'
+                if (coursePrice.compareTo(BigDecimal.ZERO) > 0) {
+                    enrollment.setPaymentStatus("pending");
+                    enrollment.setPaymentAmount(coursePrice);
+                    // Payment method will be set after checkout
+                } else {
+                    // Free courses are marked as completed right away
+                    enrollment.setPaymentStatus("completed");
+                    enrollment.setPaymentAmount(BigDecimal.ZERO);
+                    enrollment.setPaymentMethod("free");
+                    enrollment.setPaymentDate(LocalDateTime.now());
+
+                    // Update total students count for free courses
+                    course.setTotalStudents(course.getTotalStudents() + 1);
+                    courseRepository.save(course);
+                }
+
+                // Save enrollment
+                enrollmentRepository.save(enrollment);
+            }
+
+            // Here you could also create an order record with the total amount
+            // and link the enrollments to it
+
+            return true;
+        } catch (Exception e) {
+            // Transaction will be rolled back due to @Transactional annotation
+            return false;
+        }
+    }
+    /**
+     * Kiểm tra xem học viên đã đăng ký khóa học hay chưa
+     * @param courseId ID của khóa học
+     * @param studentId ID của học viên
+     * @return true nếu đã đăng ký, false nếu chưa
+     */
+    public boolean checkEnrollment(Long courseId, Long studentId) {
+        return enrollmentRepository.existsByCourse_CourseIdAndStudent_StudentId(courseId, studentId);
+    }
 }

@@ -1,60 +1,14 @@
-// const searchBtn = document.getElementById('search-btn');
-// const searchForm = document.getElementById('search-form');
+
 let isSearchActive = false;
 
-// searchBtn.addEventListener('click', function (e) {
-//     e.preventDefault(); // Ngăn chặn hành vi mặc định
-//     e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài
-//
-//     if (!isSearchActive) {
-//         // Mở thanh tìm kiếm
-//         searchForm.classList.remove('not-active');
-//         searchForm.classList.add('active');
-//         isSearchActive = true;
-//     } else {
-//         // Đóng thanh tìm kiếm
-//         searchForm.classList.add('not-active');
-//         searchForm.classList.remove('active');
-//         isSearchActive = false;
-//     }
-// });
 document.addEventListener('DOMContentLoaded', function () {
     updateCartBadge();
-    updateAuthUI();
     updateUtcTime();
     active();
     // Cập nhật thời gian UTC mỗi phút
     setInterval(updateUtcTime, 60000);
 
-    // Lắng nghe sự kiện storage
-    window.addEventListener('storage', function (e) {
-        if (e.key === 'token' || e.key === 'username') {
-            updateAuthUI();
-        }
-    });
-
 });
-
-function updateAuthUI() {
-    const token = localStorage.getItem('token');
-    const notAuthMenu = document.getElementById('not-authenticated-menu');
-    const authMenu = document.getElementById('authenticated-menu');
-    const usernameDisplay = document.getElementById('username-display');
-
-    if (token && !isTokenExpired(token)) {
-        // Đã đăng nhập
-        notAuthMenu.style.display = 'none';
-        authMenu.style.display = 'block';
-
-        // Hiển thị username
-        const userInfo = getUserInfoFromToken(token);
-        usernameDisplay.textContent = userInfo.username || 'Người dùng';
-    } else {
-        // Chưa đăng nhập
-        notAuthMenu.style.display = 'block';
-        authMenu.style.display = 'none';
-    }
-}
 
 function updateUtcTime() {
     const utcTimeDisplay = document.getElementById('utc-time-display');
@@ -104,22 +58,43 @@ function getUserInfoFromToken(token) {
 
 function logout() {
     // Hiển thị xác nhận nếu cần
-    showConfirmation("Bạn có chắc muốn đăng xuất?", function (){
-        localStorage.removeItem('token');
-        // localStorage.removeItem('refresh_token');
-        localStorage.removeItem('username');
+    showConfirmation("Bạn có chắc muốn đăng xuất?", function() {
+        // Tạo form ẩn để thực hiện POST request đến /logout
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = '/logout';
 
-        // Cập nhật giao diện
-        updateAuthUI();
+        // Thêm CSRF token nếu bạn đang sử dụng CSRF protection
+        // Nếu bạn đã tắt CSRF, có thể bỏ qua phần này
+        /*
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
-        // Chuyển hướng đến trang chủ
-        window.location.href = '/home';
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = csrfHeader;
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        */
+
+        // Thêm form vào document và submit
+        document.body.appendChild(form);
+
+
+        // Submit form để gửi request đến server
+        form.submit();
+
+        // Lưu ý: Các dòng code bên dưới có thể không được thực thi
+        // vì việc submit form sẽ chuyển hướng trang
+
+        // Cập nhật giao diện (nếu cần)
+        // updateAuthUI();
 
         // Ghi log thời gian đăng xuất
-        //const now = new Date();
-        //console.log(`Đăng xuất thành công lúc: ${formatUTCDateTime(now)}`);
-    }, function () {
-        // Không làm gì cả
+        // const now = new Date();
+        // console.log(`Đăng xuất thành công lúc: ${formatUTCDateTime(now)}`);
+    }, function() {
+        // Không làm gì cả khi người dùng hủy đăng xuất
     });
 }
 function active(){
