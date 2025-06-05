@@ -10,8 +10,6 @@ import com.dacs.quanlyhocvien.Services.CourseService;
 import com.dacs.quanlyhocvien.models.AccountModel;
 import com.dacs.quanlyhocvien.models.CourseCategoryModel;
 import com.dacs.quanlyhocvien.models.CourseModel;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Safelist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
