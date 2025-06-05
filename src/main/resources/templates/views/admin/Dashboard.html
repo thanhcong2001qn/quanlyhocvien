@@ -14,86 +14,99 @@
   <div class="content-wrapper">
     <div class="container-fluid mt-3">
       <!-- Stats Cards -->
+      <!-- Stats Cards -->
       <div class="row g-3 mb-4">
-        <div class="col-xl-4 col-md-6">
+        <!-- Tổng học viên -->
+        <div class="col-xl-6 col-md-6">
           <div class="card stat-card bg-info text-white">
             <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <h5 class="card-title">Tổng học viên</h5>
-                  <h2 class="mb-0">358</h2>
-                  <p class="mb-0">
-                    <span class="text-success">↑ 15.3%</span> so với tháng trước
-                  </p>
-                </div>
-              </div>
+              <h5 class="card-title">Tổng học viên</h5>
+              <h2 class="mb-0" th:text="${totalStudents}">0</h2>
+              <p class="mb-0"><span class="text-success">↑ 12%</span> so với tháng trước</p>
             </div>
           </div>
         </div>
-        <div class="col-xl-4 col-md-6">
+
+        <!-- Tổng doanh thu -->
+        <div class="col-xl-6 col-md-6">
           <div class="card stat-card bg-success text-white">
             <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <h5 class="card-title">Tổng giáo viên</h5>
-                  <h2 class="mb-0">854</h2>
-                  <p class="mb-0">
-                    <span class="text-info">↑ 5.7%</span> so với tháng trước
-                  </p>
-                </div>
-              </div>
+              <h5 class="card-title">Tổng doanh thu</h5>
+              <h2 class="mb-0" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 2, 'POINT')} + ' ₫'">0 ₫</h2>
+              <p class="mb-0"><span class="text-info">↑ 7.8%</span> so với tháng trước</p>
             </div>
           </div>
         </div>
-        <div class="col-xl-4 col-md-6">
-          <div class="card stat-card bg-warning text-white">
+
+        <div class="col-xl-6 col-md-6">
+          <div class="card stat-card bg-primary text-white">
             <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <h5 class="card-title">Doanh thu</h5>
-                  <h2 class="mb-0">1,258</h2>
-                  <p class="mb-0">
-                    <span class="text-danger">↑ 8.3%</span> so với tháng trước
-                  </p>
-                </div>
-              </div>
+              <h5 class="card-title">Tổng khóa học</h5>
+              <h2 th:text="${totalCourses}">0</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-6 col-md-6">
+          <div class="card stat-card bg-secondary text-white">
+            <div class="card-body">
+              <h5 class="card-title">Chứng chỉ đã cấp</h5>
+              <h2 th:text="${issuedCertificates}">0</h2>
             </div>
           </div>
         </div>
 
       </div>
+
 
       <!-- Charts -->
+      <!-- Charts -->
       <div class="row mb-4">
-        <div class="col-xl-8">
+        <!-- Pie Chart -->
+        <div class="col-xl-6">
           <div class="card h-100">
-            <div class="card-header">
-              Sales Analytics
-            </div>
-            <div class="card-body">
-              <canvas id="salesChart" width="400" height="200"></canvas>
+            <div class="card-header text-center">Giao dịch theo trạng thái</div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+              <div style="height: 220px; width: 100%;">
+                <canvas id="transactionPie"></canvas>
+              </div>
+              <p th:if="${#lists.isEmpty(transactionLabels)}" class="text-muted mt-3">Không có dữ liệu giao dịch</p>
             </div>
           </div>
         </div>
-        <div class="col-xl-4">
+
+        <!-- Line Chart -->
+        <div class="col-xl-6">
           <div class="card h-100">
-            <div class="card-header">
-              Traffic Sources
-            </div>
-            <div class="card-body d-flex align-items-center justify-content-center">
-              <canvas id="trafficChart" width="200" height="200"></canvas>
+            <div class="card-header text-center">Thống kê doanh thu hàng tháng</div>
+            <div class="card-body">
+              <div style="height: 220px; width: 100%;">
+                <canvas id="revenueChart"></canvas>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Recent Orders Table -->
+      <!--        <div class="col-xl-4">-->
+<!--          <div class="card h-100">-->
+<!--            <div class="card-header">-->
+<!--              Traffic Sources-->
+<!--            </div>-->
+<!--            <div class="card-body d-flex align-items-center justify-content-center">-->
+<!--              <canvas id="trafficChart" width="200" height="200"></canvas>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+      </div>
+
+      <!-- Giao dịch gần nhất -->
       <div class="row mb-4">
         <div class="col-12">
           <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-              <span>Recent Orders</span>
-              <button class="btn btn-sm btn-primary">View All</button>
+              <span>Giao dịch gần nhất</span>
+              <a class="btn btn-sm btn-primary" th:href="@{/admin/enrollments}">Xem tất cả</a>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -101,80 +114,35 @@
                   <thead>
                   <tr>
                     <th>#</th>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Product</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th>Mã giao dịch</th>
+                    <th>Học viên</th>
+                    <th>Khóa học</th>
+                    <th>Ngày mua</th>
+                    <th>Số tiền</th>
+                    <th>Trạng thái</th>
                   </tr>
                   </thead>
                   <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>#ORD-0025</td>
-                    <td>John Doe</td>
-                    <td>Smartphone</td>
-                    <td>2025-03-12</td>
-                    <td>$1,200</td>
-                    <td><span class="badge bg-success">Completed</span></td>
+                  <tr th:each="tx, iterStat : ${recentTransactions}">
+                    <td th:text="${iterStat.count}">1</td>
+                    <td th:text="'TX-' + ${tx.enrollmentId}">TX-0001</td>
+                    <td th:text="${tx.student.account.fullName}">Nguyễn Văn A</td>
+                    <td th:text="${tx.course.title}">Khóa học A</td>
+                    <td th:text="${#temporals.format(tx.purchaseDate, 'dd/MM/yyyy')}">01/06/2025</td>
+                    <td th:text="${#numbers.formatDecimal(tx.amountPaid, 0, 'COMMA', 2, 'POINT')} + ' ₫'">0 ₫</td>
                     <td>
-                      <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                      <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
+                  <span class="badge bg-success"
+                        th:if="${tx.paymentStatus.name() == 'COMPLETED'}">Hoàn tất</span>
+                      <span class="badge bg-warning text-dark"
+                            th:if="${tx.paymentStatus.name() == 'PENDING'}">Đang chờ</span>
+                      <span class="badge bg-danger"
+                            th:if="${tx.paymentStatus.name() == 'FAILED'}">Thất bại</span>
+                      <span class="badge bg-secondary"
+                            th:if="${tx.paymentStatus.name() == 'REFUNDED'}">Đã hoàn</span>
                     </td>
                   </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>#ORD-0024</td>
-                    <td>Jane Smith</td>
-                    <td>Laptop</td>
-                    <td>2025-03-11</td>
-                    <td>$1,850</td>
-                    <td><span class="badge bg-warning">Pending</span></td>
-                    <td>
-                      <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                      <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>#ORD-0023</td>
-                    <td>Mike Johnson</td>
-                    <td>Headphones</td>
-                    <td>2025-03-10</td>
-                    <td>$350</td>
-                    <td><span class="badge bg-success">Completed</span></td>
-                    <td>
-                      <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                      <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td>#ORD-0022</td>
-                    <td>Lisa Brown</td>
-                    <td>Smart Watch</td>
-                    <td>2025-03-09</td>
-                    <td>$420</td>
-                    <td><span class="badge bg-danger">Cancelled</span></td>
-                    <td>
-                      <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                      <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>5</td>
-                    <td>#ORD-0021</td>
-                    <td>Robert White</td>
-                    <td>Monitor</td>
-                    <td>2025-03-08</td>
-                    <td>$750</td>
-                    <td><span class="badge bg-info">Shipped</span></td>
-                    <td>
-                      <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                      <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
-                    </td>
+                  <tr th:if="${#lists.isEmpty(recentTransactions)}">
+                    <td colspan="7" class="text-center">Không có giao dịch nào</td>
                   </tr>
                   </tbody>
                 </table>
@@ -184,100 +152,157 @@
         </div>
       </div>
 
-      <!-- Quick Stats and Activity -->
-      <div class="row">
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header">
-              Today's Tasks
-            </div>
-            <div class="card-body">
-              <div class="list-group">
-                <div class="list-group-item d-flex align-items-center">
-                  <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" value="" id="task1">
-                  </div>
-                  <label class="form-check-label" for="task1">
-                    Complete monthly report
-                  </label>
-                  <span class="ms-auto badge bg-warning">High</span>
-                </div>
-                <div class="list-group-item d-flex align-items-center">
-                  <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" value="" id="task2" checked>
-                  </div>
-                  <label class="form-check-label text-decoration-line-through" for="task2">
-                    Team meeting at 2 PM
-                  </label>
-                  <span class="ms-auto badge bg-success">Done</span>
-                </div>
-                <div class="list-group-item d-flex align-items-center">
-                  <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" value="" id="task3">
-                  </div>
-                  <label class="form-check-label" for="task3">
-                    Update website content
-                  </label>
-                  <span class="ms-auto badge bg-info">Medium</span>
-                </div>
-                <div class="list-group-item d-flex align-items-center">
-                  <div class="form-check me-3">
-                    <input class="form-check-input" type="checkbox" value="" id="task4">
-                  </div>
-                  <label class="form-check-label" for="task4">
-                    Review new product designs
-                  </label>
-                  <span class="ms-auto badge bg-danger">Urgent</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header">
-              Recent Activities
-            </div>
-            <div class="card-body">
-              <ul class="list-unstyled activity-list">
-                <li class="activity-item">
-                  <span class="activity-icon bg-success"><i class="bi bi-person"></i></span>
-                  <div class="activity-content">
-                    <p class="mb-0"><strong>John Doe</strong> created a new account</p>
-                    <small class="text-muted">Today, 13:45</small>
-                  </div>
-                </li>
-                <li class="activity-item">
-                  <span class="activity-icon bg-primary"><i class="bi bi-bag"></i></span>
-                  <div class="activity-content">
-                    <p class="mb-0">New order <strong>#ORD-0025</strong> placed</p>
-                    <small class="text-muted">Today, 12:30</small>
-                  </div>
-                </li>
-                <li class="activity-item">
-                  <span class="activity-icon bg-warning"><i class="bi bi-gear"></i></span>
-                  <div class="activity-content">
-                    <p class="mb-0"><strong>System</strong> updated successfully</p>
-                    <small class="text-muted">Today, 10:15</small>
-                  </div>
-                </li>
-                <li class="activity-item">
-                  <span class="activity-icon bg-danger"><i class="bi bi-exclamation-circle"></i></span>
-                  <div class="activity-content">
-                    <p class="mb-0"><strong>Warning</strong> Server load high (92%)</p>
-                    <small class="text-muted">Today, 09:23</small>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
+
+<!--      &lt;!&ndash; Quick Stats and Activity &ndash;&gt;-->
+<!--      <div class="row">-->
+<!--        <div class="col-md-6">-->
+<!--          <div class="card">-->
+<!--            <div class="card-header">-->
+<!--              Today's Tasks-->
+<!--            </div>-->
+<!--            <div class="card-body">-->
+<!--              <div class="list-group">-->
+<!--                <div class="list-group-item d-flex align-items-center">-->
+<!--                  <div class="form-check me-3">-->
+<!--                    <input class="form-check-input" type="checkbox" value="" id="task1">-->
+<!--                  </div>-->
+<!--                  <label class="form-check-label" for="task1">-->
+<!--                    Complete monthly report-->
+<!--                  </label>-->
+<!--                  <span class="ms-auto badge bg-warning">High</span>-->
+<!--                </div>-->
+<!--                <div class="list-group-item d-flex align-items-center">-->
+<!--                  <div class="form-check me-3">-->
+<!--                    <input class="form-check-input" type="checkbox" value="" id="task2" checked>-->
+<!--                  </div>-->
+<!--                  <label class="form-check-label text-decoration-line-through" for="task2">-->
+<!--                    Team meeting at 2 PM-->
+<!--                  </label>-->
+<!--                  <span class="ms-auto badge bg-success">Done</span>-->
+<!--                </div>-->
+<!--                <div class="list-group-item d-flex align-items-center">-->
+<!--                  <div class="form-check me-3">-->
+<!--                    <input class="form-check-input" type="checkbox" value="" id="task3">-->
+<!--                  </div>-->
+<!--                  <label class="form-check-label" for="task3">-->
+<!--                    Update website content-->
+<!--                  </label>-->
+<!--                  <span class="ms-auto badge bg-info">Medium</span>-->
+<!--                </div>-->
+<!--                <div class="list-group-item d-flex align-items-center">-->
+<!--                  <div class="form-check me-3">-->
+<!--                    <input class="form-check-input" type="checkbox" value="" id="task4">-->
+<!--                  </div>-->
+<!--                  <label class="form-check-label" for="task4">-->
+<!--                    Review new product designs-->
+<!--                  </label>-->
+<!--                  <span class="ms-auto badge bg-danger">Urgent</span>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="col-md-6">-->
+<!--          <div class="card">-->
+<!--            <div class="card-header">-->
+<!--              Recent Activities-->
+<!--            </div>-->
+<!--            <div class="card-body">-->
+<!--              <ul class="list-unstyled activity-list">-->
+<!--                <li class="activity-item">-->
+<!--                  <span class="activity-icon bg-success"><i class="bi bi-person"></i></span>-->
+<!--                  <div class="activity-content">-->
+<!--                    <p class="mb-0"><strong>John Doe</strong> created a new account</p>-->
+<!--                    <small class="text-muted">Today, 13:45</small>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--                <li class="activity-item">-->
+<!--                  <span class="activity-icon bg-primary"><i class="bi bi-bag"></i></span>-->
+<!--                  <div class="activity-content">-->
+<!--                    <p class="mb-0">New order <strong>#ORD-0025</strong> placed</p>-->
+<!--                    <small class="text-muted">Today, 12:30</small>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--                <li class="activity-item">-->
+<!--                  <span class="activity-icon bg-warning"><i class="bi bi-gear"></i></span>-->
+<!--                  <div class="activity-content">-->
+<!--                    <p class="mb-0"><strong>System</strong> updated successfully</p>-->
+<!--                    <small class="text-muted">Today, 10:15</small>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--                <li class="activity-item">-->
+<!--                  <span class="activity-icon bg-danger"><i class="bi bi-exclamation-circle"></i></span>-->
+<!--                  <div class="activity-content">-->
+<!--                    <p class="mb-0"><strong>Warning</strong> Server load high (92%)</p>-->
+<!--                    <small class="text-muted">Today, 09:23</small>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--              </ul>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
   </div>
 </section>
 <th:block layout:fragment="script">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script th:inline="javascript">
+    let revenueLabels = [[${monthlyRevenueLabels}]];
+    let revenueValues = [[${monthlyRevenueValues}]];
+
+    new Chart(document.getElementById("revenueChart"), {
+        type: 'line',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                label: 'Doanh thu theo tháng',
+                data: revenueValues,
+                borderColor: 'rgba(75,192,192,1)',
+                tension: 0.3,
+                fill: true,
+                backgroundColor: 'rgba(75,192,192,0.2)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Thống kê doanh thu hàng tháng' }
+            }
+        }
+    });
+  </script>
+  <script th:inline="javascript">
+    const transactionLabels = [[${transactionLabels}]];
+    const transactionValues = [[${transactionValues}]];
+
+    const statusColors = {
+        'COMPLETED': '#28a745',
+        'PENDING': '#ffc107',
+        'FAILED': '#dc3545',
+        'REFUNDED': '#6c757d'
+    };
+
+    const backgroundColors = transactionLabels.map(label => statusColors[label] || '#999'); // fallback màu xám
+
+    new Chart(document.getElementById('transactionPie'), {
+        type: 'pie',
+        data: {
+            labels: transactionLabels,
+            datasets: [{
+                data: transactionValues,
+                backgroundColor: backgroundColors
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { position: 'bottom' },
+                title: { display: true, text: 'Phân bố trạng thái giao dịch' }
+            }
+        }
+    });
+  </script>
 </th:block>
 </body>
 </html>

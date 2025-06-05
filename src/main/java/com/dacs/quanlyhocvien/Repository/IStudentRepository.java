@@ -12,4 +12,5 @@ public interface IStudentRepository extends JpaRepository <StudentModel, Long>{
     List<StudentModel> findByAccountFullNameContainingIgnoreCaseAndClassNameContainingIgnoreCase(String fullName, String className);
     List<StudentModel> findByAccountFullNameContainingIgnoreCase(String name);
     List<StudentModel> findByClassNameContainingIgnoreCase(String className);
+
 }
