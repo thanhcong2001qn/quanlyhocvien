@@ -30,9 +30,6 @@
                         <a href="/login" class="btn btn-outline-primary btn-lg px-4">Đăng nhập</a>
                     </div>
                 </div>
-                <div class="col-lg-6 d-none d-lg-block fade-in fade-in-delay-2">
-                    <img th:src="@{/images/hero-illustration.svg}" alt="Learning" class="img-fluid">
-                </div>
             </div>
         </div>
     </section>
@@ -72,69 +69,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Popular Courses -->
-    <section class="popular-courses py-5">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fade-in">Khóa học nổi bật</h2>
-                <a href="/courses" class="btn btn-outline-primary fade-in">Xem tất cả</a>
-            </div>
-            <div class="courses-grid fade-in fade-in-delay-1">
-                <!-- Featured Course 1 -->
-                <div class="course-card">
-                    <div class="course-image">
-                        <img src="https://via.placeholder.com/300x180" alt="Java Course">
-                        <div class="course-badge">Bestseller</div>
-                    </div>
-                    <div class="course-content">
-                        <h3 class="course-title">Java Programming Masterclass</h3>
-                        <div class="course-meta">
-                            <span><i class="fas fa-book"></i> 42 bài học</span>
-                            <span><i class="fas fa-clock"></i> 24 giờ</span>
-                        </div>
-                        <div class="course-rating">
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star-half-alt text-warning"></i>
-                            <span>4.5 (128)</span>
-                        </div>
-                        <div class="course-footer">
-                            <a href="/login" class="btn btn-primary btn-sm">Đăng ký</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Featured Course 2 -->
-                <div class="course-card">
-                    <div class="course-image">
-                        <img src="https://via.placeholder.com/300x180" alt="Spring Boot Course">
-                        <div class="course-badge">Hot</div>
-                    </div>
-                    <div class="course-content">
-                        <h3 class="course-title">Spring Boot cho người mới bắt đầu</h3>
-                        <div class="course-meta">
-                            <span><i class="fas fa-book"></i> 36 bài học</span>
-                            <span><i class="fas fa-clock"></i> 18 giờ</span>
-                        </div>
-                        <div class="course-rating">
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="far fa-star text-warning"></i>
-                            <span>4.0 (85)</span>
-                        </div>
-                        <div class="course-footer">
-                            <a href="/login" class="btn btn-primary btn-sm">Đăng ký</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Call to Action -->
     <section class="cta-section py-5 bg-primary text-white text-center">
         <div class="container">
@@ -172,7 +106,11 @@
                 <i class="fas fa-graduation-cap"></i>
             </div>
             <div class="stat-content">
-                <h3>5</h3>
+                <h3 id="enrolled-courses-count">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </h3>
                 <div class="stat-label">Khóa học đã đăng ký</div>
             </div>
         </div>
@@ -182,7 +120,11 @@
                 <i class="fas fa-award"></i>
             </div>
             <div class="stat-content">
-                <h3>12</h3>
+                <h3 id="completed-lessons-count">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </h3>
                 <div class="stat-label">Bài học hoàn thành</div>
             </div>
         </div>
@@ -192,7 +134,11 @@
                 <i class="fas fa-clock"></i>
             </div>
             <div class="stat-content">
-                <h3>8.5</h3>
+                <h3 id="total-learning-hours">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </h3>
                 <div class="stat-label">Giờ học tập</div>
             </div>
         </div>
@@ -202,7 +148,11 @@
                 <i class="fas fa-star"></i>
             </div>
             <div class="stat-content">
-                <h3>120</h3>
+                <h3 id="achievement-points">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </h3>
                 <div class="stat-label">Điểm thành tích</div>
             </div>
         </div>
@@ -244,184 +194,124 @@
     <section id="explore-courses" class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="h3">Khóa học nổi bật</h2>
-            <a href="/user/all-source" class="btn btn-sm btn-outline-primary">Xem tất
-                cả khóa học</a>
+            <a href="/user/all-course" class="btn btn-sm btn-outline-primary">Xem tất cả khóa học</a>
         </div>
-        <div class="courses-grid">
-            <!-- Course Card 1 -->
-            <div class="course-card">
-                <div class="course-image">
-                    <img src="https://via.placeholder.com/300x180" alt="Course">
-                    <div class="course-badge">Hot</div>
-                </div>
-                <div class="course-content">
-                    <h3 class="course-title">Java Programming Masterclass</h3>
-                    <div class="course-meta">
-                        <span><i class="fas fa-book"></i> 42 bài học</span>
-                        <span><i class="fas fa-clock"></i> 24 giờ</span>
-                    </div>
-                    <div class="course-rating">
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star-half-alt text-warning"></i>
-                        <span>4.5 (128)</span>
-                    </div>
-                    <div class="course-footer">
-                        <a href="/user/course-detail" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Course Card 2 -->
-            <div class="course-card">
-                <div class="course-image">
-                    <img src="https://via.placeholder.com/300x180" alt="Course">
-                    <div class="course-badge">Mới</div>
-                </div>
-                <div class="course-content">
-                    <h3 class="course-title">Spring Boot cho người mới bắt đầu</h3>
-                    <div class="course-meta">
-                        <span><i class="fas fa-book"></i> 36 bài học</span>
-                        <span><i class="fas fa-clock"></i> 18 giờ</span>
-                    </div>
-                    <div class="course-rating">
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="far fa-star text-warning"></i>
-                        <span>4.0 (85)</span>
-                    </div>
-                    <div class="course-footer">
-                        <a href="#" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
-                    </div>
-                </div>
+        <!-- Loading indicator -->
+        <div id="popular-courses-loading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Đang tải...</span>
             </div>
+            <p class="mt-2">Đang tải khóa học nổi bật...</p>
+        </div>
 
-            <!-- Course Card 3 -->
-            <div class="course-card">
-                <div class="course-image">
-                    <img src="https://via.placeholder.com/300x180" alt="Course">
-                </div>
-                <div class="course-content">
-                    <h3 class="course-title">React JS - Từ cơ bản đến nâng cao</h3>
-                    <div class="course-meta">
-                        <span><i class="fas fa-book"></i> 54 bài học</span>
-                        <span><i class="fas fa-clock"></i> 32 giờ</span>
-                    </div>
-                    <div class="course-rating">
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <span>4.9 (210)</span>
-                    </div>
-                    <div class="course-footer">
-                        <a href="#" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
-                    </div>
-                </div>
-            </div>
+        <!-- Error message container -->
+        <div id="popular-courses-error" class="alert alert-danger d-none">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Không thể tải khóa học nổi bật. Vui lòng thử lại sau.
+        </div>
+
+        <!-- Course container -->
+        <div class="courses-grid" id="popular-courses-container">
+            <!-- Popular courses will be loaded here dynamically -->
         </div>
     </section>
 
-    <!-- Learning Path -->
-    <section class="mb-5">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h3">Lộ trình học tập của bạn</h2>
-        </div>
-        <div class="bg-white p-4 rounded shadow-sm">
-            <div class="learning-path">
-                <div class="path-item completed">
-                    <div class="path-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="path-content">
-                        <h4>Java cơ bản</h4>
-                        <p>Hoàn thành ngày 15/08/2023</p>
-                    </div>
-                </div>
-                <div class="path-item completed">
-                    <div class="path-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="path-content">
-                        <h4>OOP trong Java</h4>
-                        <p>Hoàn thành ngày 29/09/2023</p>
-                    </div>
-                </div>
-                <div class="path-item active">
-                    <div class="path-icon">
-                        <i class="fas fa-spinner fa-spin"></i>
-                    </div>
-                    <div class="path-content">
-                        <h4>Spring Framework</h4>
-                        <p>Đang học - 65% hoàn thành</p>
-                        <div class="progress mt-2" style="height: 5px;">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="path-item">
-                    <div class="path-icon">
-                        <i class="far fa-circle"></i>
-                    </div>
-                    <div class="path-content">
-                        <h4>Spring Boot & Microservices</h4>
-                        <p>Chưa bắt đầu</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!--    &lt;!&ndash; Learning Path &ndash;&gt;-->
+<!--    <section class="mb-5">-->
+<!--        <div class="d-flex justify-content-between align-items-center mb-3">-->
+<!--            <h2 class="h3">Lộ trình học tập của bạn</h2>-->
+<!--        </div>-->
+<!--        <div class="bg-white p-4 rounded shadow-sm">-->
+<!--            <div class="learning-path">-->
+<!--                <div class="path-item completed">-->
+<!--                    <div class="path-icon">-->
+<!--                        <i class="fas fa-check-circle"></i>-->
+<!--                    </div>-->
+<!--                    <div class="path-content">-->
+<!--                        <h4>Java cơ bản</h4>-->
+<!--                        <p>Hoàn thành ngày 15/08/2023</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="path-item completed">-->
+<!--                    <div class="path-icon">-->
+<!--                        <i class="fas fa-check-circle"></i>-->
+<!--                    </div>-->
+<!--                    <div class="path-content">-->
+<!--                        <h4>OOP trong Java</h4>-->
+<!--                        <p>Hoàn thành ngày 29/09/2023</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="path-item active">-->
+<!--                    <div class="path-icon">-->
+<!--                        <i class="fas fa-spinner fa-spin"></i>-->
+<!--                    </div>-->
+<!--                    <div class="path-content">-->
+<!--                        <h4>Spring Framework</h4>-->
+<!--                        <p>Đang học - 65% hoàn thành</p>-->
+<!--                        <div class="progress mt-2" style="height: 5px;">-->
+<!--                            <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="path-item">-->
+<!--                    <div class="path-icon">-->
+<!--                        <i class="far fa-circle"></i>-->
+<!--                    </div>-->
+<!--                    <div class="path-content">-->
+<!--                        <h4>Spring Boot & Microservices</h4>-->
+<!--                        <p>Chưa bắt đầu</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </section>-->
 
-    <!-- Upcoming Events -->
-    <section class="mb-5">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h3">Sự kiện sắp diễn ra</h2>
-            <a href="#" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
-        </div>
-        <div class="table-container">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Tên sự kiện</th>
-                    <th>Thời gian</th>
-                    <th>Loại</th>
-                    <th>Hành động</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Workshop: Xây dựng RESTful API với Spring Boot</td>
-                    <td>25/07/2023, 19:00</td>
-                    <td><span class="badge bg-info">Workshop</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary">Đăng ký</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Q&A: Giải đáp về lập trình Java</td>
-                    <td>28/07/2023, 20:00</td>
-                    <td><span class="badge bg-success">Livestream</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary">Đăng ký</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Chia sẻ kinh nghiệm phỏng vấn Java Developer</td>
-                    <td>02/08/2023, 19:30</td>
-                    <td><span class="badge bg-warning text-dark">Webinar</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary">Đăng ký</button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+<!--    &lt;!&ndash; Upcoming Events &ndash;&gt;-->
+<!--    <section class="mb-5">-->
+<!--        <div class="d-flex justify-content-between align-items-center mb-3">-->
+<!--            <h2 class="h3">Sự kiện sắp diễn ra</h2>-->
+<!--            <a href="#" class="btn btn-sm btn-outline-primary">Xem tất cả</a>-->
+<!--        </div>-->
+<!--        <div class="table-container">-->
+<!--            <table class="table">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>Tên sự kiện</th>-->
+<!--                    <th>Thời gian</th>-->
+<!--                    <th>Loại</th>-->
+<!--                    <th>Hành động</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr>-->
+<!--                    <td>Workshop: Xây dựng RESTful API với Spring Boot</td>-->
+<!--                    <td>25/07/2023, 19:00</td>-->
+<!--                    <td><span class="badge bg-info">Workshop</span></td>-->
+<!--                    <td>-->
+<!--                        <button class="btn btn-sm btn-primary">Đăng ký</button>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td>Q&A: Giải đáp về lập trình Java</td>-->
+<!--                    <td>28/07/2023, 20:00</td>-->
+<!--                    <td><span class="badge bg-success">Livestream</span></td>-->
+<!--                    <td>-->
+<!--                        <button class="btn btn-sm btn-primary">Đăng ký</button>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td>Chia sẻ kinh nghiệm phỏng vấn Java Developer</td>-->
+<!--                    <td>02/08/2023, 19:30</td>-->
+<!--                    <td><span class="badge bg-warning text-dark">Webinar</span></td>-->
+<!--                    <td>-->
+<!--                        <button class="btn btn-sm btn-primary">Đăng ký</button>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+<!--    </section>-->
 </main>
 
 <!-- Footer -->

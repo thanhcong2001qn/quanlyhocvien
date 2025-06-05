@@ -86,9 +86,6 @@
                 <!-- User Profile -->
                 <div class="header-profile">
                     <button class="profile-btn">
-                        <div class="profile-avatar">
-                            <img src="https://via.placeholder.com/128" alt="User Avatar">
-                        </div>
                         <div class="profile-info">
                             <div class="profile-name" th:text="${#authentication.principal.username}">Nguyễn Văn A</div>
                             <div class="profile-role">Administrator</div>
@@ -96,27 +93,6 @@
                     </button>
 
                     <div class="profile-dropdown">
-                        <div class="profile-dropdown-header">
-                            <div class="profile-avatar">
-                                <img src="https://via.placeholder.com/128" alt="User Avatar">
-                            </div>
-                            <div class="profile-name">Nguyễn Văn A</div>
-                            <div class="profile-role">Administrator</div>
-                        </div>
-                        <div class="profile-dropdown-menu">
-                            <a href="#" class="profile-dropdown-item">
-                                <i class="fas fa-user"></i>
-                                <span>Hồ sơ cá nhân</span>
-                            </a>
-                            <a href="#" class="profile-dropdown-item">
-                                <i class="fas fa-cog"></i>
-                                <span>Cài đặt</span>
-                            </a>
-                            <a href="#" class="profile-dropdown-item">
-                                <i class="fas fa-envelope"></i>
-                                <span>Tin nhắn</span>
-                            </a>
-                        </div>
                         <div class="profile-dropdown-footer">
                             <form action="/logout" method="post">
                                 <!-- CSRF token nếu bạn không tắt CSRF protection -->

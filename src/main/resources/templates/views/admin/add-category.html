@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Danh Mục Khóa Học</title>
+    <link rel="stylesheet" th:href="@{/css/admin/header.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/body.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /*.content-container {*/
+        /*    margin-left: 250px;*/
+        /*    padding: 20px;*/
+        /*    transition: margin-left 0.3s;*/
+        /*}*/
+
+        .sidebar-collapsed .content-container {
+            margin-left: 70px;
+        }
+
+        .category-form {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+
+        .form-section-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .icon-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            display: none;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{/fragments/admin/header :: header}"></div>
+<div th:replace="~{/fragments/admin/menu :: menu}"></div>
+<div class="content-wrapper">
+<div class="content-container">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <h2 class="mb-3">Thêm Danh Mục Khóa Học</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/all-categories}">Danh sách danh mục</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Thêm danh mục</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="category-form">
+                    <form id="addCategoryForm" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <h4 class="form-section-title">Thông tin danh mục</h4>
+
+                            <div class="mb-3">
+                                <label for="categoryName" class="form-label required-field">Tên danh mục</label>
+                                <input type="text" class="form-control" id="categoryName" name="categoryName" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Mô tả</label>
+                                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="iconFile" class="form-label">Icon danh mục</label>
+                                    <input type="file" class="form-control" id="iconFile" name="iconFile" accept="image/*">
+                                    <small class="form-text text-muted">Tải lên icon cho danh mục (khuyến nghị: .png, .svg với nền trong suốt)</small>
+                                    <div class="mt-2">
+                                        <img id="iconPreview" class="icon-preview" src="#" alt="Icon preview">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label d-block">Trạng thái</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="isActive" name="isActive" checked>
+                                        <label class="form-check-label" for="isActive">Kích hoạt danh mục</label>
+                                    </div>
+                                    <small class="form-text text-muted">Danh mục không kích hoạt sẽ không hiển thị cho người dùng</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-secondary me-2" onclick="window.location.href='/all-categories'">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu danh mục</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:src="@{/js/common/Alert.js}"></script>
+<script th:src="@{/js/admin/menu.js}"></script>
+<script th:src="@{/js/admin/header.js}"></script>
+<script th:src="@{/js/utils/api.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Preview cho icon khi chọn file
+        document.getElementById('iconFile').addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('iconPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Xử lý submit form
+        document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+
+            // Tạo FormData để gửi dữ liệu form bao gồm cả file
+            const formData = new FormData(this);
+
+            // Thêm trạng thái is_active
+            formData.set('isActive', document.getElementById('isActive').checked);
+
+            // Gửi request API để tạo danh mục mới
+            fetchWithAuth('/api/category/add-category', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include' // Đảm bảo cookies được gửi cùng request để xác thực
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Có lỗi xảy ra khi tạo danh mục');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Đã tạo danh mục mới thành công',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/all-categories';
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: error.message || 'Không thể tạo danh mục. Vui lòng thử lại sau.',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        });
+
+        // Hàm validate form
+        function validateForm() {
+            const categoryName = document.getElementById('categoryName').value.trim();
+
+            if (!categoryName) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thiếu thông tin!',
+                    text: 'Vui lòng nhập tên danh mục',
+                    confirmButtonText: 'OK'
+                });
+                return false;
+            }
+
+            return true;
+        }
+    });
+</script>
+</body>
+</html>
