@@ -6,11 +6,13 @@ import com.dacs.quanlyhocvien.DTO.Response.ModuleResponseDTO;
 import com.dacs.quanlyhocvien.Services.ModuleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_STUDENT')" + " or hasRole('ROLE_ADMIN')")
 @RequestMapping(value = "/api/modules")
 public class ModuleApiController {
     private final ModuleService moduleService;

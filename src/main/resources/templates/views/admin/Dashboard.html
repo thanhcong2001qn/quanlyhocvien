@@ -120,17 +120,18 @@
                   <tr th:each="tx, iterStat : ${recentTransactions}">
                     <td th:text="${iterStat.count}">1</td>
                     <td th:text="'TX-' + ${tx.enrollmentId}">TX-0001</td>
-                    <td th:text="${tx.student.account.fullName}">Nguyễn Văn A</td>
-                    <td th:text="${tx.course.title}">Khóa học A</td>
-                    <td th:text="${#temporals.format(tx.purchaseDate, 'dd/MM/yyyy')}">01/06/2025</td>
-                    <td th:text="${#numbers.formatDecimal(tx.amountPaid, 0, 'COMMA', 2, 'POINT')} + ' ₫'">0 ₫</td>
+                    <td th:text="${tx.student != null && tx.student.account != null ? tx.student.account.fullName : 'N/A'}">Nguyễn Văn A</td>
+                    <td th:text="${tx.course != null ? tx.course.title : 'N/A'}">Khóa học A</td>
+                    <td th:text="${tx.paymentDate != null ? #temporals.format(tx.paymentDate, 'dd/MM/yyyy') : 'N/A'}">16/05/2023</td>
+                    <td th:text="${tx.paymentAmount != null ? #numbers.formatDecimal(tx.paymentAmount, 0, 'COMMA', 2, 'POINT') + ' ₫' : '0 ₫'}">0 ₫</td>
                     <td class="text-center">
-                      <span th:switch="${tx.paymentStatus.name()}">
-                        <span class="badge bg-success" th:case="'COMPLETED'">Hoàn tất</span>
-                        <span class="badge bg-warning text-dark" th:case="'PENDING'">Đang chờ</span>
-                        <span class="badge bg-danger" th:case="'FAILED'">Thất bại</span>
-                        <span class="badge bg-secondary" th:case="'REFUNDED'">Đã hoàn</span>
+                      <span th:if="${tx.paymentStatus != null}">
+                        <span class="badge bg-success" th:if="${tx.paymentStatus == 'COMPLETED'}">Hoàn tất</span>
+                        <span class="badge bg-warning text-dark" th:if="${tx.paymentStatus == 'PENDING'}">Đang chờ</span>
+                        <span class="badge bg-danger" th:if="${tx.paymentStatus == 'FAILED'}">Thất bại</span>
+                        <span class="badge bg-secondary" th:if="${tx.paymentStatus == 'REFUNDED'}">Đã hoàn</span>
                       </span>
+                      <span class="badge bg-secondary" th:unless="${tx.paymentStatus != null}">N/A</span>
                     </td>
                   </tr>
                   <tr th:if="${#lists.isEmpty(recentTransactions)}">

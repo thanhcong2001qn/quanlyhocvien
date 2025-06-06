@@ -44,8 +44,8 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end auth-dropdown" aria-labelledby="userDropdown">
                                 <!-- Menu khi chưa đăng nhập -->
-                                <div id="not-authenticated-menu">
-                                    <li class="auth-item not-logged-in" >
+                                <div th:if="${#authorization.expression('!isAuthenticated()')}">
+                                    <li class="auth-item not-logged-in">
                                         <a class="dropdown-item" href="/login">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a>
@@ -58,21 +58,15 @@
                                 </div>
 
                                 <!-- Menu khi đã đăng nhập -->
-                                <div id="authenticated-menu" style="display: none;">
+                                <div th:if="${#authorization.expression('isAuthenticated()')}">
                                     <li class="auth-item logged-in">
                                         <a class="dropdown-item user-info" href="/user/profile">
                                             <i class="fas fa-user-circle me-2"></i>
-                                            <span id="username-display">Username</span>
+                                            <span th:text="${#authentication.principal.username}">Username</span>
                                         </a>
                                     </li>
-<!--                                    <li class="auth-item logged-in">-->
-<!--                                        <a class="dropdown-item" href="/user/my-courses">-->
-<!--                                            <i class="fas fa-graduation-cap me-2"></i>Khóa học của tôi-->
-<!--                                        </a>-->
-<!--                                    </li>-->
-
                                     <li class="auth-item logged-in">
-                                        <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="logout()">
+                                        <a href="javascript:void(0)" onclick="logout()" class="dropdown-item text-danger">
                                             <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                         </a>
                                     </li>

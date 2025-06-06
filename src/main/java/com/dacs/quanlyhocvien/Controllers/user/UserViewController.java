@@ -3,10 +3,11 @@ package com.dacs.quanlyhocvien.Controllers.user;
 import com.dacs.quanlyhocvien.DTO.Response.CourseDetailResponeDTO;
 import com.dacs.quanlyhocvien.DTO.Response.CourseResponseDTO;
 import com.dacs.quanlyhocvien.DTO.Response.LessonResponseDTO;
-import com.dacs.quanlyhocvien.Services.AccountService;
-import com.dacs.quanlyhocvien.Services.CourseService;
-import com.dacs.quanlyhocvien.Services.LessonService;
+import com.dacs.quanlyhocvien.Services.*;
 import com.dacs.quanlyhocvien.models.AccountModel;
+import com.dacs.quanlyhocvien.models.StudentModel;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,16 +19,21 @@ import java.security.Principal;
 import java.util.List;
 
 @Controller
+@PreAuthorize("hasRole('ROLE_STUDENT')")
 @RequestMapping(value = "/user")
 public class UserViewController {
     private final AccountService accountService;
     private final CourseService courseService;
     private final LessonService lessonService;
+    private final StudentService studentService;
+    private final EnrollmentService enrollmentService;
 
-    public UserViewController(AccountService accountService, CourseService courseService, LessonService lessonService) {
+    public UserViewController(AccountService accountService, CourseService courseService, LessonService lessonService, StudentService studentService, EnrollmentService enrollmentService) {
         this.accountService = accountService;
         this.courseService = courseService;
         this.lessonService = lessonService;
+        this.studentService = studentService;
+        this.enrollmentService = enrollmentService;
     }
 
     @GetMapping(value = "/profile")
@@ -39,15 +45,23 @@ public class UserViewController {
         return "views/user/course/all-course";
     }
     @GetMapping(value = "/course-detail/{courseId}")
-    public String courseDetail(@PathVariable Long courseId, Model model, Principal principal) {
+    public String courseDetail(@PathVariable Long courseId, Model model, HttpServletRequest request) {
         try {
             // Lấy thông tin người dùng hiện tại (nếu đã đăng nhập)
             AccountModel currentUser = null;
             boolean isEnrolled = false;
-
-            if (principal != null) {
-                String username = principal.getName();
+            HttpSession session = request.getSession();
+            String username = (String) session.getAttribute("username");
+            if (username != null) {
                 currentUser = accountService.getAccountByUsername(username);
+                if (currentUser != null) {
+                    // Giả sử StudentModel liên kết với AccountModel
+                    StudentModel student = studentService.getStudentByUserName(username);
+                    if (student != null) {
+                        // Kiểm tra trong repository nếu học viên đã đăng ký khóa học
+                        isEnrolled = enrollmentService.checkEnrollment(courseId, student.getStudentId());
+                    }
+                }
             }
 
             // Lấy thông tin chi tiết khóa học
@@ -58,35 +72,21 @@ public class UserViewController {
                 return "error/404";
             }
 
-            // Lấy danh sách bài học của khóa học
+            // Lấy danh sách bài học của khóa học (đã bao gồm thông tin video)
             List<LessonResponseDTO> lessons = lessonService.getLessonsByCourseId(courseId);
 
             // Lấy các khóa học liên quan cùng danh mục
             List<CourseResponseDTO> relatedCourses = courseService.getRelatedCourses(courseId,
                     courseDetail.getCategory().getCategoryId(), 3);
 
-//            // Lấy đánh giá của khóa học
-//            Page<ReviewDTO> reviews = reviewService.getCourseReviews(courseId, PageRequest.of(0, 5));
-
             // Pass dữ liệu vào model
             model.addAttribute("course", courseDetail);
             model.addAttribute("lessons", lessons);
             model.addAttribute("relatedCourses", relatedCourses);
-//            model.addAttribute("reviews", reviews);
             model.addAttribute("isEnrolled", isEnrolled);
-
-            // Nếu user đã đăng nhập, kiểm tra xem họ đã đánh giá khóa học này chưa
-//            if (currentUser != null) {
-//                ReviewDTO userReview = reviewService.getUserReviewForCourse(currentUser.getAccountId(), courseId);
-//                model.addAttribute("userReview", userReview);
-//                model.addAttribute("currentUser", currentUser);
-//            }
 
             return "views/user/course/course-detail";
         } catch (Exception e) {
-            // Log lỗi
-//            logger.error("Error retrieving course details for ID: " + courseId, e);
-
             // Thêm thông báo lỗi vào model
             model.addAttribute("errorMessage", "Không thể lấy thông tin khóa học. Vui lòng thử lại sau!");
 

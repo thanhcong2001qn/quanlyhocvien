@@ -185,23 +185,7 @@ function setupEventListeners() {
         loadCourses();
     });
 
-    // Xử lý nút reset filter
-    document.getElementById('resetFilters').addEventListener('click', function() {
-        // Chọn lại tất cả checkbox
-        document.querySelectorAll('.category-filter, .level-filter, .price-filter, .enrollment-filter')
-            .forEach(checkbox => checkbox.checked = true);
 
-        // Xóa các tham số filter khỏi URL
-        updateUrlParams({
-            categories: null,
-            levels: null,
-            priceTypes: null,
-            enrollmentStatus: null,
-            page: 0
-        });
-
-        loadCourses();
-    });
 }
 
 // Hàm tải danh mục từ API

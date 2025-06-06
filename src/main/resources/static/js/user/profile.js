@@ -1,14 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Verify token and load profile data
-    fetchWithAuth('/api/verify-token')
-        .then(response => {
-            if (!response.ok) {
-                localStorage.clear();
-                window.location.href = '/login';
-                return Promise.reject('Unauthorized');
-            }
-            return fetchWithAuth('/api/user/profile');
-        })
+    fetchWithAuth('/api/user/profile')
         .then(response => response.json())
         .then(profileData => {
             populateProfileData(profileData);
@@ -18,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => {
             console.error('Error loading profile:', error);
         });
+
     // Avatar change functionality
     document.getElementById('change-avatar-btn').addEventListener('click', function () {
         document.getElementById('avatar-upload').click();

@@ -48,7 +48,17 @@ function fetchCategories() {
             console.error('Lỗi khi tải danh mục:', error);
         });
 }
+function populateCategoryFilter(categories) {
+    const categoryFilter = document.getElementById('categoryFilter');
+    categoryFilter.innerHTML = '<option value="">Tất cả danh mục</option>';
 
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.categoryId;
+        option.textContent = category.categoryName;
+        categoryFilter.appendChild(option);
+    });
+}
 // Hàm cập nhật dropdown danh mục trong modal chỉnh sửa
 function populateEditCategoryDropdown() {
     const categorySelect = document.getElementById('editCategoryId');
@@ -345,17 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('editThumbnail').addEventListener('change', previewEditThumbnail);
 
     // Định nghĩa hàm populateCategoryFilter trong scope này
-    function populateCategoryFilter(categories) {
-        const categoryFilter = document.getElementById('categoryFilter');
-        categoryFilter.innerHTML = '<option value="">Tất cả danh mục</option>';
 
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category.categoryId;
-            option.textContent = category.categoryName;
-            categoryFilter.appendChild(option);
-        });
-    }
 
     // Fetch khóa học từ API
     function fetchCourses() {
