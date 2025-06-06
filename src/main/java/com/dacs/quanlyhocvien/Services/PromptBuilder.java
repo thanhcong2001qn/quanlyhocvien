@@ -57,9 +57,20 @@ public class PromptBuilder {
           "columns": ["..."], // Only if intent == DATABASE_QUERY
           "alias_mapping": { "alias": "canonical_column" }, // optional
           "answer": "...", // Only if intent == GENERAL_KNOWLEDGE
-          "summary": "Tóm tắt tiếng Việt ngắn gọn, đúng nội dung câu hỏi người dùng."
+          "summary": "Tóm tắt câu hỏi người dùng và nêu rõ truy vấn dựa trên những bảng nào. Ví dụ: 'Ai đăng ký nhiều khóa học nhất?' → Dựa trên bảng 'enrollment' và 'student', đây là danh sách học viên đăng ký nhiều khóa học nhất."
         }
-
+        // 🔥 IMPORTANT: Every column in the SELECT clause (including those with aliases using AS) must have an entry in alias_mapping.
+        // Ví dụ: SELECT COUNT(*) AS total_courses_enrolled → alias_mapping phải có:
+        // "Số khóa học đã đăng ký": "total_courses_enrolled" - ta tự dịch từ ENG sang VIE nếu k có mapping cụ thể đã được set sẵn
+                ✍️ Ghi nhớ:
+                        - Người dùng có thể viết không dấu hoặc viết tắt. Ví dụ:
+                            - "hv" = "học viên"
+                            - "dk" = "đăng ký"
+                            - "kh" = "khoá học"
+                            - "tt" = "thông tin"
+                            - "cn" = "chuyên ngành"
+                            - "gv" = "giáo viên"
+                        - Nếu gặp các từ viết tắt, hãy cố gắng phân tích và ánh xạ chúng sang bảng/cột hoặc thông tin tương ứng nếu có thể. 
         ----
         System knowledge (do not invent anything beyond this):
         %s

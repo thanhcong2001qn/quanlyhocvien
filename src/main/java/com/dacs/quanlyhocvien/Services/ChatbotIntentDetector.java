@@ -29,17 +29,25 @@ public class ChatbotIntentDetector {
         // ✅ 2. Nếu là tiếng Việt → gọi Gemini để phân loại (KHÔNG BAO GIỜ chấp nhận GIBBERISH từ Gemini)
         try {
             String prompt = """
-        Bạn là một AI chuyên phân loại ý định câu hỏi người dùng. Hãy đọc câu hỏi và phân loại thành một trong các intent sau:
-        
-        IMPORTANT:
-        - DATABASE_QUERY: khi người dùng hỏi thông tin có thể truy vấn từ hệ thống (cơ sở dữ liệu) như học viên, khóa học, giảng viên, điểm, lịch học, số lượng, v.v.
-        - GENERAL_KNOWLEDGE: khi người dùng hỏi về bạn, lời chào, cách dùng hệ thống, thông tin không cần truy vấn DB.
-        - Người dùng có thể viết không dấu hoặc viết tắt, hãy phân tích kỹ và trả lời đúng.
+            Bạn là một AI chuyên phân loại ý định câu hỏi người dùng. Hãy đọc câu hỏi và phân loại thành một trong các intent sau:
+            
+            IMPORTANT:
+            - DATABASE_QUERY: khi người dùng hỏi thông tin có thể truy vấn từ hệ thống (cơ sở dữ liệu) như học viên, khóa học, giảng viên, điểm, lịch học, số lượng, v.v.
+            - GENERAL_KNOWLEDGE: khi người dùng hỏi về bạn, lời chào, cách dùng hệ thống, thông tin không cần truy vấn DB.
+            
+            🎯 QUAN TRỌNG: Chỉ trả lời đúng 1 từ: DATABASE_QUERY hoặc GENERAL_KNOWLEDGE. Không viết thêm bất cứ từ nào khác.
+            
+            ✍️ Lưu ý: Người dùng có thể viết tắt hoặc không dấu. Ví dụ:
+            - "hv" = "học viên"
+            - "dk" = "đăng ký"
+            - "kh" = "khoá học"
+            - "tt" = "thông tin"
+            - "cn" = "chuyên ngành"
+            - "gv" = "giáo viên"
+            
+            Câu hỏi: "%s"
+            """.formatted(userInput.trim());
 
-        🎯 QUAN TRỌNG: Chỉ trả lời đúng 1 từ: DATABASE_QUERY hoặc GENERAL_KNOWLEDGE. Không viết thêm bất cứ từ nào khác.
-
-        Câu hỏi: "%s"
-        """.formatted(userInput.trim());
 
             String response = geminiApiClient.getResponse(prompt).trim().toUpperCase();
             System.out.println("➡️ Gemini intent response: " + response);

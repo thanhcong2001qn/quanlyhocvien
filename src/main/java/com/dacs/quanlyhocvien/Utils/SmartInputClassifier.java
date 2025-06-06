@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 @Component
@@ -27,62 +26,49 @@ public class SmartInputClassifier {
 
         String normalized = input.trim();
         String lower = normalized.toLowerCase(Locale.ROOT);
+        int wordCount = lower.split("\\s+").length;
 
-        // Nếu chuỗi quá ngắn → GIBBERISH
-        if (normalized.length() < 3) {
-            return ChatbotIntent.GIBBERISH;
-        }
+        // 🚫 Quá ngắn, không có nghĩa
+        if (normalized.length() < 3) return ChatbotIntent.GIBBERISH;
 
-        // Nếu chỉ là 1 từ ngắn như “hi”, “ok” → có thể là ENGLISH nếu meaningful
+        // ⛔ Một từ ngắn như “hi”, “ok” → kiểm tra meaningful
         if (normalized.matches("^[a-zA-Z]{1,4}$")) {
-            if (!isMeaningfulEnglish(normalized)) {
-                return ChatbotIntent.GIBBERISH;
-            }
-            return ChatbotIntent.ENGLISH;
+            return isMeaningfulEnglish(normalized) ? ChatbotIntent.ENGLISH : ChatbotIntent.GIBBERISH;
         }
 
-        // Dùng Lingua detect ngôn ngữ (cả có dấu hoặc không dấu)
+        // ✅ Nếu có ≥ 3 từ → giả định là tiếng Việt hoặc viết tắt → cho Gemini xử lý
+        if (wordCount >= 3) return ChatbotIntent.VIETNAMESE;
+
+        // 🧠 Nếu không rõ, dùng Lingua
         Language lang = detector.detectLanguageOf(normalized);
-
-        if (lang == Language.VIETNAMESE) {
-            return ChatbotIntent.VIETNAMESE;
-        }
-
+        if (lang == Language.VIETNAMESE) return ChatbotIntent.VIETNAMESE;
         if (lang == Language.ENGLISH) {
-            if (!isMeaningfulEnglish(normalized)) {
-                return ChatbotIntent.GIBBERISH;
-            }
-            return ChatbotIntent.ENGLISH;
+            return isMeaningfulEnglish(normalized) ? ChatbotIntent.ENGLISH : ChatbotIntent.GIBBERISH;
         }
 
-        // Nếu không phải tiếng Việt hay tiếng Anh → GIBBERISH
+        // ❓ Không xác định
         return ChatbotIntent.GIBBERISH;
     }
 
     private boolean isMeaningfulEnglish(String text) {
         try {
             String prompt = """
-        Is the following English sentence meaningful (yes/no)?
-        Sentence: "%s"
-        """.formatted(text);
-
+            Is the following English sentence meaningful (yes/no)?
+            Sentence: "%s"
+            """.formatted(text);
             String response = geminiApiClient.getResponse(prompt).trim().toLowerCase();
             return response.contains("yes");
-
         } catch (ChatbotException ce) {
-            // Nếu lỗi là mất kết nối AI → fallback là GIBBERISH, KHÔNG được ENGLISH
-            if (ce.getErrorCode().equals("ERR_GEMINI_UNAVAILABLE")) {
+            if ("ERR_GEMINI_UNAVAILABLE".equals(ce.getErrorCode())) {
                 System.err.println("❗ Gemini không phản hồi, fallback GIBBERISH");
                 return false;
             }
-            // Nếu lỗi khác → log và vẫn giả định là không meaningful
-            System.err.println("❌ Lỗi khi đánh giá meaningful English: " + ce.getTechnicalMessage());
             return false;
         } catch (Exception e) {
-            System.err.println("❌ Exception trong isMeaningfulEnglish: " + e.getMessage());
             return false;
         }
     }
+
     private static final Pattern UNSAFE_PATTERN = Pattern.compile(
             "\\b(xo[aá]|xoa|xóa|xóa hết|xóa toàn bộ|bỏ|bo|thay đổi|thay doi|cập nhật|cap nhat|gỡ|go|" +
                     "drop|truncate|alter|delete|insert|update|remove|reset|clear|overwrite)\\b",
@@ -95,9 +81,8 @@ public class SmartInputClassifier {
         String normalized = input
                 .trim()
                 .toLowerCase(Locale.ROOT)
-                .replaceAll("[^\\p{L}\\p{N}]+", " "); // chuẩn hóa: xoá_, xoá.hv, xoá-hv → xoa hv
+                .replaceAll("[^\\p{L}\\p{N}]+", " ");
 
         return UNSAFE_PATTERN.matcher(normalized).find();
     }
-
 }

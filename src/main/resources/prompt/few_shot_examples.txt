@@ -83,3 +83,12 @@ WHERE LOWER(c.title) LIKE LOWER('%html & css%');
 
 -- Hỏi: số lượt làm quiz của học viên id 2
 SELECT COUNT(*) FROM quiz_attempt WHERE student_id = 2;
+
+{
+  "intent": "DATABASE_QUERY",
+  "sql": "SELECT full_name, COUNT(*) AS total_courses_enrolled FROM ...",
+  "alias_mapping": {
+    "Tên đầy đủ": "full_name",
+    "Số khóa học đã đăng ký": "total_courses_enrolled"
+  }
+}

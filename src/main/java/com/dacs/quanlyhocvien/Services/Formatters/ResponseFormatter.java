@@ -155,7 +155,7 @@ public class ResponseFormatter {
         COLUMN_NAMES.put("reference_id", "Mã tham chiếu");
     }
 
-    public String format(String question, List<Map<String, Object>> results, String table, List<String> keywords) {
+    public String format(String question, List<Map<String, Object>> results, String table, List<String> keywords, Map<String, String> aliasMapping) {
         try {
             if (results == null || results.isEmpty()) {
                 return "<p>📋 Không có dữ liệu phù hợp với yêu cầu của bạn.</p>";
@@ -173,21 +173,23 @@ public class ResponseFormatter {
                 return buildFriendlyAnswer(question, value);
             }
 
+            // ✅ THÊM aliasMapping vào đây
             if (results.size() <= 10) {
-                return buildHtmlTable(question, results, table, keywords);
+                return buildHtmlTable(question, results, table, keywords, aliasMapping);
             }
 
-            String htmlTable = buildHtmlTable(question, subListSafe(results, 10), table, keywords);
+            String htmlTable = buildHtmlTable(question, subListSafe(results, 10), table, keywords, aliasMapping);
+
             String excelLink = generateExcelLink(results);
 
             return htmlTable + """
-        <p style='margin-top: 12px;'>📦 Bạn có thể tải toàn bộ kết quả tại đây:</p>
-        <p>
-            <a href='%s' target='_blank'
-               style='color: #007bff; text-decoration: underline; font-weight: 500;'>
-               Tải Excel kết quả
-            </a>
-        </p>
+            <p style='margin-top: 12px;'>📦 Bạn có thể tải toàn bộ kết quả tại đây:</p>
+            <p>
+                <a href='%s' target='_blank'
+                   style='color: #007bff; text-decoration: underline; font-weight: 500;'>
+                   Tải Excel kết quả
+                </a>
+            </p>
         """.formatted(excelLink);
 
         } catch (ChatbotException e) {
@@ -201,6 +203,7 @@ public class ResponseFormatter {
             );
         }
     }
+
 
     private List<Map<String, Object>> subListSafe(List<Map<String, Object>> list, int limit) {
         return list.size() <= limit ? list : list.subList(0, limit);
@@ -245,8 +248,9 @@ public class ResponseFormatter {
         }
     }
 
-    public String buildHtmlTable(String question, List<Map<String, Object>> results, String table, List<String> keywords) {
-        StringBuilder response = new StringBuilder();
+    public String buildHtmlTable(String question, List<Map<String, Object>> results, String table, List<String> keywords, Map<String, String> aliasMapping){
+
+    StringBuilder response = new StringBuilder();
 
         response.append("<div style='font-family: Arial, sans-serif; color: white;'>");
         response.append("<h3 style='color: white;'>").append(generateFriendlyLeadingText(question, table, keywords)).append("</h3>");
@@ -260,7 +264,7 @@ public class ResponseFormatter {
         results.get(0).keySet().stream()
                 .filter(this::shouldShowColumn)
                 .forEach(column -> response.append("<th style='padding: 12px 15px; border-bottom: 1px solid #ddd;'>")
-                        .append(getColumnDisplayName(column))
+                        .append(getColumnDisplayName(column, aliasMapping))
                         .append("</th>"));
         response.append("</tr></thead><tbody>");
 
@@ -320,9 +324,15 @@ public class ResponseFormatter {
         return !List.of("active", "password", "deleted_at").contains(columnName);
     }
 
-    private String getColumnDisplayName(String columnName) {
-        return COLUMN_NAMES.getOrDefault(columnName, columnName);
+    private String getColumnDisplayName(String columnName, Map<String, String> aliasMapping) {
+        for (Map.Entry<String, String> entry : aliasMapping.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(columnName)) {
+                return entry.getKey(); // alias dùng làm nhãn
+            }
+        }
+        return COLUMN_NAMES.getOrDefault(columnName, columnName); // fallback
     }
+
 
     private String generateFriendlyLeadingText(String userQuestion, String table, List<String> keywords) {
         try {

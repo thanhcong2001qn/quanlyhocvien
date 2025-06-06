@@ -99,7 +99,8 @@ public class ChatbotService {
                 question,
                 result,
                 resolved.getTables().isEmpty() ? "dữ liệu" : resolved.getTables().get(0),
-                new ArrayList<>(resolved.getAlias_mapping().keySet())
+                new ArrayList<>(resolved.getAlias_mapping().keySet()),
+                resolved.getAlias_mapping()
         );
     }
 
