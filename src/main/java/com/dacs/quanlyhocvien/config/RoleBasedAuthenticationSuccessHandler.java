@@ -39,7 +39,7 @@ public class RoleBasedAuthenticationSuccessHandler implements AuthenticationSucc
         // Kiểm tra quyền và quyết định URL đích
         for (GrantedAuthority authority : authorities) {
             if (authority.getAuthority().equals("ROLE_ADMIN")) {
-                return "/dashboard";
+                return "/admin/home";
             } else if (authority.getAuthority().equals("ROLE_USER")) {
                 return "/home";
             }
