@@ -15,7 +15,7 @@ async function fetchAccounts(page = 0) {
         const data = await response.json();
         renderAccountTable(data.content);
         renderAccountPagination(data.totalPages, page);
-        attachAccountActionButtons();
+        setupAccountActionButtons();
     } catch (error) {
         console.error('❌ Lỗi fetch account:', error);
     } finally {
@@ -41,14 +41,15 @@ function renderAccountTable(accounts) {
             </td>
             <td>${account.createdAt ? formatDate(account.createdAt) : 'N/A'}</td>
             <td>
-                <div class="action-buttons">
-                    <button class="btn btn-icon btn-edit" data-id="${account.accountId}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-icon btn-delete" data-id="${account.accountId}">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
+              <div class="action-buttons">
+                  <button class="btn btn-icon btn-edit" data-id="${account.accountId}">
+                      <i class="fas fa-edit"></i>
+                  </button>
+                  <label class="switch">
+                      <input type="checkbox" class="toggle-status" data-id="${account.accountId}" ${account.isActive ? 'checked' : ''}>
+                      <span class="slider round"></span>
+                  </label>
+              </div>
             </td>
         </tr>`;
         tbody.innerHTML += row;
@@ -117,35 +118,35 @@ function changeAccountPage(page) {
     fetchAccounts(page);
 }
 
-function attachAccountActionButtons() {
-    document.querySelectorAll('.btn-edit').forEach(button => {
-        button.addEventListener('click', function () {
-            const accountId = this.getAttribute('data-id');
-            window.location.href = `/accountDetail/${accountId}`;
-        });
-    });
-
-    document.querySelectorAll('.btn-delete').forEach(button => {
-        button.addEventListener('click', function () {
-            const accountId = this.getAttribute('data-id');
-            showConfirmPopup('Bạn có chắc muốn xóa tài khoản này?', function () {
-                fetch(`/account/deleteAccount/${accountId}`, { method: 'DELETE' })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Xóa thất bại');
-                        return response.text();
-                    })
-                    .then(message => {
-                        console.log('✅ Xóa account thành công:', message);
-                        fetchAccounts(currentAccountPage);
-                    })
-                    .catch(error => {
-                        console.error('❌ Lỗi khi xoá account:', error);
-                        alert('Đã xảy ra lỗi khi xoá tài khoản.');
-                    });
-            });
-        });
-    });
-}
+//function attachAccountActionButtons() {
+//    document.querySelectorAll('.btn-edit').forEach(button => {
+//        button.addEventListener('click', function () {
+//            const accountId = this.getAttribute('data-id');
+//            window.location.href = `/accountDetail/${accountId}`;
+//        });
+//    });
+//
+//    document.querySelectorAll('.btn-delete').forEach(button => {
+//        button.addEventListener('click', function () {
+//            const accountId = this.getAttribute('data-id');
+//            showConfirmPopup('Bạn có chắc muốn xóa tài khoản này?', function () {
+//                fetch(`/account/deleteAccount/${accountId}`, { method: 'DELETE' })
+//                    .then(response => {
+//                        if (!response.ok) throw new Error('Xóa thất bại');
+//                        return response.text();
+//                    })
+//                    .then(message => {
+//                        console.log('✅ Xóa account thành công:', message);
+//                        fetchAccounts(currentAccountPage);
+//                    })
+//                    .catch(error => {
+//                        console.error('❌ Lỗi khi xoá account:', error);
+//                        alert('Đã xảy ra lỗi khi xoá tài khoản.');
+//                    });
+//            });
+//        });
+//    });
+//}
 
 function prevAccountPage() {
     if (currentAccountPage > 0) {

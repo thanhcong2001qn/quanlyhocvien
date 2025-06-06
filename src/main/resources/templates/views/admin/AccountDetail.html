@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Chỉnh sửa tài khoản</title>
+  <link rel="stylesheet" th:href="@{/css/admin/AccountDetail.css}">
+</head>
+<body>
+<section layout:fragment="content">
+  <div class="content-wrapper">
+    <div class="container py-4">
+      <h2 class="mb-4">Chỉnh sửa tài khoản</h2>
+
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Thông tin tài khoản</h5>
+        </div>
+        <div class="card-body">
+          <form id="updateAccountForm" class="row">
+            <div class="col-md-9">
+              <input type="hidden" id="accountId" th:value="${account.accountId}" />
+
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Họ và tên:</label>
+                <div class="col-sm-9">
+                  <input id="fullName" type="text" class="form-control" th:value="${account.fullName}">
+                  <div class="error-message" id="fullNameError">Vui lòng nhập họ tên</div>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Ngày sinh:</label>
+                <div class="col-sm-9">
+                  <input type="date" id="dateOfBirth" class="form-control" th:value="${account.dateOfBirth}">
+                  <div class="error-message" id="birthDateError">Vui lòng chọn ngày sinh</div>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Giới tính:</label>
+                <div class="col-sm-9">
+                  <select id="gender" class="form-select">
+                    <option value="Nam" th:selected="${account.gender == 'Nam'}">Nam</option>
+                    <option value="Nữ" th:selected="${account.gender == 'Nữ'}">Nữ</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Email:</label>
+                <div class="col-sm-9">
+                  <input id="email" type="email" class="form-control" th:value="${account.email}" readonly>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Số điện thoại:</label>
+                <div class="col-sm-9">
+                  <input id="phoneNumber" type="text" class="form-control" th:value="${account.phoneNumber}">
+                  <div class="error-message" id="phoneNumberError">Vui lòng nhập số điện thoại hợp lệ</div>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Địa chỉ:</label>
+                <div class="col-sm-9">
+                  <input id="address" type="text" class="form-control" th:value="${account.address}">
+                  <div class="error-message" id="addressError">Vui lòng nhập địa chỉ</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 text-center">
+              <img th:src="@{${account.avatarPath}}" class="img-fluid avatar-image" alt="avatar">
+            </div>
+
+            <div class="form-group text-end mt-3">
+              <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<th:block layout:fragment="script">
+  <script>
+    document.getElementById('updateAccountForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const data = {
+            accountId: document.getElementById('accountId').value,
+            fullName: document.getElementById('fullName').value.trim(),
+            dateOfBirth: document.getElementById('dateOfBirth').value.trim(),
+            gender: document.getElementById('gender').value,
+            phoneNumber: document.getElementById('phoneNumber').value.trim(),
+            address: document.getElementById('address').value.trim()
+        };
+
+        // Validate (giống student)
+        // Gửi PUT request
+        fetch('/account/api/update', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.ok ? location.href = '/all-account' : alert("Cập nhật thất bại"))
+        .catch(() => alert("Có lỗi xảy ra khi cập nhật"));
+    });
+  </script>
+</th:block>
+</body>
+</html>

@@ -168,10 +168,10 @@
                                                     data-bs-toggle="tooltip" title="Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-icon btn-delete" th:data-id="${account.accountId}"
-                                                    data-bs-toggle="tooltip" title="Xóa">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                            <label class="switch">
+                                                <input type="checkbox" class="toggle-status" th:data-id="${account.accountId}" th:checked="${account.isActive}">
+                                                <span class="slider round"></span>
+                                            </label>
                                         </div>
                                     </td>
                                 </tr>
@@ -201,6 +201,7 @@
 <th:block layout:fragment="script">
     <script th:src="@{/js/admin/searching/accounts-search.js}" defer></script>
     <script th:src="@{/js/admin/list/account-list.js}" defer></script>
+    <script th:src="@{/js/admin/action/accounts-actions.js}" defer></script>
 </th:block>
 </body>
 </html>

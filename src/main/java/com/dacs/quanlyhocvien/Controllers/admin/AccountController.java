@@ -2,20 +2,21 @@ package com.dacs.quanlyhocvien.Controllers.admin;
 
 import com.dacs.quanlyhocvien.Services.AccountService;
 import com.dacs.quanlyhocvien.models.AccountModel;
+import com.dacs.quanlyhocvien.models.TeacherModel;
 import com.dacs.quanlyhocvien.models.dto.AccountResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/account")
@@ -50,5 +51,31 @@ public class AccountController {
         Pageable pageable = PageRequest.of(page, size);
         Page<AccountResponseDTO> accountDTOs = accountService.getAccounts(pageable); // 👉 gọi service
         return ResponseEntity.ok(accountDTOs);
+    }
+
+    @PutMapping(value = "/api/update")
+    public ResponseEntity<AccountModel> updateTeacher(@RequestBody AccountModel account) {
+        AccountModel savedAccount = accountService.updateAccount(account);
+        return new ResponseEntity<>(savedAccount, HttpStatus.OK);
+    }
+
+
+    @PutMapping("/deactivate/{id}")
+    public ResponseEntity<String> deactivateAccount(@PathVariable Long id) {
+        AccountModel account = accountService.getAccountById(id);
+        if (account == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        account.setIsActive(false);
+        accountService.updateAccount(account);
+        return ResponseEntity.ok("Tài khoản đã được vô hiệu hóa");
+    }
+
+    @PutMapping("/updateStatus/{id}")
+    public ResponseEntity<String> updateStatus(@PathVariable Long id, @RequestBody Map<String, Boolean> payload) {
+        Boolean isActive = payload.get("isActive");
+        accountService.updateAccountStatus(id, isActive);
+        return ResponseEntity.ok("Trạng thái tài khoản đã được cập nhật");
     }
 }

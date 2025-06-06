@@ -67,6 +67,12 @@ public class AdminViewController {
         model.addAttribute("accounts", accounts);
         return "views/admin/AllAccounts";
     }
+    @GetMapping(value = "/accountDetail/{id}")
+    public String editAccount(@PathVariable Long id,Model model){
+        AccountModel account = accountService.getAccountById(id);
+        model.addAttribute("account",account);
+        return "views/admin/AccountDetail";
+    }
     @GetMapping(value = "/add-course")
     public String addcourse(){
         return "views/admin/add-course";

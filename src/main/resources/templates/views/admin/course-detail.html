@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layouts/main-layout}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi Tiết Khóa Học</title>
-    <link rel="stylesheet" th:href="@{/css/admin/header.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/body.css}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <th:block layout:fragment="style">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    </th:block>
     <style>
         .sidebar-collapsed .content-container {
             margin-left: 70px;
@@ -199,8 +198,7 @@
     </style>
 </head>
 <body>
-<div th:replace="~{/fragments/admin/header :: header}"></div>
-<div th:replace="~{/fragments/admin/menu :: menu}"></div>
+<section layout:fragment="content">
 <div class="content-wrapper">
     <div class="content-container">
         <div class="container-fluid">
@@ -556,17 +554,11 @@
         </div>
     </div>
 </div>
-
+</section>
 <!-- Bootstrap, jQuery và các thư viện cần thiết -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script th:src="@{/js/common/Alert.js}"></script>
-<script th:src="@{/js/admin/menu.js}"></script>
-<script th:src="@{/js/admin/header.js}"></script>
+<th:block layout:fragment="script">
 <script th:src="@{/js/utils/api.js}"></script>
 <script th:src="@{/js/admin/course/course-detail.js}"></script>
-
+</th:block>
 </body>
 </html>
