@@ -2,6 +2,12 @@
 /* COMMON STYLE FILE */
 /* ======================== */
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 :root {
     --primary-color: #4361ee;
     --secondary-color: #3f37c9;

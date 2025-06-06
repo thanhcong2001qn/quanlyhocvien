@@ -1,165 +1,206 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layouts/main-layout}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Tài Khoản</title>
-    <link rel="stylesheet" th:href="@{/css/admin/header.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/body.css}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/common.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/AllAccounts.css}">
 </head>
 <body>
-<div th:replace="~{/fragments/admin/header :: header}"></div>
-<div th:replace="~{/fragments/admin/menu :: menu}"></div>
-<div th:replace="~{/fragments/common/confirm-popup}"></div>
-
-<div class="content-wrapper">
-    <div class="container">
-        <!-- Header Section -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="breadcrumbs-area mb-2">
-                    <div class="row flex-column">
-                        <div class="col-12 mb-2">
-                            <h1 class="m-0 page-title">Quản Lý Tài Khoản</h1>
-                        </div>
-                        <div class="col-12">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a th:href="@{/admin}">Trang chủ</a></li>
-                                <li class="breadcrumb-item active">Quản lý tài khoản</li>
-                            </ol>
+<section layout:fragment="content">
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="breadcrumbs-area mb-2">
+                        <div class="row flex-column">
+                            <div class="col-12 mb-2">
+                                <h1 class="m-0 page-title">
+                                    <i class="fas fa-users me-2"></i>
+                                    Quản Lý Tài Khoản
+                                </h1>
+                            </div>
+                            <div class="col-12">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a th:href="@{/admin}">
+                                            <i class="fas fa-home me-1"></i>
+                                            Trang chủ
+                                        </a>
+                                    </li>
+                                    <li class="breadcrumb-item active">
+                                        <i class="fas fa-users me-1"></i>
+                                        Quản lý tài khoản
+                                    </li>
+                                </ol>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Main Content -->
-        <div class="content">
-            <div class="container-fluid">
-                <!-- Search & Filter Section -->
-                <div class="card search-card mb-4">
-                    <div class="card-body">
-                        <form id="searchForm" th:action="@{/account/accounts}" method="GET" class="row g-3">
-                            <div class="col-md-4">
-                                <div class="search-box">
-                                    <i class="fas fa-search search-icon"></i>
-                                    <input type="text" class="form-control" id="searchInput"
-                                           name="keyword" th:value="${param.keyword}"
-                                           placeholder="Tìm kiếm theo tên, email, username...">
+            <!-- Main Content -->
+            <div class="content">
+                <div class="container-fluid">
+                    <!-- Search & Filter Section -->
+                    <div class="card search-card mb-4">
+                        <div class="card-body">
+                            <form id="searchForm" th:action="@{/account/accounts}" method="GET" class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="search-box">
+                                        <i class="fas fa-search search-icon"></i>
+                                        <input type="text" class="form-control" id="searchInput"
+                                               name="keyword" th:value="${param.keyword}"
+                                               placeholder="Tìm kiếm theo tên, email, username...">
+                                        <div class="search-loader">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-select" id="roleFilter" name="role">
-                                    <option value="">Tất cả vai trò</option>
-                                    <option value="1" th:selected="${param.role == '1'}">Admin</option>
-                                    <option value="2" th:selected="${param.role == '2'}">Giáo viên</option>
-                                    <option value="3" th:selected="${param.role == '3'}">Học viên</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-select" id="statusFilter" name="status">
-                                    <option value="">Tất cả trạng thái</option>
-                                    <option value="true" th:selected="${param.status == 'true'}">Đang hoạt động</option>
-                                    <option value="false" th:selected="${param.status == 'false'}">Đã khóa</option>
-                                </select>
-                            </div>
-<!--                            <div class="col-md-2">-->
-<!--                                <button type="submit" class="btn btn-primary w-100">-->
-<!--                                    <i class="fas fa-filter"></i> Lọc-->
-<!--                                </button>-->
-<!--                            </div>-->
-                            <div class="col-md-2 d-flex">
-                                <button type="button" class="btn clear-search w-100 d-flex align-items-center justify-content-center gap-2">
-                                    <i class="fas fa-times"></i>
-                                    Xóa bộ lọc
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Accounts Table -->
-                <div class="card table-card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="card-title">Danh sách tài khoản</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
+                                <div class="col-md-3">
+                                    <div class="select-wrapper">
+                                        <i class="fas fa-user-tag select-icon"></i>
+                                        <select class="form-select" id="roleFilter" name="role">
+                                            <option value="">Tất cả vai trò</option>
+                                            <option value="1" th:selected="${param.role == '1'}">Admin</option>
+                                            <option value="2" th:selected="${param.role == '2'}">Giáo viên</option>
+                                            <option value="3" th:selected="${param.role == '3'}">Học viên</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="select-wrapper">
+                                        <i class="fas fa-toggle-on select-icon"></i>
+                                        <select class="form-select" id="statusFilter" name="status">
+                                            <option value="">Tất cả trạng thái</option>
+                                            <option value="true" th:selected="${param.status == 'true'}">Đang hoạt động</option>
+                                            <option value="false" th:selected="${param.status == 'false'}">Đã khóa</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 d-flex">
+                                    <button type="button" class="btn btn-reset w-100 clear-search">
+                                        <i class="fas fa-times me-2"></i>
+                                        Xóa bộ lọc
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="card-body table-responsive p-0">
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th scope="col">#ID</th>
-                                <th scope="col">Username</th>
-                                <th scope="col">Họ và tên</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Vai trò</th>
-                                <th scope="col">Trạng thái</th>
-                                <th scope="col">Ngày tạo</th>
-                                <th scope="col">Thao tác</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="account : ${accounts}">
-                                <td th:text="${account.accountId}"></td>
-                                <td th:text="${account.username}"></td>
-                                <td th:text="${account.fullName}"></td>
-                                <td th:text="${account.email}"></td>
-                                <td>
-                                    <span class="role-badge" th:classappend="${'role-' + account.role.roleId}"
-                                          th:text="${account.role.roleName}">
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="status-badge"
-                                          th:classappend="${account.isActive ? 'status-active' : 'status-inactive'}"
-                                          th:text="${account.isActive ? 'Hoạt động' : 'Đã khóa'}">
-                                    </span>
-                                </td>
-                                <td th:text="${#temporals.format(account.createdAt, 'dd/MM/yyyy')}"></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-icon btn-edit"
-                                                th:data-id="${account.accountId}">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-icon btn-delete"
-                                                th:data-id="${account.accountId}">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Pagination -->
-                    <div class="card-footer">
-                        <nav aria-label="Page navigation">
-                            <ul id="pagination" class="pagination justify-content-center m-0">
-                                <!-- JavaScript sẽ render phân trang -->
-                            </ul>
-                        </nav>
+
+                    <!-- Accounts Table -->
+                    <div class="card table-card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3 class="card-title">
+                                    <i class="fas fa-list me-2"></i>
+                                    Danh sách tài khoản
+                                </h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th scope="col">
+                                        <i class="fas fa-hashtag me-1"></i>
+                                        ID
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-user me-1"></i>
+                                        Username
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-id-card me-1"></i>
+                                        Họ và tên
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-envelope me-1"></i>
+                                        Email
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-user-tag me-1"></i>
+                                        Vai trò
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-circle me-1"></i>
+                                        Trạng thái
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Ngày tạo
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-cog me-1"></i>
+                                        Thao tác
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="account : ${accounts}">
+                                    <td th:text="${account.accountId}"></td>
+                                    <td th:text="${account.username}"></td>
+                                    <td th:text="${account.fullName}"></td>
+                                    <td th:text="${account.email}"></td>
+                                    <td>
+                                        <span class="role-badge" th:classappend="${'role-' + account.role.roleId}"
+                                              th:text="${account.role.roleName}">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge"
+                                              th:classappend="${account.isActive ? 'status-active' : 'status-inactive'}"
+                                              th:text="${account.isActive ? 'Hoạt động' : 'Đã khóa'}">
+                                        </span>
+                                    </td>
+                                    <td th:text="${#temporals.format(account.createdAt, 'dd/MM/yyyy')}"></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-icon btn-edit" th:data-id="${account.accountId}"
+                                                    data-bs-toggle="tooltip" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-icon btn-delete" th:data-id="${account.accountId}"
+                                                    data-bs-toggle="tooltip" title="Xóa">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="card-footer">
+                            <nav aria-label="Page navigation">
+                                <ul id="pagination" class="pagination justify-content-center m-0">
+                                    <!-- JavaScript sẽ render phân trang -->
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!--Js-->
-<script th:src="@{/js/admin/searching/accounts-search.js}"></script>
-<script th:src="@{/js/admin/list/account-list.js}"></script>
-
-<div id="loadingSpinner">
-    <i class="fas fa-spinner fa-spin"></i>
-</div>
-<div th:replace="fragments/common/footer.html :: footer-scripts"></div>
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-overlay">
+        <div class="spinner-wrapper">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>
+    </div>
+</section>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/admin/searching/accounts-search.js}" defer></script>
+    <script th:src="@{/js/admin/list/account-list.js}" defer></script>
+</th:block>
 </body>
 </html>

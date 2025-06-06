@@ -11,6 +11,7 @@ import com.dacs.quanlyhocvien.models.dto.AdminResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,24 +25,33 @@ public class AdminService {
     private final IAccountRepository accountRepository;
     private final IRoleRepository roleRepository;
     private final FileStorageService fileStorageService;
+    private final PasswordEncoder passwordEncoder;
+    private final CloudinaryService cloudinaryService;
 
     public AdminModel addAdmin(AdminModel admin, MultipartFile file) {
         if (admin == null || admin.getAccount() == null) {
             throw new IllegalArgumentException("Admin hoặc Account không được null");
         }
-        RoleModel adminRole = roleRepository.findByRoleName("admin");
+        RoleModel adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
         AccountModel account = admin.getAccount();
         admin.getAccount().setRole(adminRole);
+
         // Kiểm tra xem tài khoản đã tồn tại chưa
         AccountModel existingAccount = accountRepository.findByEmail(account.getEmail());
         if (existingAccount != null) {
             throw new IllegalArgumentException("Email đã tồn tại, không thể thêm admin mới!");
         } else {
-            // Nếu có file ảnh, lưu ảnh
             if (file != null && !file.isEmpty()) {
-                account.setAvatarPath(fileStorageService.storeFile(file, account.getEmail()));
+                // Upload ảnh lên Cloudinary
+                String imageUrl = cloudinaryService.uploadImage(file, "course-thumbnails");
+
+                // Lưu URL vào đối tượng course
+                if (imageUrl != null) {
+                    account.setAvatarPath(imageUrl);
+                }
             }
-            account.setPassword("1234"); // Gán password mặc định
+            account.setUsername(account.getEmail());
+            account.setPassword(passwordEncoder.encode("1234")); // Gán password mặc định
             account = accountRepository.save(account); // Lưu tài khoản trước
         }
 
