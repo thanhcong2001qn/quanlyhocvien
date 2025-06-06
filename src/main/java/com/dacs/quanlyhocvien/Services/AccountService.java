@@ -23,8 +23,6 @@ public class AccountService{
         this.fileStorageService = fileStorageService;
     }
 
-
-
     public List<AccountModel> getAllAccounts() {
         return accountRepository.findAll();
     }

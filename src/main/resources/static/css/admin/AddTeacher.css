@@ -1,13 +1,20 @@
 /* Modern Teacher Form Styling */
 :root {
     --primary-color: #4361ee;
+    --primary-light: #4895ef;
     --secondary-color: #3f37c9;
     --success-color: #4caf50;
     --danger-color: #f44336;
     --text-color: #2c3e50;
+    --text-light: #6c757d;
     --border-color: #e0e0e0;
     --background-color: #f8f9fa;
     --card-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
 }
 
 /* Container Styling */
@@ -15,15 +22,23 @@
     background-color: var(--background-color);
     min-height: 100vh;
     padding: 2rem;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     background: white;
-    border-radius: 16px;
+    border-radius: 20px;
     box-shadow: var(--card-shadow);
     padding: 2.5rem;
+    transform: translateY(0);
+    transition: var(--transition);
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
 }
 
 /* Form Header */
@@ -31,14 +46,24 @@
     margin-bottom: 2.5rem;
     text-align: center;
     position: relative;
-    padding-bottom: 1rem;
+    padding-bottom: 1.5rem;
 }
 
 .form-header h1 {
     color: var(--text-color);
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 700;
     margin: 0;
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slideDown 0.5s ease-out;
+}
+
+.form-header p {
+    color: var(--text-light);
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
 }
 
 .form-header::after {
@@ -47,75 +72,104 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
+    width: 80px;
     height: 4px;
-    background: var(--primary-color);
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
     border-radius: 2px;
+    animation: expandWidth 0.8s ease-out;
 }
 
 /* Form Sections */
 .form-section {
     background: #ffffff;
-    border-radius: 12px;
-    padding: 1.5rem;
+    border-radius: 16px;
+    padding: 2rem;
     margin-bottom: 2rem;
     border: 1px solid var(--border-color);
+    transition: var(--transition);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.form-section:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-color: var(--primary-light);
 }
 
 .section-title {
     color: var(--text-color);
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.8rem;
     border-bottom: 2px solid var(--border-color);
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: var(--primary-color);
+    transition: var(--transition);
+}
+
+.form-section:hover .section-title::after {
+    width: 100px;
 }
 
 /* Form Grid Layout */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 .form-group {
     margin-bottom: 1.5rem;
-}
-
-.form-group.full-width {
-    grid-column: 1 / -1;
+    position: relative;
 }
 
 /* Labels */
 label {
     display: block;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    transition: var(--transition);
 }
 
 .required-field::after {
     content: '*';
     color: var(--danger-color);
     margin-left: 4px;
+    animation: pulse 2s infinite;
 }
 
 /* Form Controls */
 .form-control {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1.2rem;
     font-size: 1rem;
     border: 2px solid var(--border-color);
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    transition: var(--transition);
     background-color: #fff;
 }
 
 .form-control:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
     outline: none;
+    transform: translateY(-2px);
+}
+
+.form-control::placeholder {
+    color: var(--text-light);
+    opacity: 0.7;
 }
 
 /* Custom File Input */
@@ -126,37 +180,61 @@ label {
 
 .file-input-button {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background: var(--primary-color);
+    padding: 0.85rem 1.8rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
     color: white;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: var(--transition);
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
 }
 
 .file-input-button:hover {
-    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
 }
 
 /* Submit Button */
 .submit-button {
-    background: var(--primary-color);
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
     color: white;
-    padding: 1rem 2rem;
+    padding: 1rem 2.5rem;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition);
     width: auto;
-    min-width: 200px;
+    min-width: 220px;
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+    position: relative;
+    overflow: hidden;
 }
 
 .submit-button:hover {
-    background: var(--secondary-color);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
+}
+
+.submit-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease-out, height 0.6s ease-out;
+}
+
+.submit-button:hover::after {
+    width: 300px;
+    height: 300px;
 }
 
 /* Error Messages */
@@ -165,6 +243,7 @@ label {
     font-size: 0.85rem;
     margin-top: 0.5rem;
     display: none;
+    animation: shake 0.5s ease-in-out;
 }
 
 /* Success & Error States */
@@ -184,10 +263,11 @@ label {
     transform: translate(-50%, -50%);
     background: white;
     padding: 2rem;
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: var(--card-shadow);
     z-index: 1000;
     min-width: 320px;
+    animation: popIn 0.3s ease-out;
 }
 
 .popup-content {
@@ -201,22 +281,79 @@ label {
     pointer-events: none;
 }
 
-.loading-spinner {
+.loading::after {
+    content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 40px;
     height: 40px;
-    border: 4px solid #f3f3f3;
+    border: 4px solid rgba(67, 97, 238, 0.1);
     border-top: 4px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
 
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes expandWidth {
+    from { width: 0; }
+    to { width: 80px; }
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* Responsive Design */
@@ -227,6 +364,7 @@ label {
 
     .form-grid {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 }
 
@@ -241,5 +379,9 @@ label {
 
     .submit-button {
         width: 100%;
+    }
+
+    .form-header h1 {
+        font-size: 1.8rem;
     }
 }

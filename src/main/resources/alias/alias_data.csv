@@ -1,0 +1,76 @@
+type,name,description
+roles,role_id,Role ID
+roles,role_name,Tên vai trò
+roles,description,Mô tả vai trò
+account,account_id,Mã tài khoản
+account,username,Tên đăng nhập
+account,email,Email
+account,password,Mật khẩu
+account,full_name,Họ tên đầy đủ
+account,date_of_birth,Ngày sinh
+account,phone_number,Số điện thoại
+account,address,Địa chỉ
+account,gender,Giới tính
+account,avatar_path,Đường dẫn avatar
+account,role_id,ID vai trò
+account,is_active,Đang hoạt động
+account,is_email_verified,Đã xác thực email
+admin,admin_id,ID admin
+teacher,teacher_id,ID giáo viên
+teacher,subject_specialization,Bộ môn chuyên môn
+teacher,qualification,Bằng cấp
+teacher,hire_date,Ngày nhận việc
+student,hs,Học viên viết tắt
+student,student_id,ID học viên
+student,class_name,Tên lớp
+course_category,category_id,ID danh mục
+course_category,category_name,Tên danh mục
+course_category,description,Mô tả danh mục
+course_category,icon_path,Biểu tượng
+course,course_id,ID khóa học
+course,title,Tiêu đề khóa học
+course,description,Mô tả
+course,price,Học phí
+course,discount_price,Giá giảm
+course,duration,Thời lượng
+course,level,Trình độ
+course,rating,Đánh giá trung bình
+course,total_students,Tổng học viên
+course,total_reviews,Tổng đánh giá
+course,is_published,Đã xuất bản
+course,is_featured,Nổi bật
+course,published_at,Ngày xuất bản
+module,module_id,ID module
+module,title,Tên module
+module,description,Mô tả module
+module,position,Vị trí trong khóa
+module,is_free,Miễn phí
+lesson,lesson_id,ID bài học
+lesson,title,Tên bài học
+lesson,description,Mô tả bài học
+lesson,duration,Thời lượng
+lesson,position,Vị trí
+lesson,is_free,Miễn phí
+video,video_id,ID video
+video,title,Tên video
+video,video_url,Đường dẫn video
+video,duration,Thời lượng video
+enrollment,enrollment_id,ID ghi danh
+enrollment,student_id,ID học viên
+enrollment,course_id,ID khóa học
+enrollment,enrollment_date,Ngày đăng ký
+progress,progress_id,ID tiến độ
+progress,enrollment_id,ID ghi danh
+progress,lesson_id,ID bài học
+progress,is_completed,Hoàn thành
+review,review_id,ID đánh giá
+review,rating,Điểm đánh giá
+review,comment,Bình luận
+quiz,quiz_id,ID bài kiểm tra
+quiz,title,Tiêu đề bài kiểm tra
+certificate,certificate_id,ID chứng chỉ
+certificate,certificate_code,Mã chứng chỉ
+certificate,issue_date,Ngày cấp
+notification,notification_id,ID thông báo
+notification,title,Tiêu đề thông báo
+notification,content,Nội dung

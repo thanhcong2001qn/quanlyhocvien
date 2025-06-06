@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -27,23 +28,29 @@ public class AdminController {
 
     @PostMapping(value = "/apiAddAdmin", consumes = "multipart/form-data")
     public ResponseEntity<?> createAdmin(@ModelAttribute AdminRequestDTO requestDTO) {
-        if (requestDTO.getAdmin() == null || requestDTO.getAdmin().getAccount() == null) {
-            return new ResponseEntity<>("Lỗi: Thiếu thông tin admin hoặc tài khoản", HttpStatus.BAD_REQUEST);
-        }
+        try {
+            if (requestDTO.getAdmin() == null || requestDTO.getAdmin().getAccount() == null) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Thiếu thông tin admin hoặc tài khoản"));
+            }
 
-        // Nếu username null, đặt bằng email
-        if (requestDTO.getAdmin().getAccount().getUsername() == null) {
-            requestDTO.getAdmin().getAccount().setUsername(requestDTO.getAdmin().getAccount().getEmail());
-        }
+            if (requestDTO.getAdmin().getAccount().getUsername() == null) {
+                requestDTO.getAdmin().getAccount().setUsername(requestDTO.getAdmin().getAccount().getEmail());
+            }
 
-        // Nếu email trống, trả về lỗi
-        if (requestDTO.getAdmin().getAccount().getEmail() == null ||
-                requestDTO.getAdmin().getAccount().getEmail().isEmpty()) {
-            return new ResponseEntity<>("Email không được để trống", HttpStatus.BAD_REQUEST);
-        }
+            if (requestDTO.getAdmin().getAccount().getEmail() == null ||
+                    requestDTO.getAdmin().getAccount().getEmail().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Email không được để trống"));
+            }
 
-        AdminModel savedAdmin = adminService.addAdmin(requestDTO.getAdmin(), requestDTO.getFile());
-        return new ResponseEntity<>(savedAdmin, HttpStatus.CREATED);
+            AdminModel savedAdmin = adminService.addAdmin(requestDTO.getAdmin(), requestDTO.getFile());
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedAdmin);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", ex.getMessage()));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Lỗi không xác định: " + ex.getMessage()));
+        }
     }
 
     @PutMapping(value = "/apiEditAdmin")

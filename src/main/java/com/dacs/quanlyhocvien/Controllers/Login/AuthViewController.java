@@ -25,6 +25,10 @@ public class AuthViewController {
     }
     @GetMapping(value = "/login")
     public String Login(HttpServletResponse response){
+        // Thêm header chống cache cho tất cả các request
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {

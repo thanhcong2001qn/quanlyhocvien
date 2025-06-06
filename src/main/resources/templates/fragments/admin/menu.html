@@ -8,76 +8,71 @@
     </div>
     <ul>
         <li class="menu-item">
-            <a th:href="@{/dashboard}" class="menu-link">
-                <i class="fas fa-tachometer-alt"></i> <!-- Đã xóa class "padding" -->
+            <a th:href="@{admin/home}" class="menu-link">
+                <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboards</span>
             </a>
         </li>
+
         <li class="menu-item">
-            <div class="menu-link">
-                <i class="fas fa-chalkboard-teacher"></i> <!-- Đã xóa class "padding" -->
+            <a href="#" class="menu-link">
+                <i class="fas fa-chalkboard-teacher"></i>
                 <span>Admin</span>
                 <i class="fas fa-chevron-down"></i>
-            </div>
+            </a>
             <ul class="submenu">
                 <li><a th:href="@{/all-admin}"><span>All admin</span></a></li>
                 <li><a th:href="@{/add-admin}"><span>Add admin</span></a></li>
             </ul>
         </li>
-<!--        <li class="menu-item">-->
-<!--            <div class="menu-link">-->
-<!--                <i class="fas fa-chalkboard-teacher"></i> &lt;!&ndash; Đã xóa class "padding" &ndash;&gt;-->
-<!--                <span>Teachers</span>-->
-<!--                <i class="fas fa-chevron-down"></i>-->
-<!--            </div>-->
-<!--            <ul class="submenu">-->
-<!--                <li><a th:href="@{/all-teacher}"><span>All teacher</span></a></li>-->
-<!--                <li><a th:href="@{/add-teacher}"><span>Add teacher</span></a></li>-->
-<!--            </ul>-->
-<!--        </li>-->
+
         <li class="menu-item">
-            <div class="menu-link">
-                <i class="fas fa-user-graduate"></i> <!-- Đã xóa class "padding" -->
+            <a href="#" class="menu-link">
+                <i class="fas fa-user-graduate"></i>
                 <span>Students</span>
                 <i class="fas fa-chevron-down"></i>
-            </div>
+            </a>
             <ul class="submenu">
                 <li><a th:href="@{/all-student}"><span>All Students</span></a></li>
             </ul>
         </li>
-<!--        <li class="menu-item">-->
-<!--            <div class="menu-link">-->
-<!--                <i class="fas fa-book-open"></i> &lt;!&ndash; Đã xóa class "padding" &ndash;&gt;-->
-<!--                <span>Class</span>-->
-<!--                <i class="fas fa-chevron-down"></i>-->
-<!--            </div>-->
-<!--            <ul class="submenu">-->
-<!--                <li><a href="#"><span>All Class</span></a></li>-->
-<!--                <li><a href="#"><span>Class Details</span></a></li>-->
-<!--            </ul>-->
-<!--        </li>-->
+
         <li class="menu-item">
-            <div class="menu-link">
+            <a href="#" class="menu-link">
+                <i class="fas fa-book-open"></i>
+                <span>Class</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <ul class="submenu">
+                <li><a th:href="@{/all-class}"><span>All Class</span></a></li>
+                <li><a th:href="@{/class-detail}"><span>Class Details</span></a></li>
+            </ul>
+        </li>
+
+        <li class="menu-item">
+            <a href="#" class="menu-link">
                 <i class="fas fa-graduation-cap"></i>
                 <span>Category</span>
                 <i class="fas fa-chevron-down"></i>
-            </div>
+            </a>
             <ul class="submenu">
                 <li><a th:href="@{/all-categories}"><span>All Category</span></a></li>
                 <li><a th:href="@{/add-category}"><span>Add Category</span></a></li>
             </ul>
         </li>
+
         <li class="menu-item">
-            <div class="menu-link">
+            <a href="#" class="menu-link">
                 <i class="fas fa-graduation-cap"></i>
                 <span>Courses</span>
                 <i class="fas fa-chevron-down"></i>
-            </div>
+            </a>
             <ul class="submenu">
                 <li><a th:href="@{/all-courses}"><span>All Courses</span></a></li>
                 <li><a th:href="@{/add-course}"><span>Add Course</span></a></li>
             </ul>
         </li>
+
         <li class="menu-item">
             <a th:href="@{/all-account}" class="menu-link">
                 <i class="fas fa-user-cog"></i>

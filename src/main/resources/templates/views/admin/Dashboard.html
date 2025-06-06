@@ -1,392 +1,210 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main-layout}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <head>
-    <!-- Theme CSS - Phải để đầu tiên -->
-<!--    <link rel="stylesheet" th:href="@{/css/theme-variables.css}">-->
-<!--    <link rel="stylesheet" th:href="@{/css/theme-toggle.css}">-->
-
-    <!-- Bootstrap và Font Awesome -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" th:href="@{/css/admin/header.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/menu.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/body.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/Dashboard.css}">
-  </head>
+  <title>Trang tổng quan</title>
+  <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 <body>
-<div th:replace="~{/fragments/admin/header :: header}"></div>
-<div th:replace="~{/fragments/admin/menu :: menu}"></div>
-<!---->
-<div class="content-wrapper">
-  <div class="container-fluid mt-3">
-    <!-- Stats Cards -->
-    <div class="row g-3 mb-4">
-      <div class="col-xl-4 col-md-6">
-        <div class="card stat-card bg-info text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between">
-              <div>
-                <h5 class="card-title">Tổng học viên</h5>
-                <h2 class="mb-0">358</h2>
-                <p class="mb-0">
-                  <span class="text-success">↑ 15.3%</span> so với tháng trước
-                </p>
-              </div>
+<section layout:fragment="content">
+  <div class="content-wrapper">
+    <div class="container-fluid py-4">
+      <!-- Section thống kê -->
+      <div class="row g-4 mb-4 stat-summary">
+        <div class="col-md-6 col-xl-3">
+          <div class="card stat-card bg-info text-white">
+            <div class="card-body">
+              <h6 class="mb-1">Tổng học viên</h6>
+              <h3 class="fw-bold" th:text="${totalStudents}">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <div class="card stat-card bg-success text-white">
+            <div class="card-body">
+              <h6 class="mb-1">Tổng doanh thu</h6>
+              <h3 class="fw-bold" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 2, 'POINT')} + ' ₫'">0 ₫</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <div class="card stat-card bg-primary text-white">
+            <div class="card-body">
+              <h6 class="mb-1">Tổng khóa học</h6>
+              <h3 class="fw-bold" th:text="${totalCourses}">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <div class="card stat-card bg-secondary text-white">
+            <div class="card-body">
+              <h6 class="mb-1">Chứng chỉ đã cấp</h6>
+              <h3 class="fw-bold" th:text="${issuedCertificates}">0</h3>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-xl-4 col-md-6">
-        <div class="card stat-card bg-success text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between">
-              <div>
-                <h5 class="card-title">Tổng giáo viên</h5>
-                <h2 class="mb-0">854</h2>
-                <p class="mb-0">
-                  <span class="text-info">↑ 5.7%</span> so với tháng trước
-                </p>
+
+
+      <!-- Tổng quan thống kê -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-6 col-xl-3" th:each="card : ${statCards}">
+          <div class="card stat-card text-white" th:classappend="' bg-' + ${card.color}">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0" th:text="${card.title}">Tiêu đề</h6>
+                <i class="bi" th:class="'bi-' + ${card.icon} + ' stat-icon'"></i>
               </div>
+              <h3 class="fw-bold mb-1" th:text="${card.value}">0</h3>
+              <p class="mb-0 small" th:if="${card.note}" th:text="${card.note}">Ghi chú</p>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-xl-4 col-md-6">
-        <div class="card stat-card bg-warning text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between">
-              <div>
-                <h5 class="card-title">Doanh thu</h5>
-                <h2 class="mb-0">1,258</h2>
-                <p class="mb-0">
-                  <span class="text-danger">↑ 8.3%</span> so với tháng trước
-                </p>
+
+      <!-- Biểu đồ -->
+      <div class="row g-4 mb-4">
+        <div class="col-xl-6">
+          <div class="card h-100">
+            <div class="card-header text-center fw-bold">Phân bố trạng thái giao dịch</div>
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+              <div class="chart-container">
+                <canvas id="transactionPie"></canvas>
+              </div>
+              <p class="mt-3 text-muted" th:if="${#lists.isEmpty(transactionLabels)}">Không có dữ liệu giao dịch</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-6">
+          <div class="card h-100">
+            <div class="card-header text-center fw-bold">Thống kê doanh thu hàng tháng</div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-    </div>
-
-    <!-- Charts -->
-    <div class="row mb-4">
-      <div class="col-xl-8">
-        <div class="card h-100">
-          <div class="card-header">
-            Sales Analytics
-          </div>
-          <div class="card-body">
-            <canvas id="salesChart" width="400" height="200"></canvas>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-4">
-        <div class="card h-100">
-          <div class="card-header">
-            Traffic Sources
-          </div>
-          <div class="card-body d-flex align-items-center justify-content-center">
-            <canvas id="trafficChart" width="200" height="200"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Orders Table -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span>Recent Orders</span>
-            <button class="btn btn-sm btn-primary">View All</button>
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Product</th>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>#ORD-0025</td>
-                  <td>John Doe</td>
-                  <td>Smartphone</td>
-                  <td>2025-03-12</td>
-                  <td>$1,200</td>
-                  <td><span class="badge bg-success">Completed</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                    <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>#ORD-0024</td>
-                  <td>Jane Smith</td>
-                  <td>Laptop</td>
-                  <td>2025-03-11</td>
-                  <td>$1,850</td>
-                  <td><span class="badge bg-warning">Pending</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                    <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>#ORD-0023</td>
-                  <td>Mike Johnson</td>
-                  <td>Headphones</td>
-                  <td>2025-03-10</td>
-                  <td>$350</td>
-                  <td><span class="badge bg-success">Completed</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                    <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>#ORD-0022</td>
-                  <td>Lisa Brown</td>
-                  <td>Smart Watch</td>
-                  <td>2025-03-09</td>
-                  <td>$420</td>
-                  <td><span class="badge bg-danger">Cancelled</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                    <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>#ORD-0021</td>
-                  <td>Robert White</td>
-                  <td>Monitor</td>
-                  <td>2025-03-08</td>
-                  <td>$750</td>
-                  <td><span class="badge bg-info">Shipped</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></button>
-                    <button class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></button>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+      <!-- Giao dịch gần nhất -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span class="fw-bold">Giao dịch gần nhất</span>
+              <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/enrollments}">
+                <i class="bi bi-eye"></i> Xem tất cả
+              </a>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Stats and Activity -->
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">
-            Today's Tasks
-          </div>
-          <div class="card-body">
-            <div class="list-group">
-              <div class="list-group-item d-flex align-items-center">
-                <div class="form-check me-3">
-                  <input class="form-check-input" type="checkbox" value="" id="task1">
-                </div>
-                <label class="form-check-label" for="task1">
-                  Complete monthly report
-                </label>
-                <span class="ms-auto badge bg-warning">High</span>
-              </div>
-              <div class="list-group-item d-flex align-items-center">
-                <div class="form-check me-3">
-                  <input class="form-check-input" type="checkbox" value="" id="task2" checked>
-                </div>
-                <label class="form-check-label text-decoration-line-through" for="task2">
-                  Team meeting at 2 PM
-                </label>
-                <span class="ms-auto badge bg-success">Done</span>
-              </div>
-              <div class="list-group-item d-flex align-items-center">
-                <div class="form-check me-3">
-                  <input class="form-check-input" type="checkbox" value="" id="task3">
-                </div>
-                <label class="form-check-label" for="task3">
-                  Update website content
-                </label>
-                <span class="ms-auto badge bg-info">Medium</span>
-              </div>
-              <div class="list-group-item d-flex align-items-center">
-                <div class="form-check me-3">
-                  <input class="form-check-input" type="checkbox" value="" id="task4">
-                </div>
-                <label class="form-check-label" for="task4">
-                  Review new product designs
-                </label>
-                <span class="ms-auto badge bg-danger">Urgent</span>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+                  <thead class="table-light text-center">
+                  <tr>
+                    <th>#</th>
+                    <th>Mã giao dịch</th>
+                    <th>Học viên</th>
+                    <th>Khóa học</th>
+                    <th>Ngày mua</th>
+                    <th>Số tiền</th>
+                    <th>Trạng thái</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr th:each="tx, iterStat : ${recentTransactions}">
+                    <td th:text="${iterStat.count}">1</td>
+                    <td th:text="'TX-' + ${tx.enrollmentId}">TX-0001</td>
+                    <td th:text="${tx.student.account.fullName}">Nguyễn Văn A</td>
+                    <td th:text="${tx.course.title}">Khóa học A</td>
+                    <td th:text="${#temporals.format(tx.purchaseDate, 'dd/MM/yyyy')}">01/06/2025</td>
+                    <td th:text="${#numbers.formatDecimal(tx.amountPaid, 0, 'COMMA', 2, 'POINT')} + ' ₫'">0 ₫</td>
+                    <td class="text-center">
+                      <span th:switch="${tx.paymentStatus.name()}">
+                        <span class="badge bg-success" th:case="'COMPLETED'">Hoàn tất</span>
+                        <span class="badge bg-warning text-dark" th:case="'PENDING'">Đang chờ</span>
+                        <span class="badge bg-danger" th:case="'FAILED'">Thất bại</span>
+                        <span class="badge bg-secondary" th:case="'REFUNDED'">Đã hoàn</span>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr th:if="${#lists.isEmpty(recentTransactions)}">
+                    <td colspan="7" class="text-center">Không có giao dịch nào</td>
+                  </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">
-            Recent Activities
-          </div>
-          <div class="card-body">
-            <ul class="list-unstyled activity-list">
-              <li class="activity-item">
-                <span class="activity-icon bg-success"><i class="bi bi-person"></i></span>
-                <div class="activity-content">
-                  <p class="mb-0"><strong>John Doe</strong> created a new account</p>
-                  <small class="text-muted">Today, 13:45</small>
-                </div>
-              </li>
-              <li class="activity-item">
-                <span class="activity-icon bg-primary"><i class="bi bi-bag"></i></span>
-                <div class="activity-content">
-                  <p class="mb-0">New order <strong>#ORD-0025</strong> placed</p>
-                  <small class="text-muted">Today, 12:30</small>
-                </div>
-              </li>
-              <li class="activity-item">
-                <span class="activity-icon bg-warning"><i class="bi bi-gear"></i></span>
-                <div class="activity-content">
-                  <p class="mb-0"><strong>System</strong> updated successfully</p>
-                  <small class="text-muted">Today, 10:15</small>
-                </div>
-              </li>
-              <li class="activity-item">
-                <span class="activity-icon bg-danger"><i class="bi bi-exclamation-circle"></i></span>
-                <div class="activity-content">
-                  <p class="mb-0"><strong>Warning</strong> Server load high (92%)</p>
-                  <small class="text-muted">Today, 09:23</small>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
-</div>
-<!-- Nút mở Chatbox -->
-<button id="openChatBtn" class="chat-open-btn">
-  <i class="fas fa-comments"></i>
-</button>
+</section>
 
-<!-- Chatbox Messenger Style -->
-<div id="chatContainer" class="modern-chat-container" style="display: none;">
-  <!-- Header kèm animation và icon -->
-  <div id="chatHeader" class="chat-header">
-    <div class="header-content">
-      <div class="header-status">
-        <span class="status-dot"></span>
-      </div>
-      <div class="header-title">
-        <h3>Trợ lý học viên</h3>
-        <span class="status-text">Đang hoạt động</span>
-      </div>
-    </div>
+<!-- Scripts -->
+<th:block layout:fragment="script">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script th:inline="javascript">
+    const revenueLabels = [[${monthlyRevenueLabels}]];
+    const revenueValues = [[${monthlyRevenueValues}]];
 
-    <!-- Thêm 1 div bọc 2 nút control -->
-    <div class="header-controls">
-      <button id="toggleSizeBtn" class="control-button">
-        <i class="fas fa-expand"></i>
-      </button>
-      <button id="closeChatBtn" class="control-button">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-  </div>
+    new Chart(document.getElementById("revenueChart"), {
+      type: 'line',
+      data: {
+        labels: revenueLabels,
+        datasets: [{
+          label: 'Doanh thu theo tháng',
+          data: revenueValues,
+          borderColor: 'rgba(75,192,192,1)',
+          backgroundColor: 'rgba(75,192,192,0.2)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true, text: 'Doanh thu theo tháng' }
+        }
+      }
+    });
 
-  <!-- Messages container với hiệu ứng cuộn mượt -->
-  <div id="chat-messages" class="chat-messages">
-    <div class="message bot-message">
-      <div class="message-content">
-        <div class="message-bubble">Xin chào! Tôi có thể giúp gì cho bạn?</div>
-        <div class="message-time">17:12</div>
-      </div>
-    </div>
-  </div>
+    const transactionLabels = [[${transactionLabels}]];
+    const transactionValues = [[${transactionValues}]];
+    const statusColors = {
+      'COMPLETED': '#28a745',
+      'PENDING': '#ffc107',
+      'FAILED': '#dc3545',
+      'REFUNDED': '#6c757d'
+    };
+    const backgroundColors = transactionLabels.map(label => statusColors[label] || '#999');
 
-  <!-- Input area với animation và modern design -->
-  <div id="chatInputArea" class="chat-input-area">
-    <form id="chat-form" class="input-form">
-      <div class="input-wrapper">
-        <input
-                type="text"
-                id="user-input"
-                placeholder="Nhập tin nhắn..."
-                autocomplete="off"
-        >
-        <button id="sendBtn" type="submit"><i class="fas fa-paper-plane"></i></button>
-      </div>
-    </form>
-  </div>
-</div>
-<!---->
-<script th:src="@{/js/admin/menu.js}"></script>
-<script th:src="@{/js/admin/header.js}"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script th:src="@{/js/chatbot/chatbot.js}"></script>
-<!-- Script mở/đóng chat -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-  const openBtn = document.getElementById('openChatBtn');
-  const chatContainer = document.getElementById('chatContainer');
-  const closeBtn = document.getElementById('closeChatBtn');
-  const toggleSizeBtn = document.getElementById('toggleSizeBtn');
-
-  // Ấn icon mở/ẩn chat
-  openBtn.addEventListener('click', () => {
-    if (chatContainer.style.display === 'none' || chatContainer.style.display === '') {
-      chatContainer.style.display = 'flex';
-    } else {
-      chatContainer.style.display = 'none';
-    }
-  });
-
-  // Ấn nút X đóng chat
-  closeBtn.addEventListener('click', () => {
-    chatContainer.style.display = 'none';
-  });
-
-  // Ấn nút phóng to/thu nhỏ
-  toggleSizeBtn.addEventListener('click', () => {
-    chatContainer.classList.toggle('expanded');
-
-    // Đổi icon
-    const icon = toggleSizeBtn.querySelector('i');
-    if (chatContainer.classList.contains('expanded')) {
-      icon.classList.remove('fa-expand');
-      icon.classList.add('fa-compress');
-    } else {
-      icon.classList.remove('fa-compress');
-      icon.classList.add('fa-expand');
-    }
-  });
-});
-</script>
+    new Chart(document.getElementById("transactionPie"), {
+      type: 'pie',
+      data: {
+        labels: transactionLabels,
+        datasets: [{
+          data: transactionValues,
+          backgroundColor: backgroundColors
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' },
+          title: { display: true, text: 'Phân bố trạng thái giao dịch' }
+        }
+      }
+    });
+  </script>
+</th:block>
 </body>
 </html>

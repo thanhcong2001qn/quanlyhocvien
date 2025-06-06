@@ -28,7 +28,6 @@ public class TeacherModel {
 
     // Constructors
     public TeacherModel() {
-        this.account = new AccountModel(); // Đảm bảo account không bị null
     }
 
     public TeacherModel(AccountModel account, String subjectSpecialization, String qualification, LocalDate hireDate) {
