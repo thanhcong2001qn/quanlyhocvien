@@ -1,6 +1,6 @@
 package com.dacs.quanlyhocvien.Services.Executors;
 
-import com.dacs.quanlyhocvien.Services.Validators.TAMCHUADUNG.SQLValidator;
+import com.dacs.quanlyhocvien.Services.Validators.TAMCHUADUNG.SQLValidatorold;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class SafeQueryExecutor {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private SQLValidator sqlValidator;
+    private SQLValidatorold sqlValidator;
 
     public List<Map<String, Object>> safeExecute(String sqlQuery) {
         try {

@@ -3,7 +3,7 @@ package com.dacs.quanlyhocvien.Services.Validators.TAMCHUADUNG;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SQLValidator {
+public class SQLValidatorold {
 
     public boolean isSafe(String sql) {
         if (sql == null) return false;
