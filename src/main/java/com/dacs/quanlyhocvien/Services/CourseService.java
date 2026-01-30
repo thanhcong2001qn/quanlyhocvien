@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class CourseService {
+public class    CourseService {
     private final ICourseRepository courseRepository;
     private final IEnrollmentRepository enrollmentRepository;
     private final CloudinaryService cloudinaryService;
