@@ -1,5 +1,6 @@
 package com.dacs.quanlyhocvien.Services.Clients;
 
+import com.dacs.quanlyhocvien.Exceptions.ChatbotException;
 import com.dacs.quanlyhocvien.config.GeminiConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,16 +35,64 @@ public class GeminiApiClient {
             );
             return extractTextFromResponse(response);
         } catch (Exception e) {
-            logger.severe("Lỗi khi gọi Gemini API: " + e.getMessage());
-            throw new RuntimeException("Không thể kết nối với Gemini API", e);
+            logger.severe("❌ Gemini API error: " + e.getMessage());
+
+            // NÉM RA LOẠI RIÊNG nếu status là 503 hoặc connection error
+            if (e.getMessage().contains("503") || e.getMessage().toLowerCase().contains("unavailable")) {
+                throw new ChatbotException(
+                        "ERR_GEMINI_UNAVAILABLE",
+                        "🌐 Hệ thống AI đang tạm thời quá tải hoặc mất kết nối. Bạn vui lòng thử lại sau.",
+                        e.getMessage()
+                );
+            }
+
+            throw new ChatbotException(
+                    "ERR_GEMINI_API",
+                    "🤖 Có lỗi xảy ra khi xử lý câu hỏi. Vui lòng thử lại sau.",
+                    e.getMessage()
+            );
+        }
+    }
+
+    public List<Double> getEmbedding(String input) {
+        try {
+            String url = "https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("x-goog-api-key", geminiConfig.getApiKey());
+
+            Map<String, Object> textPart = Map.of("text", input);
+            Map<String, Object> content = Map.of("parts", List.of(textPart));
+            Map<String, Object> body = Map.of("model", "models/embedding-001", "content", content);
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+            Map response = restTemplate.postForObject(url, request, Map.class);
+
+            Object embeddingObj = response.get("embedding");
+            if (!(embeddingObj instanceof Map)) {
+                throw new ChatbotException("EMBEDDING_FORMAT_ERROR", "⚠️ Cấu trúc embedding không đúng", embeddingObj.toString());
+            }
+
+            Map<String, Object> embeddingMap = (Map<String, Object>) embeddingObj;
+            Object values = embeddingMap.get("values");
+
+            if (!(values instanceof List)) {
+                throw new ChatbotException("EMBEDDING_VALUES_MISSING", "⚠️ Không tìm thấy danh sách vector", values.toString());
+            }
+
+            return (List<Double>) values;
+
+        } catch (Exception e) {
+            throw new ChatbotException("EMBEDDING_ERROR", "❌ Lỗi khi gọi Gemini embedding", e.getMessage());
         }
     }
 
     private Map<String, Object> buildRequest(String prompt) {
         // Thêm hướng dẫn về giọng điệu
         String wrappedPrompt = """
-        Bạn là một trợ lý AI vui vẻ và thân thiện. 
-        Hãy trả lời ngắn gọn, tự nhiên như khi trò chuyện với bạn bè.
+        Bạn là một trợ lý AI nghiêm túc 
+        Hãy trả lời ngắn gọn, tự nhiên như khi trò chuyện với đối tác, sếp.
         Tránh trả lời dài dòng như sách hoặc tài liệu kỹ thuật.
         
         Dưới đây là câu hỏi từ người dùng:

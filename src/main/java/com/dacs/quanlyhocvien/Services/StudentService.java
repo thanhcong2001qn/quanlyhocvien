@@ -49,9 +49,29 @@ public class StudentService {
         return studentRepository.findByAccount_Username(userName);
     }
 
-    public List<StudentModel> searchStudents (String name, String className){
+    public List<StudentModel> searchStudents(String name, String className) {
+        boolean emptyName = (name == null || name.isBlank());
+        boolean emptyClass = (className == null || className.isBlank());
+
+        if (emptyName && emptyClass) {
+            // ✅ Nếu cả hai đều rỗng → trả về tất cả sinh viên
+            return studentRepository.findAll();
+        }
+
+        if (emptyName) {
+            // ✅ Chỉ lọc theo className
+            return studentRepository.findByClassNameContainingIgnoreCase(className);
+        }
+
+        if (emptyClass) {
+            // ✅ Chỉ lọc theo name
+            return studentRepository.findByAccountFullNameContainingIgnoreCase(name);
+        }
+
+        // ✅ Có cả hai
         return studentRepository.findByAccountFullNameContainingIgnoreCaseAndClassNameContainingIgnoreCase(name, className);
     }
+
     public Page<StudentResponseDTO> getStudents(Pageable pageable) {
         return studentRepository.findAll(pageable)
                 .map(this::mapToDto); // map từng StudentModel sang StudentResponseDTO
@@ -68,6 +88,14 @@ public class StudentService {
                 .phoneNumber(student.getAccount() != null ? student.getAccount().getPhoneNumber() : null)
                 .build();
     }
+
+    public List<StudentResponseDTO> getAllStudentDTOs() {
+        return studentRepository.findAll().stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
+
     public StudentModel updateStudentByUserName(String userName, UpdateStudentRequest student){
         StudentModel studentModel = studentRepository.findByAccount_Username(userName);
         studentModel.getAccount().setFullName(student.getFullName());

@@ -1,8 +1,7 @@
 function fetchWithAuth(url, options = {}) {
     const token = localStorage.getItem('token');
     const headers = {
-        ...options.headers || {},
-//        'Content-Type': 'application/json'
+        ...options.headers || {}
     };
 
     if (token) {

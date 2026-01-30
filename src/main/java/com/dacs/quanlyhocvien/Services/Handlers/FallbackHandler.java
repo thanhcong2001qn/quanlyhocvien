@@ -3,7 +3,7 @@ package com.dacs.quanlyhocvien.Services.Handlers;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FallbackHandler_TAMCHUADUNG {
+public class FallbackHandler {
 
     public String handle(String question) {
         return """

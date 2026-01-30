@@ -1,505 +1,118 @@
-
-.wrapper {
-    display: flex;
-    width: 100%;
-}
-
-/* Page Content */
-#content {
-    width: calc(100% - 250px);
+/* Layout */
+.content-wrapper {
+    padding: 2rem;
+    background-color: #f4f6f9;
     min-height: 100vh;
-    transition: all 0.3s;
-    position: absolute;
-    top: 0;
-    right: 0;
 }
 
-#content.active {
-    width: 100%;
-}
-
-/* Stat Cards */
+/* Stat Card */
 .stat-card {
     border: none;
-    border-radius: 10px;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    transition: all 0.3s;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
 }
 
 .stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
 }
 
 .stat-icon {
-    font-size: 2.5rem;
-    opacity: 0.8;
+    font-size: 1.75rem;
+    opacity: 0.9;
 }
 
-/* Activity List */
-.activity-list {
-    margin-top: 15px;
+/* Chart Container */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 260px;
 }
 
-.activity-item {
-    display: flex;
-    margin-bottom: 15px;
-    align-items: flex-start;
+/* Table */
+.table {
+    margin-bottom: 0;
+    font-size: 0.95rem;
 }
 
-.activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-    flex-shrink: 0;
-}
-
-.activity-content {
-    flex-grow: 1;
-}
-
-/* Tables */
 .table thead th {
-    background-color: #f8f9fa;
-    border-color: #e9ecef;
+    background-color: #f1f3f5;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table tbody td {
+    vertical-align: middle;
+}
+
+/* Badge Custom */
+.badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.75em;
+    border-radius: 0.5rem;
 }
 
 /* Cards */
 .card {
-    border-radius: 0.5rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    margin-bottom: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
     border: none;
+    background-color: #ffffff;
+}
+
+.stat-summary {
+  margin-top: 2rem; /* hoặc nhiều hơn nếu cần */
 }
 
 .card-header {
-    background-color: #fff;
-    border-bottom: 1px solid #e9ecef;
-    font-weight: 500;
+    background-color: transparent;
+    font-weight: 600;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0.75rem 1rem;
+}
+
+/* Button */
+.btn-outline-primary {
+    border-color: #0d6efd;
+    color: #0d6efd;
+    transition: all 0.2s;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #fff;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-    #content {
-        width: 100%;
+@media (max-width: 992px) {
+    .chart-container {
+        height: 220px;
     }
-    #content.active {
-        width: calc(100% - 250px);
+
+    .stat-icon {
+        font-size: 1.5rem;
+    }
+
+    .card-header {
+        text-align: center;
     }
 }
 
-/* Container chính */
-#chatContainer {
-  position: fixed;
-  bottom: 0px;
-  right: 90px;
-  width: 350px;
-  height: 500px;
-  background: #1c1e21;
-  border-radius: 15px 15px 0 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  z-index: 1002;
-  transition: width 2s ease, height 2s ease, right 2s ease, bottom 2s ease;
-  transition-timing-function: ease-in-out;
+@media (max-width: 576px) {
+    .table th,
+    .table td {
+        font-size: 0.85rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
 }
-
-/* Khi mở rộng */
-#chatContainer.expanded {
-  left: 0;
-  right: 90px;
-  top: 0;
-  bottom: 0;
-  width: auto;
-  height: auto;
-  border-radius: 0;
-}
-
-
-#toggleSizeBtn:hover {
-    background: rgba(255, 255, 255, 0.1); /* Hover nhẹ */
-    border-radius: 50%;
-}
-
-/* Header */
-#chatHeader {
-  background: #242526;
-  color: #e4e6eb;
-  padding: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #3a3b3c;
-}
-
-.header-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Khoảng cách giữa 2 nút */
-}
-
-
-.control-button:hover {
-  background: rgba(255, 255, 255, 0.1); /* Hover nhẹ */
-}
-
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  background: #4CAF50;
-  border-radius: 50%;
-  display: inline-block;
-  animation: pulse 2s infinite;
-}
-
-.header-title {
-  display: flex;
-  flex-direction: column;
-}
-
-.header-title h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #e4e6eb;
-}
-
-.status-text {
-  font-size: 12px;
-  color: #b0b3b8;
-}
-
-/* Các nút điều khiển (phóng to / thu nhỏ và đóng) */
-.control-button,
-#closeChatBtn {
-  width: 32px;
-  height: 32px;
-  background: none;
-  border: none;
-  padding: 0;
-  margin-left: 0px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background-color 0.3s;
-}
-
-/* Icon bên trong nút (cả i và svg) */
-.control-button i,
-#closeChatBtn svg {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
-  color: white;
-}
-
-/* Hover chung cho cả 2 nút */
-.control-button:hover,
-#closeChatBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-#closeChatBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* Khu vực tin nhắn */
-.chat-messages {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
-  background: #1c1e21;
-  display: flex;
-  flex-direction: column;
-  scroll-behavior: smooth;
-}
-
-/* Thiết kế tin nhắn */
-.message {
-  margin-bottom: 16px;
-  display: flex;
-  flex-direction: column;
-  animation: slideIn 0.3s ease-out;
-}
-
-.message-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.bot-message .message-content {
-  align-self: flex-start;
-  max-width: 80%;
-}
-
-.user-message .message-content {
-  align-self: flex-end;
-  max-width: 80%;
-}
-
-.message-bubble {
-  padding: 8px 12px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.4;
-  white-space: pre-wrap; /* Giữ khoảng trắng và xuống dòng đúng theo người dùng nhập */
-  word-break: break-word; /* Chỉ xuống dòng khi quá dài */
-}
-
-.bot-message .message-bubble {
-  background: #3a3b3c;
-  color: #e4e6eb;
-  border-bottom-left-radius: 4px;
-}
-
-.user-message .message-bubble {
-  background-color: #0084ff; /* Màu xanh Messenger chuẩn */
-  color: white;
-  border-radius: 18px 18px 4px 18px; /* Bo góc đẹp như Messenger */
-  padding: 8px 12px;
-  max-width: 80%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  word-break: break-word;
-  animation: slideIn 0.3s ease-out;
-}
-
-.message-time {
-  font-size: 11px;
-  color: #b0b3b8;
-  margin-top: 4px;
-  margin-left: 8px;
-}
-
-/* Khu vực nhập liệu */
-#chatInputArea {
-  background: #242526;
-  padding: 12px;
-  border-top: 1px solid #3a3b3c;
-}
-
-#chat-form {
-  display: flex;
-  gap: 8px;
-}
-
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  background: #3a3b3c;
-  border-radius: 20px;
-  padding: 4px 8px;
-  transition: box-shadow 0.3s;
-}
-
-.input-wrapper:focus-within {
-  box-shadow: 0 0 0 2px rgba(0, 132, 255, 0.3);
-}
-
-#user-input {
-  flex: 1;
-  border: none;
-  background: none;
-  padding: 8px 12px;
-  font-size: 14px;
-  color: #e4e6eb;
-  outline: none;
-}
-
-#user-input::placeholder {
-  color: #b0b3b8;
-}
-
-#sendBtn {
-  background: #0084ff;
-  color: white;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s;
-}
-
-#sendBtn i {
-  font-size: 16px;
-}
-
-#sendBtn:hover {
-  background: #006bbd;
-}
-
-/* Nút mở chat */
-.chat-open-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  background-color: #0084ff;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  z-index: 1001;
-  transition: background-color 0.3s, transform 0.3s;
-}
-
-.chat-open-btn:hover {
-  background-color: #006bbd;
-  transform: scale(1.05);
-}
-
-/* Custom Scrollbar */
-.chat-messages::-webkit-scrollbar {
-  width: 6px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 3px;
-}
-
-.chat-messages::-webkit-scrollbar-thumb:hover {
-  background: #666;
-}
-
-/* Animations */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Responsive adjustments */
-@media screen and (max-width: 480px) {
-  #chatContainer {
-    width: 100%;
-    height: 100%;
-    right: 0;
-    bottom: 0;
-    border-radius: 0;
-  }
-
-  .chat-open-btn {
-    bottom: 10px;
-    right: 10px;
-  }
-}
-
-@keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.message {
-  animation: fadeSlideUp 0.4s ease forwards;
-}
-
-.typing {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  justify-content: center;
-}
-
-.typing-indicator {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin: 10px;
-  align-self: flex-start;
-}
-
-.typing-indicator-container {
-  background: #3a3b3c; /* Màu xám giống bot message */
-  color: #e4e6eb;
-  padding: 8px 12px;
-  border-radius: 18px 18px 4px 18px;
-  max-width: 150px; /* <= Rộng tối đa */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  animation: fadeSlideUp 0.4s ease forwards;
-}
-
-.typing-indicator span {
-  width: 6px;
-  height: 6px;
-  background: #e4e6eb;
-  border-radius: 50%;
-  animation: typingBounce 1.5s infinite;
-}
-
-.typing-indicator span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.typing-indicator span:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes typingBounce {
-  0%, 60%, 100% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(-6px);
-  }
-}
-

@@ -1,12 +1,14 @@
 package com.dacs.quanlyhocvien.Repository;
 
 import com.dacs.quanlyhocvien.models.EnrollmentModel;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,4 +59,22 @@ public interface IEnrollmentRepository extends JpaRepository<EnrollmentModel, Lo
     @Transactional
     @Query("DELETE FROM EnrollmentModel e WHERE e.course.courseId = :courseId")
     void deleteAllByCourseId(Long courseId);
+    @Query("SELECT SUM(sc.paymentAmount) FROM EnrollmentModel sc WHERE sc.paymentStatus = 'COMPLETED'")
+    BigDecimal getTotalRevenue();
+    @Query(value = "SELECT DATE_FORMAT(payment_date, '%Y-%m') AS month, SUM(payment_amount) " +
+            "FROM enrollment WHERE payment_status = 'COMPLETED' " +
+            "GROUP BY DATE_FORMAT(payment_date, '%Y-%m') " +
+            "ORDER BY STR_TO_DATE(DATE_FORMAT(payment_date, '%Y-%m-01'), '%Y-%m-%d') ASC",
+            nativeQuery = true)
+    List<Object[]> getRevenuePerMonth();
+    @Query("SELECT sc.paymentStatus, COUNT(sc) FROM EnrollmentModel sc GROUP BY sc.paymentStatus")
+    List<Object[]> getTransactionStatusStats();
+    @Query("""
+    SELECT sc FROM EnrollmentModel sc
+    JOIN FETCH sc.student s
+    JOIN FETCH s.account a
+    JOIN FETCH sc.course c
+    ORDER BY sc.paymentDate DESC
+    """)
+    List<EnrollmentModel> findTop5RecentWithJoins(Pageable pageable);
 }
