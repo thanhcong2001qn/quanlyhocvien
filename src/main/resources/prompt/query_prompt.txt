@@ -1,3 +1,0 @@
-💡 Lưu ý: Dùng cú pháp của MySQL.
-- Lọc theo tháng: dùng DATE_FORMAT(published_at, '%Y-%m')
-- Không dùng STRFTIME() (vì chỉ có trong SQLite)
