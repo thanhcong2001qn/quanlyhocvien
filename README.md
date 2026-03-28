@@ -2,7 +2,7 @@
 
 # Quản lý học viên (LMS)
 
-**Nền tảng học trực tuyến full-stack** — quản lý khóa học, người dùng đa vai trò, thanh toán giỏ hàng và **trợ lý hỏi đáp tiếng Việt** tích hợp AI (Gemini) với truy vấn dữ liệu an toàn.
+**Nền tảng học trực tuyến full-stack** — quản lý khóa học, người dùng đa vai trò, giỏ hàng, ghi danh và phân quyền rõ ràng giữa học viên, giảng viên và admin.
 
 <br/>
 
@@ -21,7 +21,7 @@
 | Điểm mạnh | Mô tả ngắn |
 |-----------|------------|
 | **Bảo mật thực tế** | Spring Security, JWT, reCAPTCHA khi đăng ký, phân quyền theo vai trò (học viên / giảng viên / admin). |
-| **AI có kiểm soát** | Chatbot phân loại intent, chuẩn hóa ngôn ngữ tự nhiên, alias ngữ nghĩa, validator SQL và executor an toàn trước khi chạm database. |
+| **Nghiệp vụ LMS đầy đủ** | Khóa học theo module/bài học, tiến độ, chứng chỉ; thống kê và export dữ liệu phục vụ vận hành. |
 | **Tích hợp dịch vụ** | Gửi email xác thực, upload ảnh qua Cloudinary, export dữ liệu Excel (Apache POI). |
 | **Kiến trúc rõ ràng** | REST API song song giao diện server-side (Thymeleaf) và module React; tách lớp Controller — Service — Repository. |
 
@@ -33,7 +33,6 @@
 - **Người dùng**: đăng ký / đăng nhập, xác thực email, JWT cho API.
 - **Thương mại**: giỏ hàng, đăng ký khóa học (enrollment).
 - **Admin & giảng viên**: dashboard, quản lý học viên / tài khoản / khóa học (theo phân quyền).
-- **Chatbot** (`/api/chatbot/query`): hỏi đáp tiếng Việt; truy vấn dữ liệu có lớp bảo vệ (phát hiện lệnh nguy hiểm, giới hạn SQL hợp lệ).
 
 ---
 
@@ -46,7 +45,6 @@
 - Spring Security · JWT (jjwt)  
 - Thymeleaf + Layout Dialect  
 - Spring Mail · Google reCAPTCHA  
-- Google Gemini API · Google Cloud AI Platform client  
 - Cloudinary · Apache POI / OpenCSV · Lombok · Jsoup  
 
 **Frontend**
@@ -69,7 +67,6 @@ flowchart LR
     API[REST API]
     Sec[Spring Security / JWT]
     Svc[Services]
-    AI[Chatbot + Gemini]
   end
   subgraph data [Dữ liệu & hạ tầng]
     DB[(MySQL)]
@@ -85,8 +82,6 @@ flowchart LR
   Svc --> DB
   Svc --> Mail
   Svc --> CDN
-  AI --> Gemini[Gemini API]
-  AI --> DB
 ```
 
 ---
@@ -96,11 +91,11 @@ flowchart LR
 ```
 quanlyhocvien/
 ├── src/main/java/com/dacs/quanlyhocvien/
-│   ├── Controllers/      # MVC + REST (auth, course, admin, chatbot, …)
-│   ├── Services/         # Nghiệp vụ, tích hợp Gemini, validator SQL
-│   ├── config/           # Security, JWT, Cloudinary, Gemini
+│   ├── Controllers/      # MVC + REST (auth, course, admin, …)
+│   ├── Services/         # Nghiệp vụ nền tảng LMS
+│   ├── config/           # Security, JWT, Cloudinary, …
 │   ├── models/           # Entity JPA & DTO
-│   └── Utils/            # NLP, alias, export Excel, schema DB
+│   └── Utils/            # Tiện ích, export Excel, …
 ├── src/main/resources/
 │   ├── templates/        # Thymeleaf
 │   ├── static/
@@ -139,7 +134,6 @@ Chỉnh `src/main/resources/application.properties` (hoặc dùng profile riêng
 - `app.jwt.secret`, `app.jwt.expiration`  
 - SMTP (Gmail hoặc provider khác)  
 - `google.recaptcha` (site key + secret)  
-- `gemini.api.key`, `gemini.api.url`  
 - `cloudinary.*`  
 - `app.base-url` (URL public cho link xác thực email)  
 
@@ -170,7 +164,6 @@ npm start
 | Xác thực | `POST /api/register`, `POST /api/login` |
 | Khóa học | REST dưới `/api/...` (course, module, lesson, category) |
 | Người dùng / giỏ hàng / ghi danh | `UserAPIController`, `CartApiController`, `EnrollmentApiController` |
-| Chatbot | `POST /api/chatbot/query` — body JSON: `{ "question": "..." }` |
 
 Chi tiết đầy đủ nằm trong các class `@RestController` trong package `Controllers`.
 
@@ -193,6 +186,6 @@ Dự án phục vụ mục đích học tập / demo portfolio. Nếu bạn fork
 
 <div align="center">
 
-**Được xây dựng với Spring Boot, React và tư duy bảo mật cho truy vấn AI.**
+**Được xây dựng với Spring Boot, React và tư duy phân quyền rõ ràng cho LMS.**
 
 </div>
