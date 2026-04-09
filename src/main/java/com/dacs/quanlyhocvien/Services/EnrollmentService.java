@@ -261,6 +261,6 @@ public class EnrollmentService {
             return 0;
         }
         int completed = progressRepository.countCompletedLessonsByStudentIdAndCourseId(studentId, courseId);
-        return (int) Math.round((double) completed / totalLessons * 100);
+        return (int) Math.round(((double) completed * 100) / totalLessons);
     }
 }

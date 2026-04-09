@@ -285,7 +285,8 @@
                             <span class="fw-semibold"><i class="fas fa-chart-line me-1"></i>Tiến độ học</span>
                             <span class="progress-percent-label" th:text="${progressPercentage} + '%'">0%</span>
                         </div>
-                        <div class="progress" style="height: 10px; border-radius: 5px;">
+                        <div class="progress" style="height: 10px; border-radius: 5px;"
+                             th:attr="aria-label='Tiến độ hoàn thành khóa học: ' + ${progressPercentage} + '%'">
                             <div class="progress-bar progress-bar-striped progress-bar-animated"
                                  role="progressbar"
                                  th:style="'width: ' + ${progressPercentage} + '%;'"
