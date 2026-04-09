@@ -50,13 +50,15 @@ public class UserViewController {
             // Lấy thông tin người dùng hiện tại (nếu đã đăng nhập)
             AccountModel currentUser = null;
             boolean isEnrolled = false;
+            int progressPercentage = 0;
             HttpSession session = request.getSession();
             String username = (String) session.getAttribute("username");
+            StudentModel student = null;
             if (username != null) {
                 currentUser = accountService.getAccountByUsername(username);
                 if (currentUser != null) {
                     // Giả sử StudentModel liên kết với AccountModel
-                    StudentModel student = studentService.getStudentByUserName(username);
+                    student = studentService.getStudentByUserName(username);
                     if (student != null) {
                         // Kiểm tra trong repository nếu học viên đã đăng ký khóa học
                         isEnrolled = enrollmentService.checkEnrollment(courseId, student.getStudentId());
@@ -72,6 +74,12 @@ public class UserViewController {
                 return "error/404";
             }
 
+            // Tính tiến độ học nếu học viên đã đăng ký
+            if (isEnrolled && student != null) {
+                int totalLessons = courseDetail.getTotalLessons() != null ? courseDetail.getTotalLessons() : 0;
+                progressPercentage = enrollmentService.getProgressPercentage(courseId, student.getStudentId(), totalLessons);
+            }
+
             // Lấy danh sách bài học của khóa học (đã bao gồm thông tin video)
             List<LessonResponseDTO> lessons = lessonService.getLessonsByCourseId(courseId);
 
@@ -84,6 +92,7 @@ public class UserViewController {
             model.addAttribute("lessons", lessons);
             model.addAttribute("relatedCourses", relatedCourses);
             model.addAttribute("isEnrolled", isEnrolled);
+            model.addAttribute("progressPercentage", progressPercentage);
 
             return "views/user/course/course-detail";
         } catch (Exception e) {

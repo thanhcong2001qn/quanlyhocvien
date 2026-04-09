@@ -2,6 +2,7 @@ package com.dacs.quanlyhocvien.Services;
 
 import com.dacs.quanlyhocvien.Repository.ICourseRepository;
 import com.dacs.quanlyhocvien.Repository.IEnrollmentRepository;
+import com.dacs.quanlyhocvien.Repository.IProgressRepository;
 import com.dacs.quanlyhocvien.Repository.IStudentRepository;
 import com.dacs.quanlyhocvien.models.CourseModel;
 import com.dacs.quanlyhocvien.models.EnrollmentModel;
@@ -26,15 +27,19 @@ public class EnrollmentService {
     private final ICourseRepository courseRepository;
     private final IStudentRepository studentRepository;
     private final StudentService studentService;
+    private final IProgressRepository progressRepository;
 
     @Autowired
     public EnrollmentService(IEnrollmentRepository enrollmentRepository,
                              ICourseRepository courseRepository,
-                             IStudentRepository studentRepository, StudentService studentService) {
+                             IStudentRepository studentRepository,
+                             StudentService studentService,
+                             IProgressRepository progressRepository) {
         this.enrollmentRepository = enrollmentRepository;
         this.courseRepository = courseRepository;
         this.studentRepository = studentRepository;
         this.studentService = studentService;
+        this.progressRepository = progressRepository;
     }
 
     /**
@@ -242,5 +247,20 @@ public class EnrollmentService {
      */
     public boolean checkEnrollment(Long courseId, Long studentId) {
         return enrollmentRepository.existsByCourse_CourseIdAndStudent_StudentId(courseId, studentId);
+    }
+
+    /**
+     * Tính phần trăm hoàn thành khóa học của học viên
+     * @param courseId ID của khóa học
+     * @param studentId ID của học viên
+     * @param totalLessons tổng số bài học trong khóa học
+     * @return phần trăm hoàn thành (0-100)
+     */
+    public int getProgressPercentage(Long courseId, Long studentId, int totalLessons) {
+        if (totalLessons == 0) {
+            return 0;
+        }
+        int completed = progressRepository.countCompletedLessonsByStudentIdAndCourseId(studentId, courseId);
+        return (int) Math.round((double) completed / totalLessons * 100);
     }
 }

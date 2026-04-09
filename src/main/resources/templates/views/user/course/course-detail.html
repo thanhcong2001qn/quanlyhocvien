@@ -279,6 +279,27 @@
                               th:text="'-' + ${course.getDiscountPercentage()} + '%'">-50%</span>
                     </div>
 
+                    <!-- Tiến độ học (chỉ hiện khi đã đăng ký) -->
+                    <div th:if="${isEnrolled}" class="course-progress mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-semibold"><i class="fas fa-chart-line me-1"></i>Tiến độ học</span>
+                            <span class="progress-percent-label" th:text="${progressPercentage} + '%'">0%</span>
+                        </div>
+                        <div class="progress" style="height: 10px; border-radius: 5px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                 role="progressbar"
+                                 th:style="'width: ' + ${progressPercentage} + '%;'"
+                                 th:aria-valuenow="${progressPercentage}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100"
+                                 th:classappend="${progressPercentage == 100 ? ' bg-success' : ' bg-primary'}">
+                            </div>
+                        </div>
+                        <div class="mt-1 text-muted small" th:if="${progressPercentage == 100}">
+                            <i class="fas fa-check-circle text-success"></i> Bạn đã hoàn thành khóa học!
+                        </div>
+                    </div>
+
                     <div th:if="${!isEnrolled}">
                         <button type="button" class="btn btn-primary btn-lg w-100 mb-3" id="enrollBtn"
                                 th:if="${course.price == 0}"
